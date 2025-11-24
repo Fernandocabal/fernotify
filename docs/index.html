@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Herramienta de notificaciones para gestionar y enviar notificaciones push en aplicaciones web.">
+    <meta name="author" content="Fernandocabal">
+    <meta name="theme-color" content="#6D28D9">
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="FerNotify — Sistema de Notificaciones" />
+    <meta property="og:description"
+        content="Biblioteca ligera para mostrar modales y notificaciones con animaciones fluidas. Soporta contenido HTML, formularios y accesibilidad." />
+    <meta property="og:url" content="https://fernotify.pages.dev/" />
+    <meta property="og:image" content="https://fernotify.pages.dev/assets/img/logoMeta.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Icons & Manifest -->
+    <link rel="icon" type="image/webp" href="assets/img/logoMeta.webp">
+    <link rel="apple-touch-icon" href="assets/img/logoMeta.webp">
+    <link rel="mask-icon" href="assets/icons/safari-pinned-tab.svg" color="#6D28D9">
+    <link rel="manifest" href="manifest.json">
+    <meta name="msapplication-TileColor" content="#6D28D9" />
+    <meta name="msapplication-config" content="browserconfig.xml" />
+    <title>Fernotify | Documentación</title>
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <!-- Boxicons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial
+        }
+    </style>
+</head>
+
+<body
+    class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300">
+    <main class="max-w-5xl mx-auto p-6">
+        <!-- Hero -->
+        <section
+            class="mb-6 rounded-lg p-6 overflow-hidden transition-all duration-500 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 text-white shadow-lg"
+            aria-hidden="false">
+            <div class="flex items-start justify-between">
+                <div>
+                    <h1 id="hero-title" class="text-3xl md:text-4xl font-extrabold mb-2" data-animate>
+                        Sistema de Notificaciones modernas
+                    </h1>
+                    <p id="hero-sub" class="text-white/95 dark:text-slate-100/90 max-w-2xl" data-animate>
+                        Biblioteca ligera para mostrar modales y notificaciones con animaciones fluidas. Soporta
+                        contenido HTML, formularios, accesibilidad y personalización de animación.
+                    </p>
+                    <div class="mt-4 flex gap-3" data-animate>
+                        <a href="#examples"
+                            class="inline-flex items-center gap-2 bg-white/30 hover:bg-white/40 transition px-3 py-2 rounded text-sm font-semibold shadow-sm">Ver
+                            ejemplos</a>
+                        <a href="#pg-code"
+                            class="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 transition px-3 py-2 rounded text-sm shadow-sm">Abrir
+                            playground</a>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <button id="theme-toggle"
+                        class="p-2 rounded bg-white/40 dark:bg-slate-800 hover:bg-white/60 dark:hover:bg-slate-700 transition shadow-sm"
+                        aria-label="Cambiar tema" aria-pressed="false" title="Cambiar a modo oscuro">
+                        <!-- icon será actualizado por JS -->
+                        <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                            viewBox="0 0 24 24" fill="currentColor"
+                            class="text-white dark:text-yellow-300 transition-colors duration-300">
+                            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <header class="flex items-center justify-between mb-6">
+            <h1 class="text-2xl font-semibold">Documentación — Sistema de Notificaciones</h1>
+            <div class="space-x-2">
+                <button id="btn-success" class="px-3 py-1 rounded bg-green-500 text-white">Éxito</button>
+                <button id="btn-error" class="px-3 py-1 rounded bg-red-500 text-white">Error</button>
+                <button id="btn-warning" class="px-3 py-1 rounded bg-amber-500 text-white">Warning</button>
+                <button id="btn-info" class="px-3 py-1 rounded bg-sky-500 text-white">Info</button>
+                <button id="btn-custom" class="px-3 py-1 rounded bg-indigo-600 text-white">Custom</button>
+            </div>
+        </header>
+
+        <!-- Sección de Dark Mode -->
+        <section
+            class="mb-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700 rounded-lg border border-blue-200 dark:border-slate-600">
+            <div class="flex items-start gap-4">
+                <div class="text-4xl">🌓</div>
+                <div class="flex-1">
+                    <h2 class="text-xl font-bold mb-2 text-slate-900 dark:text-slate-100">Dark Mode Automático</h2>
+                    <p class="text-slate-700 dark:text-slate-300 mb-4">
+                        Las notificaciones detectan automáticamente el tema activo en tu web y ajustan sus colores.
+                        Prueba cambiar el tema usando el botón de arriba y luego abre cualquier notificación.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div
+                            class="p-4 bg-white dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-700">
+                            <h3 class="font-semibold mb-2 text-slate-900 dark:text-slate-100">🌞 Modo Claro</h3>
+                            <ul class="space-y-1 text-slate-600 dark:text-slate-400">
+                                <li>• Fondo blanco (#ffffff)</li>
+                                <li>• Texto oscuro (#111827)</li>
+                                <li>• Overlay suave</li>
+                            </ul>
+                        </div>
+                        <div
+                            class="p-4 bg-white dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-700">
+                            <h3 class="font-semibold mb-2 text-slate-900 dark:text-slate-100">🌙 Modo Oscuro</h3>
+                            <ul class="space-y-1 text-slate-600 dark:text-slate-400">
+                                <li>• Fondo oscuro (#0f1724)</li>
+                                <li>• Texto claro (#e6eef8)</li>
+                                <li>• Overlay intenso</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div
+                        class="mt-4 p-3 bg-blue-100 dark:bg-slate-800 rounded text-sm text-slate-700 dark:text-slate-300">
+                        <strong>💡 Integración:</strong> Solo necesitas agregar/quitar la clase <code
+                            class="px-1 py-0.5 bg-white dark:bg-slate-900 rounded border">.dark</code>
+                        al elemento <code
+                            class="px-1 py-0.5 bg-white dark:bg-slate-900 rounded border">&lt;html&gt;</code>.
+                        Compatible con Tailwind CSS (<code
+                            class="px-1 py-0.5 bg-white dark:bg-slate-900 rounded border">darkMode: 'class'</code>)
+                        y frameworks personalizados.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-lg font-semibold mb-3 text-slate-800 dark:text-slate-100">Ejemplos</h2>
+            <div id="examples" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-lg font-semibold mb-3 text-slate-800 dark:text-slate-100">Playground</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-2">
+                    <label class="block">Tipo
+                        <select id="pg-type"
+                            class="w-full border rounded px-2 py-1 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500 transition">
+                            <option value="success">success</option>
+                            <option value="error">error</option>
+                            <option value="warning">warning</option>
+                            <option value="info">info</option>
+                        </select>
+                    </label>
+                    <label class="block">Título
+                        <input id="pg-title"
+                            class="w-full border rounded px-2 py-1 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500 transition"
+                            value="Título de prueba">
+                    </label>
+                    <label class="block">Mensaje
+                        <input id="pg-message"
+                            class="w-full border rounded px-2 py-1 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500 transition"
+                            value="Mensaje de ejemplo">
+                    </label>
+                    <label class="block">Texto del botón
+                        <input id="pg-buttonText"
+                            class="w-full border rounded px-2 py-1 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500 transition"
+                            value="Aceptar">
+                    </label>
+                    <label class="block">Timer (ms)
+                        <input id="pg-timer"
+                            class="w-full border rounded px-2 py-1 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500 transition"
+                            type="number" value="3000">
+                    </label>
+                </div>
+                <div class="space-y-2">
+                    <label class="block">Overlay Opacity
+                        <input id="pg-overlayOpacity" type="number" step="0.1" min="0" max="1" value="0.85"
+                            class="w-full border rounded px-2 py-1 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500 transition">
+                    </label>
+                    <label class="block">Overlay Duration (ms)
+                        <input id="pg-overlayDuration" type="number" value="200"
+                            class="w-full border rounded px-2 py-1 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500 transition">
+                    </label>
+                    <label class="block">Box Duration (ms)
+                        <input id="pg-boxDuration" type="number" value="250"
+                            class="w-full border rounded px-2 py-1 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500 transition">
+                    </label>
+                    <label class="block">Box Start Scale
+                        <input id="pg-boxStartScale" type="number" step="0.1" value="0.8"
+                            class="w-full border rounded px-2 py-1 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500 transition">
+                    </label>
+                    <label class="block">Icon Rotate (deg)
+                        <input id="pg-iconRotate" type="number" value="0"
+                            class="w-full border rounded px-2 py-1 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500 transition">
+                    </label>
+                </div>
+            </div>
+            <div class="flex gap-2 mt-4">
+                <button id="pg-run" class="px-3 py-1 rounded bg-indigo-600 text-white">Ejecutar</button>
+                <button id="pg-copy" class="px-3 py-1 rounded border">Copiar</button>
+            </div>
+            <pre id="pg-code"
+                class="mt-3 p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded whitespace-pre-wrap break-words overflow-auto"><code></code></pre>
+        </section>
+
+        <div id="notify-live" class="sr-only" aria-live="polite"></div>
+
+        <!-- Template for examples -->
+        <template id="example-template">
+            <div class="p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow-sm">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="example-title font-medium"></div>
+                        <div class="example-desc text-sm text-slate-500 dark:text-slate-400"></div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="copy-btn px-2 py-1 border rounded text-sm">Copiar</button>
+                        <button class="run-btn px-2 py-1 rounded bg-indigo-600 text-white text-sm">Ejecutar</button>
+                    </div>
+                </div>
+                <pre
+                    class="mt-3 bg-slate-50 dark:bg-slate-900 p-3 rounded example-code whitespace-pre-wrap break-words overflow-auto"><code></code></pre>
+            </div>
+        </template>
+
+    </main>
+
+    <!-- Dependencias necesarias -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script>
+            // Hero animations and theme toggle (depends on anime.js)
+            (function () {
+                function animateHero() {
+                    try {
+                        const targets = document.querySelectorAll('[data-animate]');
+                        if (!targets || !targets.length) return;
+                        anime.timeline({ easing: 'easeOutExpo' })
+                            .add({ targets: targets, translateY: [18, 0], opacity: [0, 1], delay: anime.stagger(120), duration: 700 });
+                    } catch (e) { /* silent */ }
+                }
+
+                function setTheme(theme) {
+                    try {
+                        console.debug('setTheme()', theme);
+                        if (theme === 'dark') {
+                            document.documentElement.classList.add('dark');
+                            document.body.classList.add('dark');
+                            document.documentElement.setAttribute('data-theme', 'dark');
+                            localStorage.setItem('site-theme', 'dark');
+                            try {
+                                const btn = document.getElementById('theme-toggle');
+                                if (btn) {
+                                    btn.setAttribute('aria-pressed', true);
+                                    btn.setAttribute('title', 'Cambiar a modo claro');
+                                }
+                            } catch (e) { /* ignore */ }
+                        } else {
+                            // Remove dark class from root and body to ensure tailwind dark: utilities deactivate
+                            document.documentElement.classList.remove('dark');
+                            document.body.classList.remove('dark');
+                            document.documentElement.setAttribute('data-theme', 'light');
+                            localStorage.setItem('site-theme', 'light');
+                            try {
+                                const btn = document.getElementById('theme-toggle');
+                                if (btn) {
+                                    btn.setAttribute('aria-pressed', false);
+                                    btn.setAttribute('title', 'Cambiar a modo oscuro');
+                                }
+                            } catch (e) { /* ignore */ }
+                        }
+                        // Apply color-scheme for native scrollbars
+                        try {
+                            document.documentElement.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
+                        } catch (e) { }
+
+                        updateIcon(theme === 'dark');
+                    } catch (e) { console.error('setTheme error', e); }
+                }
+
+                function updateIcon(forceIsDark) {
+                    const icon = document.getElementById('theme-icon');
+                    if (!icon) return;
+                    const isDark = (typeof forceIsDark === 'boolean') ? forceIsDark : document.documentElement.classList.contains('dark');
+                    console.debug('updateIcon() isDark=', isDark);
+                    // Sun (light) and Moon (dark) SVGs
+                    if (isDark) {
+                        // Moon icon (outline)
+                        icon.innerHTML = '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />';
+                    } else {
+                        // Improved sun icon (outline) — lighter and more consistent
+                        icon.innerHTML = '<path d="M12 3v2M12 19v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42M12 8a4 4 0 100 8 4 4 0 000-8z" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
+                    }
+                    // Update tooltip and pressed state
+                    try {
+                        const btn = document.getElementById('theme-toggle');
+                        if (btn) {
+                            btn.setAttribute('title', isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
+                            btn.setAttribute('aria-pressed', !!isDark);
+                        }
+                    } catch (e) { /* ignore */ }
+                }
+
+                document.addEventListener('DOMContentLoaded', function () {
+                    try {
+                        // Init theme from localStorage or existing class
+                        const stored = localStorage.getItem('site-theme');
+                        if (stored) setTheme(stored);
+                        else {
+                            // If user hasn't chosen, match OS preference or default to light
+                            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                            setTheme(prefersDark ? 'dark' : 'light');
+                        }
+
+                        // Attach toggle using event delegation (single listener to avoid double firing)
+                        document.addEventListener('click', function (ev) {
+                            const t = ev.target.closest('#theme-toggle');
+                            if (t) {
+                                ev.preventDefault();
+                                ev.stopPropagation();
+                                console.debug('theme-toggle clicked');
+                                const isDark = document.documentElement.classList.contains('dark');
+                                setTheme(isDark ? 'light' : 'dark');
+                            }
+                        });
+
+                        animateHero();
+                    } catch (e) {
+                        console.error('hero/theme init error', e);
+                    }
+                });
+            })();
+    </script>
+    <script src="../dist/notification-system.js"></script>
+
+    <!-- Script demo -->
+    <script src="assets/demo.js"></script>
+
+</body>
+
+</html>

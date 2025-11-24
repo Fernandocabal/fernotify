@@ -1,16 +1,16 @@
-# 🎨 Sistema de Notificaciones - Guía de Uso
+# Sistema de Notificaciones - Guía de Uso
 
 ## Características
 
-✅ Estilo moderno tipo SweetAlert2
-✅ Animaciones fluidas con anime.js
-✅ Centrado en pantalla con overlay
-✅ 4 tipos: success, error, warning, info
-✅ Completamente reutilizable
-✅ Auto-cierre opcional
-✅ Callbacks personalizados
-✅ **Soporte completo de Dark Mode** 🌓
-✅ Respeta el tema del usuario en tu web
+ - Estilo moderno tipo SweetAlert2
+ - Animaciones fluidas con anime.js
+ - Centrado en pantalla con overlay
+ - 4 tipos: success, error, warning, info
+ - Completamente reutilizable
+ - Auto-cierre opcional
+ - Callbacks personalizados
+ - **Soporte completo de Dark Mode**
+ - Respeta el tema del usuario en tu web
 
 ## Uso Básico
 
@@ -201,7 +201,7 @@ function autoSave(content) {
 }
 ```
 
-## 🌓 Dark Mode y Temas
+## Dark Mode y Temas
 
 El sistema de notificaciones **detecta automáticamente** el tema activo en tu web y ajusta sus colores en consecuencia.
 
@@ -336,10 +336,10 @@ Esto asegura que los usuarios vean notificaciones consistentes con el tema que e
 
 Cada tipo tiene su propio estilo:
 
-- **success** 🟢 - Verde, para operaciones exitosas
-- **error** 🔴 - Rojo, para errores críticos
-- **warning** 🟡 - Amarillo, para advertencias
-- **info** 🔵 - Azul, para información general
+- **success** - Verde, para operaciones exitosas
+- **error** - Rojo, para errores críticos
+- **warning** - Amarillo, para advertencias
+- **info** - Azul, para información general
 
 ## API Completa
 
@@ -373,12 +373,12 @@ notify.close();  // Cierra la notificación actual
 
 ## Características Técnicas
 
-- ✅ **Responsive**: Se adapta a móviles y tablets
-- ✅ **Accessible**: Puede cerrarse con ESC o click en overlay
-- ✅ **Solo una a la vez**: Cierra automáticamente la anterior
-- ✅ **Animaciones suaves**: Entrada/salida con anime.js
-- ✅ **Sin dependencias extras**: Solo requiere anime.js
-- ✅ **Ligero**: ~10KB total
+- **Responsive**: Se adapta a móviles y tablets
+- **Accessible**: Puede cerrarse con ESC o click en overlay
+- **Solo una a la vez**: Cierra automáticamente la anterior
+- **Animaciones suaves**: Entrada/salida con anime.js
+- **Sin dependencias extras**: Solo requiere anime.js
+- **Ligero**: ~10KB total
 
 ## Integración en Otros Proyectos
 
@@ -395,4 +395,4 @@ notify.close();  // Cierra la notificación actual
 </script>
 ```
 
-¡Listo para usar! 🚀
+¡Listo para usar!

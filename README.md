@@ -1,4 +1,4 @@
-# 🎨 Notification System
+# Notification System
 
 > Sistema moderno de notificaciones con animaciones fluidas y soporte completo de Dark Mode.
 
@@ -6,18 +6,18 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![jsDelivr](https://data.jsdelivr.com/v1/package/gh/Fernandocabal/notification-system/badge)](https://www.jsdelivr.com/package/gh/Fernandocabal/fernotify)
 
-## ✨ Características
+## Características
 
-- 🎯 **4 tipos de notificaciones**: Success, Error, Warning, Info
-- 🌓 **Dark Mode automático**: Detecta el tema de tu web
-- 🎬 **Animaciones fluidas**: Powered by anime.js
-- ⚡ **Ligero y rápido**: ~10KB sin dependencias (excepto anime.js)
-- ♿ **Accesible**: Soporte completo de teclado y ARIA
-- 📱 **Responsive**: Se adapta a todos los tamaños de pantalla
-- 🎨 **Personalizable**: Colores, textos, temporizadores y callbacks
-- 🔒 **Sin dependencias de npm**: Usa directamente desde CDN
+- **4 tipos de notificaciones**: Success, Error, Warning, Info
+- **Dark Mode automático**: Detecta el tema de tu web
+- **Animaciones fluidas**: Powered by anime.js
+- **Ligero y rápido**: ~10KB sin dependencias (excepto anime.js)
+- **Accesible**: Soporte completo de teclado y ARIA
+- **Responsive**: Se adapta a todos los tamaños de pantalla
+- **Personalizable**: Colores, textos, temporizadores y callbacks
+- **Sin dependencias de npm**: Usa directamente desde CDN
 
-## 🚀 Instalación
+## Instalación
 
 ### Método 1: CDN Clásico (UMD)
 
@@ -59,7 +59,7 @@
 </script>
 ```
 
-## 📖 Uso Básico
+## Uso Básico
 
 ### Notificaciones Rápidas
 
@@ -106,7 +106,7 @@ notify.show({
 });
 ```
 
-## 🌓 Dark Mode
+## Dark Mode
 
 El sistema detecta automáticamente el tema de tu web usando la clase `.dark` en el elemento `<html>`:
 
@@ -134,7 +134,7 @@ document.documentElement.classList.toggle('dark');
 
 Las notificaciones cambiarán automáticamente sus colores según el tema activo.
 
-## 🎨 API Completa
+## API Completa
 
 ### `notify.show(options)`
 
@@ -180,7 +180,7 @@ notify.show({
 });
 ```
 
-## 🎯 Ejemplos de Uso
+## Ejemplos de Uso
 
 ### Validación de Formulario
 
@@ -245,7 +245,7 @@ notify.show({
 });
 ```
 
-## 📦 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 notification-system/
@@ -262,7 +262,7 @@ notification-system/
 └── .gitignore
 ```
 
-## 🌐 Demo en Vivo
+## Demo en Vivo
 
 👉 **[Ver Demo Completa](https://TU_DOMINIO.dev)**
 
@@ -272,7 +272,7 @@ La demo incluye:
 - Documentación visual del Dark Mode
 - Ejemplos de código copiables
 
-## 🔖 Versiones
+## Versiones
 
 Para usar una versión específica, usa tags en la URL del CDN:
 
@@ -291,7 +291,7 @@ git tag v1.0.0
 git push origin v1.0.0
 ```
 
-## 🎨 Colores del Dark Mode
+## Colores del Dark Mode
 
 **Modo Claro:**
 - Fondo del modal: `#ffffff`
@@ -303,7 +303,7 @@ git push origin v1.0.0
 - Texto principal: `#e6eef8`
 - Overlay: `rgba(0, 0, 0, 0.6)`
 
-## 🤝 Contribuciones
+## Contribuciones
 
 Las contribuciones son bienvenidas. Por favor:
 
@@ -313,21 +313,21 @@ Las contribuciones son bienvenidas. Por favor:
 4. Push al branch (`git push origin feature/AmazingFeature`)
 5. Abre un Pull Request
 
-## 📄 Licencia
+## Licencia
 
 MIT License - ver [LICENSE](LICENSE) para más detalles.
 
-## 🙏 Créditos
+## Créditos
 
 - Animaciones: [anime.js](https://animejs.com/)
 - Inspirado en: [SweetAlert2](https://sweetalert2.github.io/)
 
-## 📞 Soporte
+## Soporte
 
-- 📖 [Documentación Completa](NOTIFICATION_SYSTEM_GUIDE.md)
-- 🐛 [Reportar un Bug](https://github.com/Fernandocabal/notification-system/issues)
-- 💡 [Solicitar Feature](https://github.com/Fernandocabal/notification-system/issues)
+- [Documentación Completa](NOTIFICATION_SYSTEM_GUIDE.md)
+- [Reportar un Bug](https://github.com/Fernandocabal/notification-system/issues)
+- [Solicitar Feature](https://github.com/Fernandocabal/notification-system/issues)
 
 ---
 
-Hecho con ❤️ para la comunidad de desarrolladores
+Hecho para la comunidad de desarrolladores

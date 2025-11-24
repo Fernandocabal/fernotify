@@ -142,17 +142,17 @@ Los usuarios pueden elegir:
 ```
 notification-system/
 ├── dist/
-│   ├── notification-system.js       ✅ UMD para CDN
-│   └── notification-system.esm.js   ✅ ES Module para CDN
+│   ├── notification-system.js       UMD para CDN
+│   └── notification-system.esm.js   ES Module para CDN
 ├── docs/
-│   ├── index.html                   ✅ Demo (Cloudflare Pages)
+│   ├── index.html                   Demo (Cloudflare Pages)
 │   └── assets/
 │       └── demo.js
-├── .gitignore                       ✅ 
-├── LICENSE                          ✅
-├── README.md                        ✅
-├── NOTIFICATION_SYSTEM_GUIDE.md     ✅
-└── DEPLOY.md                        ✅ (este archivo)
+├── .gitignore
+├── LICENSE
+├── README.md
+├── NOTIFICATION_SYSTEM_GUIDE.md
+└── DEPLOY.md                        (este archivo)
 ```
 
 ## Comandos Útiles
