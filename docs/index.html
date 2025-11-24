@@ -20,7 +20,6 @@
     <link rel="icon" type="image/webp" href="assets/img/logoMeta.webp">
     <link rel="apple-touch-icon" href="assets/img/logoMeta.webp">
     <link rel="mask-icon" href="assets/icons/safari-pinned-tab.svg" color="#6D28D9">
-    <link rel="manifest" href="manifest.json">
     <meta name="msapplication-TileColor" content="#6D28D9" />
     <meta name="msapplication-config" content="browserconfig.xml" />
     <title>Fernotify | Documentación</title>
@@ -39,18 +38,41 @@
         body {
             font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial
         }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .hero-bg {
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
     </style>
 </head>
 
 <body
     class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300">
-    <main class="max-w-5xl mx-auto p-6">
+    <main class="max-w-5xl mx-auto p-4 sm:p-6">
         <!-- Hero -->
         <section
-            class="mb-6 rounded-lg p-6 overflow-hidden transition-all duration-500 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 text-white shadow-lg"
+            class="hero-bg mb-6 rounded-lg p-4 sm:p-6 overflow-hidden transition-all duration-500 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 text-white shadow-lg"
             aria-hidden="false">
-            <div class="flex items-start justify-between">
-                <div>
+            <div class="flex flex-col md:flex-row items-start md:justify-between">
+                <div class="order-2 md:order-1">
                     <h1 id="hero-title" class="text-3xl md:text-4xl font-extrabold mb-2" data-animate>
                         Sistema de Notificaciones modernas
                     </h1>
@@ -67,7 +89,7 @@
                             playground</a>
                     </div>
                 </div>
-                <div class="flex items-start gap-3">
+                <div class="flex items-start gap-3 order-1 md:order-2 self-end md:self-auto">
                     <button id="theme-toggle"
                         class="p-2 rounded bg-white/40 dark:bg-slate-800 hover:bg-white/60 dark:hover:bg-slate-700 transition shadow-sm"
                         aria-label="Cambiar tema" aria-pressed="false" title="Cambiar a modo oscuro">
@@ -81,9 +103,9 @@
                 </div>
             </div>
         </section>
-        <header class="flex items-center justify-between mb-6">
-            <h1 class="text-2xl font-semibold">Documentación — Sistema de Notificaciones</h1>
-            <div class="space-x-2">
+        <header class="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-4 mb-6">
+            <h1 class="text-xl sm:text-2xl font-semibold">Documentación — Sistema de Notificaciones</h1>
+            <div class="flex flex-wrap gap-2">
                 <button id="btn-success" class="px-3 py-1 rounded bg-green-500 text-white">Éxito</button>
                 <button id="btn-error" class="px-3 py-1 rounded bg-red-500 text-white">Error</button>
                 <button id="btn-warning" class="px-3 py-1 rounded bg-amber-500 text-white">Warning</button>
@@ -94,8 +116,8 @@
 
         <!-- Sección de Dark Mode -->
         <section
-            class="mb-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700 rounded-lg border border-blue-200 dark:border-slate-600">
-            <div class="flex items-start gap-4">
+            class="mb-8 p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700 rounded-lg border border-blue-200 dark:border-slate-600">
+            <div class="flex flex-col sm:flex-row items-start gap-4">
                 <div class="text-4xl">🌓</div>
                 <div class="flex-1">
                     <h2 class="text-xl font-bold mb-2 text-slate-900 dark:text-slate-100">Dark Mode Automático</h2>
@@ -199,7 +221,7 @@
                     </label>
                 </div>
             </div>
-            <div class="flex gap-2 mt-4">
+            <div class="flex flex-wrap gap-2 mt-4">
                 <button id="pg-run" class="px-3 py-1 rounded bg-indigo-600 text-white">Ejecutar</button>
                 <button id="pg-copy" class="px-3 py-1 rounded border">Copiar</button>
             </div>
@@ -212,12 +234,12 @@
         <!-- Template for examples -->
         <template id="example-template">
             <div class="p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow-sm">
-                <div class="flex justify-between items-start">
+                <div class="flex flex-col sm:flex-row sm:justify-between items-start gap-2">
                     <div>
                         <div class="example-title font-medium"></div>
                         <div class="example-desc text-sm text-slate-500 dark:text-slate-400"></div>
                     </div>
-                    <div class="flex gap-2">
+                    <div class="flex gap-2 flex-shrink-0">
                         <button class="copy-btn px-2 py-1 border rounded text-sm">Copiar</button>
                         <button class="run-btn px-2 py-1 rounded bg-indigo-600 text-white text-sm">Ejecutar</button>
                     </div>
@@ -228,6 +250,19 @@
         </template>
 
     </main>
+
+    <button id="scroll-top"
+        class="fixed bottom-4 right-4 p-3 bg-indigo-600 text-white rounded-full shadow-lg opacity-0 transition-opacity duration-300"
+        style="display: none;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 19V5M5 12l7-7 7 7" />
+        </svg>
+    </button>
+
+    <footer class="mt-12 py-6 text-center text-slate-600 dark:text-slate-400">
+        <p>Desarrollado por <a href="https://github.com/Fernandocabal"
+                class="text-indigo-600 dark:text-indigo-400 hover:underline">Fernandocabal</a></p>
+    </footer>
 
     <!-- Dependencias necesarias -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
@@ -245,7 +280,6 @@
 
                 function setTheme(theme) {
                     try {
-                        console.debug('setTheme()', theme);
                         if (theme === 'dark') {
                             document.documentElement.classList.add('dark');
                             document.body.classList.add('dark');
@@ -278,14 +312,13 @@
                         } catch (e) { }
 
                         updateIcon(theme === 'dark');
-                    } catch (e) { console.error('setTheme error', e); }
+                    } catch (e) { }
                 }
 
                 function updateIcon(forceIsDark) {
                     const icon = document.getElementById('theme-icon');
                     if (!icon) return;
                     const isDark = (typeof forceIsDark === 'boolean') ? forceIsDark : document.documentElement.classList.contains('dark');
-                    console.debug('updateIcon() isDark=', isDark);
                     // Sun (light) and Moon (dark) SVGs
                     if (isDark) {
                         // Moon icon (outline)
@@ -321,13 +354,29 @@
                             if (t) {
                                 ev.preventDefault();
                                 ev.stopPropagation();
-                                console.debug('theme-toggle clicked');
                                 const isDark = document.documentElement.classList.contains('dark');
                                 setTheme(isDark ? 'light' : 'dark');
                             }
                         });
 
                         animateHero();
+
+                        // Scroll to top button
+                        const scrollTopBtn = document.getElementById('scroll-top');
+                        window.addEventListener('scroll', () => {
+                            if (window.scrollY > 300) {
+                                scrollTopBtn.style.display = 'block';
+                                scrollTopBtn.classList.remove('opacity-0');
+                                scrollTopBtn.classList.add('opacity-100');
+                            } else {
+                                scrollTopBtn.classList.remove('opacity-100');
+                                scrollTopBtn.classList.add('opacity-0');
+                                setTimeout(() => scrollTopBtn.style.display = 'none', 300);
+                            }
+                        });
+                        scrollTopBtn.addEventListener('click', () => {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        });
                     } catch (e) {
                         console.error('hero/theme init error', e);
                     }
