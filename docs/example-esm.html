@@ -41,8 +41,8 @@
         </div>
 
         <pre class="mt-8 p-4 bg-gray-800 text-green-400 rounded overflow-x-auto"><code>&lt;script type="module"&gt;
-  // Importar desde jsDelivr CDN
-  import NotificationSystem from 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.esm.js';
+  // Importar localmente
+  import NotificationSystem from './dist/notification-system.esm.js';
   
   // Crear instancia global
   window.notify = new NotificationSystem();
@@ -58,7 +58,7 @@
     <!-- Importar como ES Module -->
     <script type="module">
         // Importar NotificationSystem
-        import NotificationSystem from '../dist/notification-system.esm.js';
+        import NotificationSystem from './dist/notification-system.esm.js';
 
         // Crear instancia global
         window.notify = new NotificationSystem();
