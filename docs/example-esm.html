@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification System - Ejemplo ES Module</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-3xl font-bold mb-4">Notification System - ES Module</h1>
+        <p class="mb-6 text-gray-600 dark:text-gray-400">
+            Ejemplo de uso con ES6 Modules (import/export)
+        </p>
+
+        <div class="space-y-4">
+            <button id="btn-success" class="px-4 py-2 bg-green-500 text-white rounded">
+                Success
+            </button>
+            <button id="btn-error" class="px-4 py-2 bg-red-500 text-white rounded">
+                Error
+            </button>
+            <button id="btn-toggle" class="px-4 py-2 bg-gray-700 text-white rounded">
+                Toggle Dark Mode
+            </button>
+        </div>
+
+        <pre class="mt-8 p-4 bg-gray-800 text-green-400 rounded overflow-x-auto"><code>&lt;script type="module"&gt;
+  // Importar desde jsDelivr CDN
+  import NotificationSystem from 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.esm.js';
+  
+  // Crear instancia global
+  window.notify = new NotificationSystem();
+  
+  // Usar
+  notify.success('¡Funcionando con ES Modules!');
+&lt;/script&gt;</code></pre>
+    </div>
+
+    <!-- Anime.js (dependencia) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <!-- Importar como ES Module -->
+    <script type="module">
+        // Importar NotificationSystem
+        import NotificationSystem from '../dist/notification-system.esm.js';
+
+        // Crear instancia global
+        window.notify = new NotificationSystem();
+
+        // Event listeners
+        document.getElementById('btn-success').addEventListener('click', () => {
+            notify.success('Operación completada con éxito', '¡Éxito!');
+        });
+
+        document.getElementById('btn-error').addEventListener('click', () => {
+            notify.error('Ocurrió un error inesperado', 'Error');
+        });
+
+        document.getElementById('btn-toggle').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+        });
+
+        // Notificación inicial
+        notify.info('Ejemplo cargado con ES Modules', 'Bienvenido');
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,23 @@
+# Archivos locales que no deben subirse
+convertidor.html
+index.html
+
+# Logs y temporales
+*.log
+*.tmp
+*.temp
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node modules (por si decides usar build tools en el futuro)
+node_modules/
+package-lock.json
