@@ -319,130 +319,144 @@
     <!-- Dependencias necesarias -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script>
-            // Hero animations and theme toggle (depends on anime.js)
-            (function () {
-                function animateHero() {
-                    try {
-                        const targets = document.querySelectorAll('[data-animate]');
-                        if (!targets || !targets.length) return;
-                        anime.timeline({ easing: 'easeOutExpo' })
-                            .add({ targets: targets, translateY: [18, 0], opacity: [0, 1], delay: anime.stagger(120), duration: 700 });
-                    } catch (e) { /* silent */ }
-                }
+        // Fallback: Si ../dist no carga (en producción), cargar desde CDN
+        window.notifyLoadedFromCDN = false;
+        if (typeof NotificationSystem === 'undefined' && typeof notify === 'undefined') {
+            window.notifyLoadedFromCDN = true;
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.js';
+            script.onerror = () => {
+                console.error('❌ Error: No se pudo cargar FerNotify. Verifica tu conexión a internet.');
+            };
+            document.head.appendChild(script);
+        }
+    </script>
+    <script src="../dist/notification-system.js"></script>
+    <script>
+        // Hero animations and theme toggle (depends on anime.js)
+        (function () {
+            function animateHero() {
+                try {
+                    const targets = document.querySelectorAll('[data-animate]');
+                    if (!targets || !targets.length) return;
+                    anime.timeline({ easing: 'easeOutExpo' })
+                        .add({ targets: targets, translateY: [18, 0], opacity: [0, 1], delay: anime.stagger(120), duration: 700 });
+                } catch (e) { /* silent */ }
+            }
 
-                function setTheme(theme) {
-                    try {
-                        if (theme === 'dark') {
-                            document.documentElement.classList.add('dark');
-                            document.body.classList.add('dark');
-                            document.documentElement.setAttribute('data-theme', 'dark');
-                            localStorage.setItem('site-theme', 'dark');
-                            try {
-                                const btn = document.getElementById('theme-toggle');
-                                if (btn) {
-                                    btn.setAttribute('aria-pressed', true);
-                                    btn.setAttribute('title', 'Cambiar a modo claro');
-                                }
-                            } catch (e) { /* ignore */ }
-                        } else {
-                            // Remove dark class from root and body to ensure tailwind dark: utilities deactivate
-                            document.documentElement.classList.remove('dark');
-                            document.body.classList.remove('dark');
-                            document.documentElement.setAttribute('data-theme', 'light');
-                            localStorage.setItem('site-theme', 'light');
-                            try {
-                                const btn = document.getElementById('theme-toggle');
-                                if (btn) {
-                                    btn.setAttribute('aria-pressed', false);
-                                    btn.setAttribute('title', 'Cambiar a modo oscuro');
-                                }
-                            } catch (e) { /* ignore */ }
-                        }
-                        // Apply color-scheme for native scrollbars
+            function setTheme(theme) {
+                try {
+                    if (theme === 'dark') {
+                        document.documentElement.classList.add('dark');
+                        document.body.classList.add('dark');
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                        localStorage.setItem('site-theme', 'dark');
                         try {
-                            document.documentElement.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
-                        } catch (e) { }
-
-                        updateIcon(theme === 'dark');
-                    } catch (e) { }
-                }
-
-                function updateIcon(forceIsDark) {
-                    const icon = document.getElementById('theme-icon');
-                    if (!icon) return;
-                    const isDark = (typeof forceIsDark === 'boolean') ? forceIsDark : document.documentElement.classList.contains('dark');
-                    // Sun (light) and Moon (dark) SVGs
-                    if (isDark) {
-                        // Moon icon (outline)
-                        icon.innerHTML = '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />';
+                            const btn = document.getElementById('theme-toggle');
+                            if (btn) {
+                                btn.setAttribute('aria-pressed', true);
+                                btn.setAttribute('title', 'Cambiar a modo claro');
+                            }
+                        } catch (e) { /* ignore */ }
                     } else {
-                        // Improved sun icon (outline) — lighter and more consistent
-                        icon.innerHTML = '<path d="M12 3v2M12 19v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42M12 8a4 4 0 100 8 4 4 0 000-8z" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
+                        // Remove dark class from root and body to ensure tailwind dark: utilities deactivate
+                        document.documentElement.classList.remove('dark');
+                        document.body.classList.remove('dark');
+                        document.documentElement.setAttribute('data-theme', 'light');
+                        localStorage.setItem('site-theme', 'light');
+                        try {
+                            const btn = document.getElementById('theme-toggle');
+                            if (btn) {
+                                btn.setAttribute('aria-pressed', false);
+                                btn.setAttribute('title', 'Cambiar a modo oscuro');
+                            }
+                        } catch (e) { /* ignore */ }
                     }
-                    // Update tooltip and pressed state
+                    // Apply color-scheme for native scrollbars
                     try {
-                        const btn = document.getElementById('theme-toggle');
-                        if (btn) {
-                            btn.setAttribute('title', isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
-                            btn.setAttribute('aria-pressed', !!isDark);
-                        }
-                    } catch (e) { /* ignore */ }
+                        document.documentElement.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
+                    } catch (e) { }
+
+                    updateIcon(theme === 'dark');
+                } catch (e) { }
+            }
+
+            function updateIcon(forceIsDark) {
+                const icon = document.getElementById('theme-icon');
+                if (!icon) return;
+                const isDark = (typeof forceIsDark === 'boolean') ? forceIsDark : document.documentElement.classList.contains('dark');
+                // Sun (light) and Moon (dark) SVGs
+                if (isDark) {
+                    // Moon icon (outline)
+                    icon.innerHTML = '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />';
+                } else {
+                    // Improved sun icon (outline) — lighter and more consistent
+                    icon.innerHTML = '<path d="M12 3v2M12 19v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42M12 8a4 4 0 100 8 4 4 0 000-8z" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
                 }
-
-                document.addEventListener('DOMContentLoaded', function () {
-                    try {
-                        // Init theme from localStorage or existing class
-                        const stored = localStorage.getItem('site-theme');
-                        if (stored) setTheme(stored);
-                        else {
-                            // If user hasn't chosen, match OS preference or default to light
-                            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-                            setTheme(prefersDark ? 'dark' : 'light');
-                        }
-
-                        // Attach toggle using event delegation (single listener to avoid double firing)
-                        document.addEventListener('click', function (ev) {
-                            const t = ev.target.closest('#theme-toggle');
-                            if (t) {
-                                ev.preventDefault();
-                                ev.stopPropagation();
-                                const isDark = document.documentElement.classList.contains('dark');
-                                setTheme(isDark ? 'light' : 'dark');
-                            }
-                        });
-
-                        animateHero();
-
-                        // Scroll to top button
-                        const scrollTopBtn = document.getElementById('scroll-top');
-                        let isScrollTopVisible = false;
-                        window.addEventListener('scroll', () => {
-                            const shouldBeVisible = window.scrollY > 300;
-                            // Solo cambiar estado si realmente cambió
-                            if (shouldBeVisible !== isScrollTopVisible) {
-                                isScrollTopVisible = shouldBeVisible;
-                                if (shouldBeVisible) {
-                                    scrollTopBtn.style.display = 'block';
-                                    // Pequeño delay para asegurar que el display se aplique antes de la transición
-                                    requestAnimationFrame(() => {
-                                        scrollTopBtn.classList.remove('opacity-0');
-                                        scrollTopBtn.classList.add('opacity-100');
-                                    });
-                                } else {
-                                    scrollTopBtn.classList.remove('opacity-100');
-                                    scrollTopBtn.classList.add('opacity-0');
-                                    setTimeout(() => scrollTopBtn.style.display = 'none', 300);
-                                }
-                            }
-                        });
-                        scrollTopBtn.addEventListener('click', () => {
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                        });
-                    } catch (e) {
-                        console.error('hero/theme init error', e);
+                // Update tooltip and pressed state
+                try {
+                    const btn = document.getElementById('theme-toggle');
+                    if (btn) {
+                        btn.setAttribute('title', isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
+                        btn.setAttribute('aria-pressed', !!isDark);
                     }
-                });
-            })();
+                } catch (e) { /* ignore */ }
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                try {
+                    // Init theme from localStorage or existing class
+                    const stored = localStorage.getItem('site-theme');
+                    if (stored) setTheme(stored);
+                    else {
+                        // If user hasn't chosen, match OS preference or default to light
+                        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                        setTheme(prefersDark ? 'dark' : 'light');
+                    }
+
+                    // Attach toggle using event delegation (single listener to avoid double firing)
+                    document.addEventListener('click', function (ev) {
+                        const t = ev.target.closest('#theme-toggle');
+                        if (t) {
+                            ev.preventDefault();
+                            ev.stopPropagation();
+                            const isDark = document.documentElement.classList.contains('dark');
+                            setTheme(isDark ? 'light' : 'dark');
+                        }
+                    });
+
+                    animateHero();
+
+                    // Scroll to top button
+                    const scrollTopBtn = document.getElementById('scroll-top');
+                    let isScrollTopVisible = false;
+                    window.addEventListener('scroll', () => {
+                        const shouldBeVisible = window.scrollY > 300;
+                        // Solo cambiar estado si realmente cambió
+                        if (shouldBeVisible !== isScrollTopVisible) {
+                            isScrollTopVisible = shouldBeVisible;
+                            if (shouldBeVisible) {
+                                scrollTopBtn.style.display = 'block';
+                                // Pequeño delay para asegurar que el display se aplique antes de la transición
+                                requestAnimationFrame(() => {
+                                    scrollTopBtn.classList.remove('opacity-0');
+                                    scrollTopBtn.classList.add('opacity-100');
+                                });
+                            } else {
+                                scrollTopBtn.classList.remove('opacity-100');
+                                scrollTopBtn.classList.add('opacity-0');
+                                setTimeout(() => scrollTopBtn.style.display = 'none', 300);
+                            }
+                        }
+                    });
+                    scrollTopBtn.addEventListener('click', () => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    });
+                } catch (e) {
+                    console.error('hero/theme init error', e);
+                }
+            });
+        })();
     </script>
     <script src="../dist/notification-system.js"></script>
 
