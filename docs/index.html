@@ -159,6 +159,58 @@
             </div>
         </section>
 
+        <!-- CDN Import Section -->
+        <section class="mb-8">
+            <h2 class="text-lg font-semibold mb-3 text-slate-800 dark:text-slate-100">⚡ Importar mediante CDN</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div
+                    class="p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow-sm">
+                    <h3 class="font-semibold mb-3 text-slate-900 dark:text-slate-100">📦 Script Clásico (UMD)</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">Compatible con cualquier proyecto HTML
+                        tradicional. ¡Solo necesitas un tag script! Todas las dependencias se cargan automáticamente.
+                    </p>
+                    <pre class="bg-slate-50 dark:bg-slate-900 p-3 rounded text-xs overflow-auto"><code class="text-slate-900 dark:text-slate-100">&lt;!-- FerNotify (todo se carga automáticamente) --&gt;
+&lt;script src="https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.js"&gt;&lt;/script&gt;
+
+&lt;script&gt;
+  notify.success('¡Todo funcionando!');
+&lt;/script&gt;</code></pre>
+                </div>
+                <div
+                    class="p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow-sm">
+                    <h3 class="font-semibold mb-3 text-slate-900 dark:text-slate-100">📦 ES Module</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">Para proyectos modernos con
+                        import/export. Las dependencias se cargan automáticamente.</p>
+                    <pre class="bg-slate-50 dark:bg-slate-900 p-3 rounded text-xs overflow-auto"><code class="text-slate-900 dark:text-slate-100">&lt;script type="module"&gt;
+  import NotificationSystem from 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.esm.js';
+  
+  window.notify = new NotificationSystem();
+  notify.success('¡Funciona con ES Modules!');
+&lt;/script&gt;</code></pre>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded border border-green-200 dark:border-green-800">
+                    <p class="text-sm text-green-700 dark:text-green-300">
+                        <strong>✅ Dependencias Automáticas:</strong>
+                    </p>
+                    <ul class="text-sm text-green-700 dark:text-green-300 mt-2 space-y-1 ml-4">
+                        <li>• <strong>anime.js 3.2.1</strong> - Se carga automáticamente desde CDN</li>
+                        <li>• <strong>Boxicons 2.1.4</strong> - Se carga automáticamente desde CDN
+                        </li>
+                    </ul>
+                </div>
+                <div class="p-4 bg-amber-50 dark:bg-slate-800 rounded border border-amber-200 dark:border-slate-700">
+                    <p class="text-sm text-slate-700 dark:text-slate-300">
+                        <strong>💡 Versionado:</strong> Puedes usar <code
+                            class="px-1 py-0.5 bg-white dark:bg-slate-900 rounded border text-xs">@latest</code> para la
+                        última versión o especificar una versión exacta como <code
+                            class="px-1 py-0.5 bg-white dark:bg-slate-900 rounded border text-xs">@1.0.0</code>
+                    </p>
+                </div>
+            </div>
+        </section>
+
         <section class="mb-8">
             <h2 class="text-lg font-semibold mb-3 text-slate-800 dark:text-slate-100">Ejemplos</h2>
             <div id="examples" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
@@ -363,15 +415,24 @@
 
                         // Scroll to top button
                         const scrollTopBtn = document.getElementById('scroll-top');
+                        let isScrollTopVisible = false;
                         window.addEventListener('scroll', () => {
-                            if (window.scrollY > 300) {
-                                scrollTopBtn.style.display = 'block';
-                                scrollTopBtn.classList.remove('opacity-0');
-                                scrollTopBtn.classList.add('opacity-100');
-                            } else {
-                                scrollTopBtn.classList.remove('opacity-100');
-                                scrollTopBtn.classList.add('opacity-0');
-                                setTimeout(() => scrollTopBtn.style.display = 'none', 300);
+                            const shouldBeVisible = window.scrollY > 300;
+                            // Solo cambiar estado si realmente cambió
+                            if (shouldBeVisible !== isScrollTopVisible) {
+                                isScrollTopVisible = shouldBeVisible;
+                                if (shouldBeVisible) {
+                                    scrollTopBtn.style.display = 'block';
+                                    // Pequeño delay para asegurar que el display se aplique antes de la transición
+                                    requestAnimationFrame(() => {
+                                        scrollTopBtn.classList.remove('opacity-0');
+                                        scrollTopBtn.classList.add('opacity-100');
+                                    });
+                                } else {
+                                    scrollTopBtn.classList.remove('opacity-100');
+                                    scrollTopBtn.classList.add('opacity-0');
+                                    setTimeout(() => scrollTopBtn.style.display = 'none', 300);
+                                }
                             }
                         });
                         scrollTopBtn.addEventListener('click', () => {
@@ -383,7 +444,7 @@
                 });
             })();
     </script>
-    <script src="dist/notification-system.js"></script>
+    <script src="../dist/notification-system.js"></script>
 
     <!-- Script demo -->
     <script src="assets/demo.js"></script>

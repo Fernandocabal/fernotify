@@ -1,6 +1,7 @@
 /**
- * Sistema de Notificaciones Modernas - Estilo SweetAlert2
- * Usa anime.js para animaciones fluidas
+ * Sistema de Notificaciones Modernas
+ * Librería ligera de notificaciones con animaciones fluidas
+ * Dependencias automáticas: anime.js, Boxicons
  */
 
 class NotificationSystem {
@@ -8,6 +9,19 @@ class NotificationSystem {
         this.currentNotification = null;
         this._lastActiveElement = null;
         this.injectStyles();
+        this.loadBoxicons();
+    }
+
+    /**
+     * Cargar Boxicons CSS si no está presente
+     */
+    loadBoxicons() {
+        if (!document.querySelector('link[href*="boxicons"]')) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css';
+            document.head.appendChild(link);
+        }
     }
 
     /**

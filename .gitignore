@@ -19,3 +19,6 @@ desktop.ini
 # Node modules (por si decides usar build tools en el futuro)
 node_modules/
 package-lock.json
+
+# test
+test-cdn.html

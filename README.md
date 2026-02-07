@@ -19,14 +19,11 @@
 
 ## Instalación
 
-### Método 1: CDN Clásico (UMD)
+### Método 1: CDN Clásico (UMD) - Lo mas fácil 🚀
 
 ```html
-<!-- Dependencia: anime.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-
-<!-- Notification System -->
-<script src="https://cdn.jsdelivr.net/gh/Fernandocabal/notification-system@latest/dist/notification-system.js"></script>
+<!-- FerNotify (todo se carga automáticamente: anime.js, Boxicons) -->
+<script src="https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.js"></script>
 
 <!-- Usar directamente -->
 <script>
@@ -51,7 +48,7 @@
 
 ```html
 <!-- UMD -->
-<script src="https://cdn.jsdelivr.net/gh/Fernandocabal/notification-system@1.0.0/dist/notification-system.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@1.0.0/dist/notification-system.js"></script>
 
 <!-- ES Module -->
 <script type="module">
@@ -320,7 +317,7 @@ MIT License - ver [LICENSE](LICENSE) para más detalles.
 ## Créditos
 
 - Animaciones: [anime.js](https://animejs.com/)
-- Inspirado en: [SweetAlert2](https://sweetalert2.github.io/)
+- Iconos: [Boxicons](https://boxicons.com/)
 
 ## Soporte
 

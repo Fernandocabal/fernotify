@@ -1,9 +1,28 @@
 # Sistema de Notificaciones - Guía de Uso
 
+## 🚀 Instalación
+
+### CDN (Lo más fácil)
+
+```html
+<!-- ¡Es todo lo que necesitas! Las dependencias se cargan automáticamente -->
+<script src="https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.js"></script>
+```
+
+### ES Module
+
+```javascript
+import NotificationSystem from 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.esm.js';
+
+window.notify = new NotificationSystem();
+```
+
+> **✅ Dependencias Automáticas:** Se cargan automáticamente anime.js (animaciones) y Boxicons (iconos). No necesitas hacer nada especial.
+
 ## Características
 
- - Estilo moderno tipo SweetAlert2
- - Animaciones fluidas con anime.js
+ - Estilo moderno y limpio
+ - Animaciones fluidas con anime.js (se carga automáticamente)
  - Centrado en pantalla con overlay
  - 4 tipos: success, error, warning, info
  - Completamente reutilizable
@@ -383,11 +402,11 @@ notify.close();  // Cierra la notificación actual
 ## Integración en Otros Proyectos
 
 ```html
-<!-- Incluir anime.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<!-- Incluir Boxicons para los iconos -->
+<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
-<!-- Incluir notification-system.js -->
-<script src="assets/js/notification-system.js"></script>
+<!-- Incluir notification-system.js (anime.js se carga automáticamente) -->
+<script src="https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.js"></script>
 
 <!-- Usar en tu código -->
 <script>
