@@ -81,7 +81,7 @@ wrangler pages deploy . --project-name=notification-system
 
 ### URLs Resultantes:
 
-- **Demo**: `https://tu-dominio.dev` o `https://notification-system.pages.dev`
+- **Demo**: `https://fernotify.pages.dev/`
 - **CDN UMD**: `https://cdn.jsdelivr.net/gh/Fernandocabal/notification-system@latest/dist/notification-system.js`
 - **CDN ESM**: `https://cdn.jsdelivr.net/gh/Fernandocabal/notification-system@latest/dist/notification-system.esm.js`
 

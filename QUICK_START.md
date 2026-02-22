@@ -60,7 +60,7 @@ Después de deployar, actualiza estas URLs en tus archivos:
 
 **Demo:**
 ```
-https://tu-dominio.dev
+https://fernotify.pages.dev/
 ```
 
 **CDN UMD:**

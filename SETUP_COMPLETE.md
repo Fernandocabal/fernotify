@@ -55,7 +55,7 @@ git push origin v1.0.0
 
 **Demo en vivo:**
 ```
-https://tu-dominio.dev
+https://fernotify.pages.dev
 ```
 
 **CDN Clásico (UMD):**

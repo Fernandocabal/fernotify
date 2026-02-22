@@ -89,6 +89,50 @@ document.addEventListener('DOMContentLoaded', function () {
                 desc: 'Notificación que solo se puede cerrar con el botón (fija).',
                 code: "notify.show({\\n  type: 'error',\\n  message: 'Este diálogo solo cierra con el botón.',\\n  allowEscapeKey: false,\\n  allowOutsideClick: false,\\n  buttonText: 'Cerrar'\\n}).then(() => console.log('cerrada'));",
                 run: (done) => { notify.show({ type: 'error', message: 'Este diálogo solo cierra con el botón.', allowEscapeKey: false, allowOutsideClick: false, buttonText: 'Cerrar' }).then(() => { if (done) done(); }); }
+            },
+            {
+                title: 'Carga básica',
+                desc: 'Spinner de carga con mensaje personalizado.',
+                code: "notify.loading('Procesando solicitud...', 'Espera');",
+                run: (done) => {
+                    notify.loading('Procesando solicitud...', 'Espera');
+                    setTimeout(() => { notify.closeLoading(); if (done) done(); }, 3000);
+                }
+            },
+            {
+                title: 'Carga con cierre automático',
+                desc: 'Notificación de carga que se cierra automáticamente.',
+                code: "notify.loading('Conectando al servidor...', 'Por favor espera', {\\n  timer: 2500\\n}).then(() => console.log('Carga completada'));",
+                run: (done) => {
+                    notify.loading('Conectando al servidor...', 'Por favor espera', { timer: 2500 }).then(() => {
+                        console.log('Carga completada');
+                        if (done) done();
+                    });
+                }
+            },
+            {
+                title: 'Simular respuesta backend',
+                desc: 'Mostrar carga, luego cerrar y mostrar resultado.',
+                code: "notify.loading('Obteniendo datos...', 'Cargando');\nsetTimeout(() => {\n  notify.closeLoading();\n  notify.success('Datos cargados correctamente');\n}, 2000);",
+                run: (done) => {
+                    notify.loading('Obteniendo datos...', 'Cargando');
+                    setTimeout(() => {
+                        notify.closeLoading();
+                        notify.success('Datos cargados correctamente', null, { onClose: done });
+                    }, 2000);
+                }
+            },
+            {
+                title: 'Carga con error',
+                desc: 'Simular un error después de la carga.',
+                code: "notify.loading('Subiendo archivo...', 'Espera');\nsetTimeout(() => {\n  notify.closeLoading();\n  notify.error('Archivo demasiado grande');\n}, 2500);",
+                run: (done) => {
+                    notify.loading('Subiendo archivo...', 'Espera');
+                    setTimeout(() => {
+                        notify.closeLoading();
+                        notify.error('Archivo demasiado grande', null, { onClose: done });
+                    }, 2500);
+                }
             }
         ];
 
@@ -202,6 +246,10 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('btn-error').addEventListener('click', () => { notify.error('Ha ocurrido un error inesperado.', 'Error'); });
         document.getElementById('btn-warning').addEventListener('click', () => { notify.warning('Revisa los datos antes de continuar.', 'Advertencia'); });
         document.getElementById('btn-info').addEventListener('click', () => { notify.info('Esta es una notificación informativa.', 'Información'); });
+        document.getElementById('btn-loading').addEventListener('click', () => {
+            notify.loading('Procesando solicitud...', 'Por favor espera');
+            setTimeout(() => { notify.closeLoading(); }, 3000);
+        });
         document.getElementById('btn-custom').addEventListener('click', () => { notify.show({ type: 'info', title: 'Notificación Personalizada', message: 'Esta notificación se cierra automáticamente en 3 segundos.', buttonText: 'Entendido', timer: 3000 }); });
 
     } // FIN initDemo

@@ -1,35 +1,65 @@
 /**
+ * Sistema de Notificaciones Modernas (ESM)
+ * Librería ligera de notificaciones con animaciones fluidas
+ * 
+ * RECOMENDADO: Cargar dependencias antes de importar:
+ * <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+ * <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+ * 
+ * Uso:
+ * import NotificationSystem from '@fernandocabal/fernotify';
+ * const notify = new NotificationSystem();
+ * notify.success('¡Hola!');
+ */
+
+// Importar el código UMD y ejecutarlo para generar window.notify
+/**
  * Sistema de Notificaciones Modernas
  * Librería ligera de notificaciones con animaciones fluidas
  * Dependencias automáticas: anime.js, Boxicons
  */
 
-class NotificationSystem {
-    constructor() {
-        this.currentNotification = null;
-        this._lastActiveElement = null;
-        this.injectStyles();
-        this.loadBoxicons();
+(function ensureAnimeDependency() {
+    if (typeof anime !== 'undefined') {
+        initFerNotify();
+    } else {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js';
+        script.onload = initFerNotify;
+        script.onerror = () => {
+            console.error('FerNotify: No se pudo cargar anime.js. Por favor, cargalo manualmente.');
+        };
+        document.head.appendChild(script);
     }
 
-    /**
-     * Cargar Boxicons CSS si no está presente
-     */
-    loadBoxicons() {
-        if (!document.querySelector('link[href*="boxicons"]')) {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = 'https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css';
-            document.head.appendChild(link);
-        }
-    }
+    function initFerNotify() {
+        class NotificationSystem {
+            constructor() {
+                this.currentNotification = null;
+                this._lastActiveElement = null;
+                this._currentLoadingPromise = null;
+                this.injectStyles();
+                this.loadBoxicons();
+            }
 
-    /**
-     * Inyectar estilos CSS
-     */
-    injectStyles() {
-        const style = document.createElement('style');
-        style.textContent = `
+            /**
+             * Cargar Boxicons CSS si no está presente
+             */
+            loadBoxicons() {
+                if (!document.querySelector('link[href*="boxicons"]')) {
+                    const link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = 'https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css';
+                    document.head.appendChild(link);
+                }
+            }
+
+            /**
+             * Inyectar estilos CSS
+             */
+            injectStyles() {
+                const style = document.createElement('style');
+                style.textContent = `
             .notification-overlay {
                 position: fixed;
                 top: 0;
@@ -269,486 +299,610 @@ class NotificationSystem {
                     opacity: 1;
                 }
             }
+
+            /* Loading spinner styles */
+            .notification-spinner {
+                width: 50px;
+                height: 50px;
+                border: 4px solid rgba(99, 102, 241, 0.2);
+                border-top-color: #6366f1;
+                border-radius: 50%;
+                animation: notification-spin 1s linear infinite;
+                margin: 0 auto 20px;
+            }
+
+            @keyframes notification-spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+            .notification-loading-text {
+                font-size: 14px;
+                color: #6b7280;
+                text-align: center;
+                margin-top: 12px;
+            }
+
+            .dark .notification-loading-text {
+                color: #cbd5e1;
+            }
         `;
-        document.head.appendChild(style);
-    }
-
-    /**
-     * Obtener ícono según el tipo
-     */
-    getIcon(type) {
-        // Return a Boxicons markup string — presentation/index.php now imports the CSS.
-        const icons = {
-            'success': '<i class="bx bx-check" aria-hidden="true"></i>',
-            'error': '<i class="bx bx-x" aria-hidden="true"></i>',
-            'warning': '<i class="bx bx-error" aria-hidden="true"></i>',
-            'info': '<i class="bx bx-info-circle" aria-hidden="true"></i>'
-        };
-        return icons[type] || icons.info;
-    }
-
-    /**
-     * Obtener título por defecto según el tipo
-     */
-    getDefaultTitle(type) {
-        const titles = {
-            'success': '¡Éxito!',
-            'error': 'Error',
-            'warning': 'Advertencia',
-            'info': 'Información'
-        };
-        return titles[type] || 'Notificación';
-    }
-
-    /**
-     * Obtener gradiente de botón según el tipo
-     */
-    getButtonGradient(type) {
-        const gradients = {
-            'success': 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-            'error': 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-            'warning': 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-            'info': 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'
-        };
-        return gradients[type] || gradients.info;
-    }
-
-    /**
-     * Obtener color de sombra según el tipo
-     */
-    getButtonShadow(type) {
-        const shadows = {
-            'success': 'rgba(16, 185, 129, 0.4)',
-            'error': 'rgba(239, 68, 68, 0.4)',
-            'warning': 'rgba(245, 158, 11, 0.4)',
-            'info': 'rgba(59, 130, 246, 0.4)'
-        };
-        return shadows[type] || shadows.info;
-    }
-
-    /**
-     * Mostrar notificación
-     * 
-     * @param {Object} options - Opciones de la notificación
-     * @param {string} options.type - Tipo: 'success', 'error', 'warning', 'info'
-     * @param {string} options.title - Título (opcional, usa título por defecto)
-     * @param {string} options.message - Mensaje a mostrar
-     * @param {string} options.buttonText - Texto del botón (opcional, default: 'OK')
-     * @param {string} options.buttonColor - Color del botón en formato CSS (opcional, usa color del tipo por defecto)
-     * @param {Function} options.onClose - Callback al cerrar (opcional)
-     * @param {number} options.timer - Auto-cerrar después de X ms (opcional)
-     * @param {boolean} options.allowOutsideClick - Permitir cerrar haciendo click fuera (default: true)
-     * @param {boolean} options.allowEscapeKey - Permitir cerrar con tecla ESC (default: true)
-     */
-    show(options = {}) {
-        // Cerrar notificación existente si hay
-        if (this.currentNotification) {
-            this.close();
-        }
-
-        const {
-            type = 'info',
-            title = this.getDefaultTitle(type),
-            message = '',
-            buttonText = 'OK',
-            buttonColor = null,
-            onClose = null,
-            timer = null,
-            allowOutsideClick = true,
-            allowEscapeKey = true,
-            // New option: hideButton true -> do not render action button
-            hideButton = false
-        } = options;
-
-        // Option to show a small close 'X' in the corner
-        const showCloseButton = options.showCloseButton === true;
-
-        // Bloquear scroll del body y root (más robusto)
-        try { document.body.style.overflow = 'hidden'; } catch (e) { }
-        try { document.documentElement.style.overflow = 'hidden'; } catch (e) { }
-
-        // Crear overlay
-        const overlay = document.createElement('div');
-        overlay.className = 'notification-overlay';
-        // Accessibility: make overlay focusable and a dialog
-        overlay.tabIndex = -1;
-        overlay.setAttribute('role', 'dialog');
-        overlay.setAttribute('aria-modal', 'true');
-        // Ensure overlay receives pointer events
-        overlay.style.pointerEvents = 'auto';
-
-        // Crear box
-        const box = document.createElement('div');
-        box.className = 'notification-box';
-
-        // Crear ícono
-        const icon = document.createElement('div');
-        icon.className = `notification-icon ${type}`;
-        icon.innerHTML = this.getIcon(type);
-
-        // Crear título
-        const titleElement = document.createElement('h3');
-        titleElement.className = 'notification-title';
-        titleElement.textContent = title;
-
-        // Crear mensaje
-        const messageElement = document.createElement('p');
-        messageElement.className = 'notification-message';
-        messageElement.textContent = message;
-
-        // Custom content support: options.html (string) or options.content (HTMLElement)
-        let customContent = null;
-        if (options.html || options.content) {
-            customContent = document.createElement('div');
-            customContent.className = 'notification-content';
-            if (options.html) {
-                try { customContent.innerHTML = options.html; } catch (e) { customContent.textContent = options.html; }
-            } else if (options.content && options.content instanceof HTMLElement) {
-                customContent.appendChild(options.content);
+                document.head.appendChild(style);
             }
-        }
 
-        // Crear (opcional) botón. Si hideButton === true o buttonText es falsy, no renderizamos.
-        let button = null;
-        if (!hideButton && buttonText) {
-            button = document.createElement('button');
-            button.className = 'notification-button';
-            button.textContent = buttonText;
-
-            // Aplicar color del botón (personalizado o automático según tipo)
-            const finalButtonColor = buttonColor || this.getButtonGradient(type);
-            const buttonShadowColor = this.getButtonShadow(type);
-            button.style.background = finalButtonColor;
-            button.style.boxShadow = `0 4px 12px ${buttonShadowColor}`;
-        }
-
-        // Close 'X' button in corner (optional)
-        let closeBtn = null;
-        if (showCloseButton) {
-            closeBtn = document.createElement('button');
-            closeBtn.setAttribute('aria-label', 'Cerrar');
-            closeBtn.className = 'notification-close';
-            closeBtn.innerHTML = '&times;';
-            closeBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                closeHandler();
-            });
-        }
-
-        // Ensamblar
-        box.appendChild(icon);
-        // If customContent provided, prefer it. Otherwise render title/message as before.
-        if (customContent) {
-            // For accessibility, link aria-describedby to the content
-            const descId = 'notify-desc-' + Date.now();
-            customContent.id = descId;
-            overlay.setAttribute('aria-describedby', descId);
-            box.appendChild(customContent);
-        } else {
-            box.appendChild(titleElement);
-            box.appendChild(messageElement);
-        }
-        // Append close button last so it's visually on top
-        if (closeBtn) box.appendChild(closeBtn);
-        if (button) box.appendChild(button);
-        overlay.appendChild(box);
-        document.body.appendChild(overlay);
-
-        // Provide a Promise that resolves when this notification is closed.
-        const closePromise = new Promise((resolveClose) => {
-            try { overlay._externalResolve = resolveClose; } catch (e) { /* ignore */ }
-        });
-
-        // If page provides a live region, update it for screen readers
-        try {
-            const live = document.getElementById('notify-live');
-            if (live) {
-                live.textContent = `${title}: ${message}`;
+            /**
+             * Obtener ícono según el tipo
+             */
+            getIcon(type) {
+                // Return a Boxicons markup string — presentation/index.php now imports the CSS.
+                const icons = {
+                    'success': '<i class="bx bx-check" aria-hidden="true"></i>',
+                    'error': '<i class="bx bx-x" aria-hidden="true"></i>',
+                    'warning': '<i class="bx bx-error" aria-hidden="true"></i>',
+                    'info': '<i class="bx bx-info-circle" aria-hidden="true"></i>'
+                };
+                return icons[type] || icons.info;
             }
-        } catch (e) { }
 
-        // Save current focused element to restore later
-        try { this._lastActiveElement = document.activeElement; } catch (e) { this._lastActiveElement = null; }
-
-        // Debug (use console.log to avoid being filtered out)
-        try { console.log('notify.show:', { type, title, message, hideButton, allowOutsideClick, allowEscapeKey }); } catch (e) { }
-
-        this.currentNotification = overlay;
-
-        // Move focus into the notification for accessibility
-        // Focus management: focus first focusable element inside box, otherwise the button, otherwise overlay
-        try {
-            const focusable = box.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])');
-            if (focusable && focusable.length) {
-                focusable[0].focus();
-            } else if (button) {
-                button.focus();
-            } else {
-                overlay.focus();
+            /**
+             * Obtener título por defecto según el tipo
+             */
+            getDefaultTitle(type) {
+                const titles = {
+                    'success': '¡Éxito!',
+                    'error': 'Error',
+                    'warning': 'Advertencia',
+                    'info': 'Información'
+                };
+                return titles[type] || 'Notificación';
             }
-        } catch (e) { try { overlay.focus(); } catch (err) { } }
 
-        // Implement focus trap (Tab/Shift+Tab) inside the box
-        const focusTrap = (e) => {
-            if (e.key !== 'Tab') return;
-            const focusable = Array.from(box.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'))
-                .filter(el => el.offsetParent !== null);
-            if (!focusable.length) {
-                e.preventDefault();
-                return;
+            /**
+             * Obtener gradiente de botón según el tipo
+             */
+            getButtonGradient(type) {
+                const gradients = {
+                    'success': 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    'error': 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                    'warning': 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                    'info': 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'
+                };
+                return gradients[type] || gradients.info;
             }
-            const first = focusable[0];
-            const last = focusable[focusable.length - 1];
-            if (!e.shiftKey && document.activeElement === last) {
-                e.preventDefault();
-                first.focus();
-            } else if (e.shiftKey && document.activeElement === first) {
-                e.preventDefault();
-                last.focus();
+
+            /**
+             * Obtener color de sombra según el tipo
+             */
+            getButtonShadow(type) {
+                const shadows = {
+                    'success': 'rgba(16, 185, 129, 0.4)',
+                    'error': 'rgba(239, 68, 68, 0.4)',
+                    'warning': 'rgba(245, 158, 11, 0.4)',
+                    'info': 'rgba(59, 130, 246, 0.4)'
+                };
+                return shadows[type] || shadows.info;
             }
-        };
-        overlay._focusTrap = focusTrap;
-        document.addEventListener('keydown', focusTrap);
 
-        // Allow optional animation overrides via options.anim
-        const anim = options.anim || {};
-        const overlayDuration = typeof anim.overlayDuration === 'number' ? anim.overlayDuration : 150;
-        const overlayEasing = anim.overlayEasing || 'easeOutQuad';
-        const boxDuration = typeof anim.boxDuration === 'number' ? anim.boxDuration : 200;
-        const boxDelay = typeof anim.boxDelay === 'number' ? anim.boxDelay : 50;
-        const boxEasing = anim.boxEasing || 'easeOutBack';
-        const boxStartScale = typeof anim.boxStartScale === 'number' ? anim.boxStartScale : 0.8;
-        const iconDuration = typeof anim.iconDuration === 'number' ? anim.iconDuration : 250;
-        const iconDelay = typeof anim.iconDelay === 'number' ? anim.iconDelay : 100;
-        const iconRotate = (typeof anim.iconRotate === 'number') ? anim.iconRotate : (type === 'success' ? -90 : type === 'error' ? 90 : 0);
-        if (typeof anim.overlayOpacity === 'number') {
-            overlay.style.backgroundColor = `rgba(0,0,0,${anim.overlayOpacity})`;
-        }
-
-        // Animación de entrada con anime.js - configurable
-        anime({
-            targets: overlay,
-            opacity: [0, 1],
-            duration: overlayDuration,
-            easing: overlayEasing
-        });
-
-        anime({
-            targets: box,
-            scale: [boxStartScale, 1],
-            opacity: [0, 1],
-            duration: boxDuration,
-            easing: boxEasing,
-            delay: boxDelay
-        });
-
-        anime({
-            targets: icon,
-            scale: [0, 1],
-            rotate: [iconRotate, 0],
-            duration: iconDuration,
-            easing: boxEasing,
-            delay: iconDelay
-        });
-
-        // Efecto hover y listener del botón (solo si existe)
-        const closeHandler = () => {
-            this.close(onClose);
-        };
-        if (button) {
-            const buttonShadowColor = this.getButtonShadow(type);
-            button.addEventListener('mouseenter', () => {
-                button.style.boxShadow = `0 6px 16px ${buttonShadowColor}`;
-            });
-            button.addEventListener('mouseleave', () => {
-                button.style.boxShadow = `0 4px 12px ${buttonShadowColor}`;
-            });
-            button.addEventListener('click', (e) => {
-                try { console.log('notify.button.click'); } catch (err) { }
-                closeHandler(e);
-            });
-        }
-
-        // Click en overlay para cerrar (solo si está permitido)
-        if (allowOutsideClick) {
-            overlay.addEventListener('click', (e) => {
-                try { console.log('notify.overlay.click', e.target); } catch (err) { }
-                // Close when clicking outside the box (more robust than e.target === overlay)
-                if (!box.contains(e.target)) {
-                    closeHandler();
+            /**
+             * Mostrar notificación
+             * 
+             * @param {Object} options - Opciones de la notificación
+             * @param {string} options.type - Tipo: 'success', 'error', 'warning', 'info'
+             * @param {string} options.title - Título (opcional, usa título por defecto)
+             * @param {string} options.message - Mensaje a mostrar
+             * @param {string} options.buttonText - Texto del botón (opcional, default: 'OK')
+             * @param {string} options.buttonColor - Color del botón en formato CSS (opcional, usa color del tipo por defecto)
+             * @param {Function} options.onClose - Callback al cerrar (opcional)
+             * @param {number} options.timer - Auto-cerrar después de X ms (opcional)
+             * @param {boolean} options.allowOutsideClick - Permitir cerrar haciendo click fuera (default: true)
+             * @param {boolean} options.allowEscapeKey - Permitir cerrar con tecla ESC (default: true)
+             */
+            show(options = {}) {
+                // Cerrar notificación existente si hay
+                if (this.currentNotification) {
+                    this.close();
                 }
-            });
-        }
 
-        // Auto-cerrar si hay timer
-        if (timer) {
-            setTimeout(() => {
-                closeHandler();
-            }, timer);
-        }
+                const {
+                    type = 'info',
+                    title = this.getDefaultTitle(type),
+                    message = '',
+                    buttonText = 'OK',
+                    buttonColor = null,
+                    onClose = null,
+                    timer = null,
+                    allowOutsideClick = true,
+                    allowEscapeKey = true,
+                    // New option: hideButton true -> do not render action button
+                    hideButton = false
+                } = options;
 
-        // Tecla ESC para cerrar (solo si está permitido)
-        if (allowEscapeKey) {
-            const escHandler = (e) => {
-                try { console.log('notify.esc', e.key); } catch (err) { }
-                if (e.key === 'Escape') {
-                    closeHandler();
-                    document.removeEventListener('keydown', escHandler);
+                // Option to show a small close 'X' in the corner
+                const showCloseButton = options.showCloseButton === true;
+
+                // Bloquear scroll del body y root (más robusto)
+                try { document.body.style.overflow = 'hidden'; } catch (e) { }
+                try { document.documentElement.style.overflow = 'hidden'; } catch (e) { }
+
+                // Crear overlay
+                const overlay = document.createElement('div');
+                overlay.className = 'notification-overlay';
+                // Accessibility: make overlay focusable and a dialog
+                overlay.tabIndex = -1;
+                overlay.setAttribute('role', 'dialog');
+                overlay.setAttribute('aria-modal', 'true');
+                // Ensure overlay receives pointer events
+                overlay.style.pointerEvents = 'auto';
+
+                // Crear box
+                const box = document.createElement('div');
+                box.className = 'notification-box';
+
+                // Crear ícono
+                const icon = document.createElement('div');
+                icon.className = `notification-icon ${type}`;
+
+                // Si la opción hideButton es true Y message contiene patrón de loading, mostrar spinner
+                if (hideButton && type === 'info') {
+                    // Mostrar spinner para notificación de carga
+                    icon.innerHTML = '<div class="notification-spinner"></div>';
+                    icon.style.background = 'transparent';
+                    icon.style.boxShadow = 'none';
+                    icon.style.width = 'auto';
+                    icon.style.height = 'auto';
+                    icon.querySelector('.notification-spinner').style.margin = '0 auto 20px';
+                } else {
+                    icon.innerHTML = this.getIcon(type);
                 }
-            };
-            // Store handler reference on overlay so close() can remove it if needed
-            overlay._escHandler = escHandler;
-            document.addEventListener('keydown', escHandler);
+
+                // Crear título
+                const titleElement = document.createElement('h3');
+                titleElement.className = 'notification-title';
+                titleElement.textContent = title;
+
+                // Crear mensaje
+                const messageElement = document.createElement('p');
+                messageElement.className = 'notification-message';
+                messageElement.textContent = message;
+
+                // Custom content support: options.html (string) or options.content (HTMLElement)
+                let customContent = null;
+                if (options.html || options.content) {
+                    customContent = document.createElement('div');
+                    customContent.className = 'notification-content';
+                    if (options.html) {
+                        try { customContent.innerHTML = options.html; } catch (e) { customContent.textContent = options.html; }
+                    } else if (options.content && options.content instanceof HTMLElement) {
+                        customContent.appendChild(options.content);
+                    }
+                }
+
+                // Crear (opcional) botón. Si hideButton === true o buttonText es falsy, no renderizamos.
+                let button = null;
+                if (!hideButton && buttonText) {
+                    button = document.createElement('button');
+                    button.className = 'notification-button';
+                    button.textContent = buttonText;
+
+                    // Aplicar color del botón (personalizado o automático según tipo)
+                    const finalButtonColor = buttonColor || this.getButtonGradient(type);
+                    const buttonShadowColor = this.getButtonShadow(type);
+                    button.style.background = finalButtonColor;
+                    button.style.boxShadow = `0 4px 12px ${buttonShadowColor}`;
+                }
+
+                // Close 'X' button in corner (optional)
+                let closeBtn = null;
+                if (showCloseButton) {
+                    closeBtn = document.createElement('button');
+                    closeBtn.setAttribute('aria-label', 'Cerrar');
+                    closeBtn.className = 'notification-close';
+                    closeBtn.innerHTML = '&times;';
+                    closeBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        closeHandler();
+                    });
+                }
+
+                // Ensamblar
+                box.appendChild(icon);
+                // If customContent provided, prefer it. Otherwise render title/message as before.
+                if (customContent) {
+                    // For accessibility, link aria-describedby to the content
+                    const descId = 'notify-desc-' + Date.now();
+                    customContent.id = descId;
+                    overlay.setAttribute('aria-describedby', descId);
+                    box.appendChild(customContent);
+                } else {
+                    box.appendChild(titleElement);
+                    box.appendChild(messageElement);
+                }
+                // Append close button last so it's visually on top
+                if (closeBtn) box.appendChild(closeBtn);
+                if (button) box.appendChild(button);
+                overlay.appendChild(box);
+                document.body.appendChild(overlay);
+
+                // Provide a Promise that resolves when this notification is closed.
+                const closePromise = new Promise((resolveClose) => {
+                    try { overlay._externalResolve = resolveClose; } catch (e) { /* ignore */ }
+                });
+
+                // If page provides a live region, update it for screen readers
+                try {
+                    const live = document.getElementById('notify-live');
+                    if (live) {
+                        live.textContent = `${title}: ${message}`;
+                    }
+                } catch (e) { }
+
+                // Save current focused element to restore later
+                try { this._lastActiveElement = document.activeElement; } catch (e) { this._lastActiveElement = null; }
+
+                // Debug (use console.log to avoid being filtered out)
+                try { console.log('notify.show:', { type, title, message, hideButton, allowOutsideClick, allowEscapeKey }); } catch (e) { }
+
+                this.currentNotification = overlay;
+
+                // Move focus into the notification for accessibility
+                // Focus management: focus first focusable element inside box, otherwise the button, otherwise overlay
+                try {
+                    const focusable = box.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])');
+                    if (focusable && focusable.length) {
+                        focusable[0].focus();
+                    } else if (button) {
+                        button.focus();
+                    } else {
+                        overlay.focus();
+                    }
+                } catch (e) { try { overlay.focus(); } catch (err) { } }
+
+                // Implement focus trap (Tab/Shift+Tab) inside the box
+                const focusTrap = (e) => {
+                    if (e.key !== 'Tab') return;
+                    const focusable = Array.from(box.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'))
+                        .filter(el => el.offsetParent !== null);
+                    if (!focusable.length) {
+                        e.preventDefault();
+                        return;
+                    }
+                    const first = focusable[0];
+                    const last = focusable[focusable.length - 1];
+                    if (!e.shiftKey && document.activeElement === last) {
+                        e.preventDefault();
+                        first.focus();
+                    } else if (e.shiftKey && document.activeElement === first) {
+                        e.preventDefault();
+                        last.focus();
+                    }
+                };
+                overlay._focusTrap = focusTrap;
+                document.addEventListener('keydown', focusTrap);
+
+                // Allow optional animation overrides via options.anim
+                const anim = options.anim || {};
+                const overlayDuration = typeof anim.overlayDuration === 'number' ? anim.overlayDuration : 150;
+                const overlayEasing = anim.overlayEasing || 'easeOutQuad';
+                const boxDuration = typeof anim.boxDuration === 'number' ? anim.boxDuration : 200;
+                const boxDelay = typeof anim.boxDelay === 'number' ? anim.boxDelay : 50;
+                const boxEasing = anim.boxEasing || 'easeOutBack';
+                const boxStartScale = typeof anim.boxStartScale === 'number' ? anim.boxStartScale : 0.8;
+                const iconDuration = typeof anim.iconDuration === 'number' ? anim.iconDuration : 250;
+                const iconDelay = typeof anim.iconDelay === 'number' ? anim.iconDelay : 100;
+                const iconRotate = (typeof anim.iconRotate === 'number') ? anim.iconRotate : (type === 'success' ? -90 : type === 'error' ? 90 : 0);
+                if (typeof anim.overlayOpacity === 'number') {
+                    overlay.style.backgroundColor = `rgba(0,0,0,${anim.overlayOpacity})`;
+                }
+
+                // Animación de entrada con anime.js - configurable
+                anime({
+                    targets: overlay,
+                    opacity: [0, 1],
+                    duration: overlayDuration,
+                    easing: overlayEasing
+                });
+
+                anime({
+                    targets: box,
+                    scale: [boxStartScale, 1],
+                    opacity: [0, 1],
+                    duration: boxDuration,
+                    easing: boxEasing,
+                    delay: boxDelay
+                });
+
+                anime({
+                    targets: icon,
+                    scale: [0, 1],
+                    rotate: [iconRotate, 0],
+                    duration: iconDuration,
+                    easing: boxEasing,
+                    delay: iconDelay
+                });
+
+                // Efecto hover y listener del botón (solo si existe)
+                const closeHandler = () => {
+                    this.close(onClose);
+                };
+                if (button) {
+                    const buttonShadowColor = this.getButtonShadow(type);
+                    button.addEventListener('mouseenter', () => {
+                        button.style.boxShadow = `0 6px 16px ${buttonShadowColor}`;
+                    });
+                    button.addEventListener('mouseleave', () => {
+                        button.style.boxShadow = `0 4px 12px ${buttonShadowColor}`;
+                    });
+                    button.addEventListener('click', (e) => {
+                        try { console.log('notify.button.click'); } catch (err) { }
+                        closeHandler(e);
+                    });
+                }
+
+                // Click en overlay para cerrar (solo si está permitido)
+                if (allowOutsideClick) {
+                    overlay.addEventListener('click', (e) => {
+                        try { console.log('notify.overlay.click', e.target); } catch (err) { }
+                        // Close when clicking outside the box (more robust than e.target === overlay)
+                        if (!box.contains(e.target)) {
+                            closeHandler();
+                        }
+                    });
+                }
+
+                // Auto-cerrar si hay timer
+                if (timer) {
+                    setTimeout(() => {
+                        closeHandler();
+                    }, timer);
+                }
+
+                // Tecla ESC para cerrar (solo si está permitido)
+                if (allowEscapeKey) {
+                    const escHandler = (e) => {
+                        try { console.log('notify.esc', e.key); } catch (err) { }
+                        if (e.key === 'Escape') {
+                            closeHandler();
+                            document.removeEventListener('keydown', escHandler);
+                        }
+                    };
+                    // Store handler reference on overlay so close() can remove it if needed
+                    overlay._escHandler = escHandler;
+                    document.addEventListener('keydown', escHandler);
+                }
+
+                // Return a Promise that resolves when the notification is closed
+                return closePromise;
+            }
+
+            /**
+             * Cerrar notificación actual
+             */
+            close(callback = null) {
+                if (!this.currentNotification) return Promise.resolve();
+
+                const overlay = this.currentNotification;
+                const box = overlay.querySelector('.notification-box');
+
+                // Animación de salida
+                anime({
+                    targets: box,
+                    scale: 0.8,
+                    opacity: 0,
+                    duration: 100,
+                    easing: 'easeInQuad'
+                });
+
+                return new Promise((resolve) => {
+                    anime({
+                        targets: overlay,
+                        opacity: 0,
+                        duration: 100,
+                        easing: 'easeInQuad',
+                        complete: () => {
+                            try { console.log('notify.close'); } catch (e) { }
+                            // Remove keydown handler if present
+                            try {
+                                if (overlay && overlay._escHandler) {
+                                    document.removeEventListener('keydown', overlay._escHandler);
+                                    overlay._escHandler = null;
+                                }
+                            } catch (e) { }
+
+                            // Remove focus trap if present
+                            try {
+                                if (overlay && overlay._focusTrap) {
+                                    document.removeEventListener('keydown', overlay._focusTrap);
+                                    overlay._focusTrap = null;
+                                }
+                            } catch (e) { }
+
+                            // Resolve external Promise returned by show(), if present
+                            try {
+                                if (overlay && typeof overlay._externalResolve === 'function') {
+                                    try { overlay._externalResolve(); } catch (er) { }
+                                    overlay._externalResolve = null;
+                                }
+                            } catch (e) { }
+
+                            // Remove this overlay
+                            try { overlay.remove(); } catch (e) { }
+                            this.currentNotification = null;
+                            // Restaurar scroll del body y root
+                            try { document.body.style.overflow = ''; } catch (e) { }
+                            try { document.documentElement.style.overflow = ''; } catch (e) { }
+                            // Restore previous focus if possible
+                            try {
+                                if (this._lastActiveElement && typeof this._lastActiveElement.focus === 'function') {
+                                    this._lastActiveElement.focus();
+                                }
+                            } catch (e) { }
+                            this._lastActiveElement = null;
+
+                            if (callback) callback();
+                            resolve();
+                        }
+                    });
+                });
+            }
+
+            /**
+             * Métodos de acceso rápido
+             */
+            success(message, title = null, options = {}) {
+                try { console.log('notify.success called', { message, title, options }); } catch (e) { }
+                this.show({
+                    type: 'success',
+                    title: title || this.getDefaultTitle('success'),
+                    message,
+                    ...options
+                });
+            }
+
+            error(message, title = null, options = {}) {
+                this.show({
+                    type: 'error',
+                    title: title || this.getDefaultTitle('error'),
+                    message,
+                    ...options
+                });
+            }
+
+            warning(message, title = null, options = {}) {
+                this.show({
+                    type: 'warning',
+                    title: title || this.getDefaultTitle('warning'),
+                    message,
+                    ...options
+                });
+            }
+
+            info(message, title = null, options = {}) {
+                try { console.log('notify.info called', { message, title, options }); } catch (e) { }
+                this.show({
+                    type: 'info',
+                    title: title || this.getDefaultTitle('info'),
+                    message,
+                    ...options
+                });
+            }
+
+            /**
+             * Mostrar notificación de carga con spinner
+             * Útil para operaciones async, cargas desde backend, etc
+             * 
+             * @param {string} message - Mensaje a mostrar
+             * @param {string} title - Título (opcional, default: 'Cargando...')
+             * @param {Object} options - Opciones adicionales
+             * @param {number} options.timer - Auto-cerrar después de X ms (opcional)
+             * @param {boolean} options.allowOutsideClick - Permitir cerrar haciendo click fuera (default: false)
+             * @param {boolean} options.allowEscapeKey - Permitir cerrar con tecla ESC (default: false)
+             * @param {Function} options.onClose - Callback al cerrar (opcional)
+             * @returns {Promise} Promesa que se resuelve cuando se cierre la notificación
+             * 
+             * @example
+             * // Usar como promise
+             * notify.loading('Procesando...', 'Espera')
+             *   .then(() => console.log('Completado'));
+             * 
+             * // Cerrar manualmente
+             * const loadingPromise = notify.loading('Subiendo archivo...');
+             * setTimeout(() => notify.closeLoading(), 3000);
+             * 
+             * // Con respuesta de backend
+             * notify.loading('Obteniendo datos...');
+             * fetch('/api/datos')
+             *   .then(res => res.json())
+             *   .then(data => {
+             *     notify.closeLoading();
+             *     notify.success('Datos cargados');
+             *   })
+             *   .catch(err => {
+             *     notify.closeLoading();
+             *     notify.error('Error: ' + err.message);
+             *   });
+             */
+            loading(message = 'Cargando...', title = 'Espera', options = {}) {
+                try { console.log('notify.loading called', { message, title, options }); } catch (e) { }
+
+                // No cierra al hacer click fuera ni ESC por defecto
+                const loadingOptions = {
+                    type: 'info',
+                    title,
+                    message,
+                    hideButton: true,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    ...options
+                };
+
+                // Crear una promesa wrapper para poder guardar la referencia y resolver después
+                const loadingPromise = this.show(loadingOptions);
+
+                // Guardar referencia a esta promesa para poder cerrarla después
+                this._currentLoadingPromise = loadingPromise;
+
+                return loadingPromise;
+            }
+
+            /**
+             * Cerrar la notificación de carga actual
+             * 
+             * @param {Function} callback - Callback al cerrar (opcional)
+             * @returns {Promise} Promesa que se resuelve cuando se cierre
+             * 
+             * @example
+             * notify.closeLoading();
+             * // o con callback
+             * notify.closeLoading(() => console.log('Loading cerrado'));
+             */
+            closeLoading(callback = null) {
+                this._currentLoadingPromise = null;
+                return this.close(callback);
+            }
+
+            /**
+             * Alias para cerrar/ocultar la notificación actual
+             */
+            hide(callback = null) {
+                return this.close(callback);
+            }
+
+            /**
+             * Compatibilidad con nombre mal escrito 'hiden'
+             */
+            hiden(callback = null) {
+                return this.close(callback);
+            }
+
+            /**
+             * Formatea segundos a mm:ss
+             */
+            _formatTime(seconds) {
+                const s = Math.max(0, Math.floor(seconds));
+                const mm = Math.floor(s / 60).toString().padStart(2, '0');
+                const ss = (s % 60).toString().padStart(2, '0');
+                return `${mm}:${ss}`;
+            }
+
         }
 
-        // Return a Promise that resolves when the notification is closed
-        return closePromise;
+        // Crear instancia global
+        window.notify = new NotificationSystem();
+
+        // Exponer también como objeto global para compatibilidad
+        window.Notification = window.notify;
     }
+})();
 
-    /**
-     * Cerrar notificación actual
-     */
-    close(callback = null) {
-        if (!this.currentNotification) return Promise.resolve();
 
-        const overlay = this.currentNotification;
-        const box = overlay.querySelector('.notification-box');
+// Extraer la clase desde la instancia global
+const NotificationSystem = window.notify?.constructor || function() {
+    throw new Error('NotificationSystem no se pudo cargar. Verifica que anime.js esté disponible.');
+};
 
-        // Animación de salida
-        anime({
-            targets: box,
-            scale: 0.8,
-            opacity: 0,
-            duration: 100,
-            easing: 'easeInQuad'
-        });
-
-        return new Promise((resolve) => {
-            anime({
-                targets: overlay,
-                opacity: 0,
-                duration: 100,
-                easing: 'easeInQuad',
-                complete: () => {
-                    try { console.log('notify.close'); } catch (e) { }
-                    // Remove keydown handler if present
-                    try {
-                        if (overlay && overlay._escHandler) {
-                            document.removeEventListener('keydown', overlay._escHandler);
-                            overlay._escHandler = null;
-                        }
-                    } catch (e) { }
-
-                    // Remove focus trap if present
-                    try {
-                        if (overlay && overlay._focusTrap) {
-                            document.removeEventListener('keydown', overlay._focusTrap);
-                            overlay._focusTrap = null;
-                        }
-                    } catch (e) { }
-
-                    // Resolve external Promise returned by show(), if present
-                    try {
-                        if (overlay && typeof overlay._externalResolve === 'function') {
-                            try { overlay._externalResolve(); } catch (er) { }
-                            overlay._externalResolve = null;
-                        }
-                    } catch (e) { }
-
-                    // Remove this overlay
-                    try { overlay.remove(); } catch (e) { }
-                    this.currentNotification = null;
-                    // Restaurar scroll del body y root
-                    try { document.body.style.overflow = ''; } catch (e) { }
-                    try { document.documentElement.style.overflow = ''; } catch (e) { }
-                    // Restore previous focus if possible
-                    try {
-                        if (this._lastActiveElement && typeof this._lastActiveElement.focus === 'function') {
-                            this._lastActiveElement.focus();
-                        }
-                    } catch (e) { }
-                    this._lastActiveElement = null;
-
-                    if (callback) callback();
-                    resolve();
-                }
-            });
-        });
-    }
-
-    /**
-     * Métodos de acceso rápido
-     */
-    success(message, title = null, options = {}) {
-        try { console.log('notify.success called', { message, title, options }); } catch (e) { }
-        this.show({
-            type: 'success',
-            title: title || this.getDefaultTitle('success'),
-            message,
-            ...options
-        });
-    }
-
-    error(message, title = null, options = {}) {
-        this.show({
-            type: 'error',
-            title: title || this.getDefaultTitle('error'),
-            message,
-            ...options
-        });
-    }
-
-    warning(message, title = null, options = {}) {
-        this.show({
-            type: 'warning',
-            title: title || this.getDefaultTitle('warning'),
-            message,
-            ...options
-        });
-    }
-
-    info(message, title = null, options = {}) {
-        try { console.log('notify.info called', { message, title, options }); } catch (e) { }
-        this.show({
-            type: 'info',
-            title: title || this.getDefaultTitle('info'),
-            message,
-            ...options
-        });
-    }
-
-    /**
-     * Alias para cerrar/ocultar la notificación actual
-     */
-    hide(callback = null) {
-        return this.close(callback);
-    }
-
-    /**
-     * Compatibilidad con nombre mal escrito 'hiden'
-     */
-    hiden(callback = null) {
-        return this.close(callback);
-    }
-
-    /**
-     * Formatea segundos a mm:ss
-     */
-    _formatTime(seconds) {
-        const s = Math.max(0, Math.floor(seconds));
-        const mm = Math.floor(s / 60).toString().padStart(2, '0');
-        const ss = (s % 60).toString().padStart(2, '0');
-        return `${mm}:${ss}`;
-    }
-
-}
-
-// ES Module: Exportar la clase
+// Reexportar para módulos ESM
 export default NotificationSystem;
+export { NotificationSystem };
 
-// Si se usa en un contexto no-module, crear instancia global
-if (typeof window !== 'undefined' && !window.notify) {
-    window.notify = new NotificationSystem();
-    window.Notification = window.notify;
-}
-
+// La instancia global también está disponible como window.notify

@@ -22,6 +22,7 @@
             constructor() {
                 this.currentNotification = null;
                 this._lastActiveElement = null;
+                this._currentLoadingPromise = null;
                 this.injectStyles();
                 this.loadBoxicons();
             }
@@ -283,6 +284,34 @@
                     opacity: 1;
                 }
             }
+
+            /* Loading spinner styles */
+            .notification-spinner {
+                width: 50px;
+                height: 50px;
+                border: 4px solid rgba(99, 102, 241, 0.2);
+                border-top-color: #6366f1;
+                border-radius: 50%;
+                animation: notification-spin 1s linear infinite;
+                margin: 0 auto 20px;
+            }
+
+            @keyframes notification-spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+            .notification-loading-text {
+                font-size: 14px;
+                color: #6b7280;
+                text-align: center;
+                margin-top: 12px;
+            }
+
+            .dark .notification-loading-text {
+                color: #cbd5e1;
+            }
         `;
                 document.head.appendChild(style);
             }
@@ -398,7 +427,19 @@
                 // Crear ícono
                 const icon = document.createElement('div');
                 icon.className = `notification-icon ${type}`;
-                icon.innerHTML = this.getIcon(type);
+
+                // Si la opción hideButton es true Y message contiene patrón de loading, mostrar spinner
+                if (hideButton && type === 'info') {
+                    // Mostrar spinner para notificación de carga
+                    icon.innerHTML = '<div class="notification-spinner"></div>';
+                    icon.style.background = 'transparent';
+                    icon.style.boxShadow = 'none';
+                    icon.style.width = 'auto';
+                    icon.style.height = 'auto';
+                    icon.querySelector('.notification-spinner').style.margin = '0 auto 20px';
+                } else {
+                    icon.innerHTML = this.getIcon(type);
+                }
 
                 // Crear título
                 const titleElement = document.createElement('h3');
@@ -729,6 +770,80 @@
                     message,
                     ...options
                 });
+            }
+
+            /**
+             * Mostrar notificación de carga con spinner
+             * Útil para operaciones async, cargas desde backend, etc
+             * 
+             * @param {string} message - Mensaje a mostrar
+             * @param {string} title - Título (opcional, default: 'Cargando...')
+             * @param {Object} options - Opciones adicionales
+             * @param {number} options.timer - Auto-cerrar después de X ms (opcional)
+             * @param {boolean} options.allowOutsideClick - Permitir cerrar haciendo click fuera (default: false)
+             * @param {boolean} options.allowEscapeKey - Permitir cerrar con tecla ESC (default: false)
+             * @param {Function} options.onClose - Callback al cerrar (opcional)
+             * @returns {Promise} Promesa que se resuelve cuando se cierre la notificación
+             * 
+             * @example
+             * // Usar como promise
+             * notify.loading('Procesando...', 'Espera')
+             *   .then(() => console.log('Completado'));
+             * 
+             * // Cerrar manualmente
+             * const loadingPromise = notify.loading('Subiendo archivo...');
+             * setTimeout(() => notify.closeLoading(), 3000);
+             * 
+             * // Con respuesta de backend
+             * notify.loading('Obteniendo datos...');
+             * fetch('/api/datos')
+             *   .then(res => res.json())
+             *   .then(data => {
+             *     notify.closeLoading();
+             *     notify.success('Datos cargados');
+             *   })
+             *   .catch(err => {
+             *     notify.closeLoading();
+             *     notify.error('Error: ' + err.message);
+             *   });
+             */
+            loading(message = 'Cargando...', title = 'Espera', options = {}) {
+                try { console.log('notify.loading called', { message, title, options }); } catch (e) { }
+
+                // No cierra al hacer click fuera ni ESC por defecto
+                const loadingOptions = {
+                    type: 'info',
+                    title,
+                    message,
+                    hideButton: true,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    ...options
+                };
+
+                // Crear una promesa wrapper para poder guardar la referencia y resolver después
+                const loadingPromise = this.show(loadingOptions);
+
+                // Guardar referencia a esta promesa para poder cerrarla después
+                this._currentLoadingPromise = loadingPromise;
+
+                return loadingPromise;
+            }
+
+            /**
+             * Cerrar la notificación de carga actual
+             * 
+             * @param {Function} callback - Callback al cerrar (opcional)
+             * @returns {Promise} Promesa que se resuelve cuando se cierre
+             * 
+             * @example
+             * notify.closeLoading();
+             * // o con callback
+             * notify.closeLoading(() => console.log('Loading cerrado'));
+             */
+            closeLoading(callback = null) {
+                this._currentLoadingPromise = null;
+                return this.close(callback);
             }
 
             /**
