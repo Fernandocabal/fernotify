@@ -41,6 +41,21 @@ console.log(`✅ ${ESM_FILE} generado (ESM - exportable)`);
 // Minificar versión ESM
 minifyFile(esmCode, ESM_MIN_FILE, 'ESM');
 
+// Copiar archivos a docs/dist para Cloudflare Pages
+const DOCS_DIST_DIR = path.join(__dirname, 'docs', 'dist');
+if (!fs.existsSync(DOCS_DIST_DIR)) {
+    fs.mkdirSync(DOCS_DIST_DIR, { recursive: true });
+    console.log('✅ Directorio docs/dist/ creado');
+}
+
+// Copiar todos los archivos de dist a docs/dist
+[UMD_FILE, UMD_MIN_FILE, ESM_FILE, ESM_MIN_FILE].forEach(file => {
+    const filename = path.basename(file);
+    const destFile = path.join(DOCS_DIST_DIR, filename);
+    fs.copyFileSync(file, destFile);
+    console.log(`📋 Copiado a docs/dist/${filename}`);
+});
+
 console.log(`\n📦 Build completado - v${getVersion()}`);
 
 
