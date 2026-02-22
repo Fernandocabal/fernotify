@@ -2,7 +2,7 @@
 
 > Sistema moderno de notificaciones con animaciones fluidas y soporte completo de Dark Mode.
 
-[![Demo](https://img.shields.io/badge/Demo-Live-success)](https://TU_DOMINIO.dev)
+[![Demo](https://img.shields.io/badge/Demo-Live-success)](https://fernotify.pages.dev)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![jsDelivr](https://data.jsdelivr.com/v1/package/gh/Fernandocabal/notification-system/badge)](https://www.jsdelivr.com/package/gh/Fernandocabal/fernotify)
 
