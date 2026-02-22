@@ -320,39 +320,39 @@
     <!-- Dependencias necesarias -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script>
-        // Sistema robusto de carga que funciona en local y producción
-        (function() {
-            function loadNotificationSystem() {
-                // Si ya está cargado, no hacer nada
-                if (typeof notify !== 'undefined' && typeof notify.success === 'function') {
-                    return;
+            // Sistema robusto de carga que funciona en local y producción
+            (function () {
+                function loadNotificationSystem() {
+                    // Si ya está cargado, no hacer nada
+                    if (typeof notify !== 'undefined' && typeof notify.success === 'function') {
+                        return;
+                    }
+
+                    // Intentar cargar desde ruta relativa (funciona en local y producción)
+                    const script = document.createElement('script');
+                    script.src = './dist/notification-system.js';
+                    script.onerror = function () {
+                        console.warn('⚠️ No se pudo cargar FerNotify desde ./dist/notification-system.js, usando CDN...');
+                        // Fallback a CDN
+                        const scriptCDN = document.createElement('script');
+                        scriptCDN.src = 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.js';
+                        scriptCDN.onerror = () => {
+                            console.error('❌ Error: No se pudo cargar FerNotify desde CDN. Verifica tu conexión a internet.');
+                        };
+                        scriptCDN.onload = () => {
+                            console.log('✅ FerNotify cargado desde CDN');
+                        };
+                        document.head.appendChild(scriptCDN);
+                    };
+                    script.onload = () => {
+                        console.log('✅ FerNotify cargado desde servidor local');
+                    };
+                    document.head.appendChild(script);
                 }
 
-                // Intentar cargar desde ruta relativa (funciona en local y producción)
-                const script = document.createElement('script');
-                script.src = './dist/notification-system.js';
-                script.onerror = function() {
-                    console.warn('⚠️ No se pudo cargar FerNotify desde ./dist/notification-system.js, usando CDN...');
-                    // Fallback a CDN
-                    const scriptCDN = document.createElement('script');
-                    scriptCDN.src = 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.js';
-                    scriptCDN.onerror = () => {
-                        console.error('❌ Error: No se pudo cargar FerNotify desde CDN. Verifica tu conexión a internet.');
-                    };
-                    scriptCDN.onload = () => {
-                        console.log('✅ FerNotify cargado desde CDN');
-                    };
-                    document.head.appendChild(scriptCDN);
-                };
-                script.onload = () => {
-                    console.log('✅ FerNotify cargado desde servidor local');
-                };
-                document.head.appendChild(script);
-            }
-
-            // Cargar la librería
-            loadNotificationSystem();
-        })();
+                // Cargar la librería
+                loadNotificationSystem();
+            })();
     </script>
     <script>
         // Hero animations and theme toggle (depends on anime.js)
