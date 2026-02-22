@@ -301,14 +301,22 @@
             }
 
             /* Loading spinner styles */
+            .notification-loading-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto;
+            }
+
             .notification-spinner {
-                width: 50px;
-                height: 50px;
-                border: 4px solid rgba(99, 102, 241, 0.2);
+                width: 60px;
+                height: 60px;
+                border: 5px solid rgba(99, 102, 241, 0.15);
                 border-top-color: #6366f1;
                 border-radius: 50%;
                 animation: notification-spin 1s linear infinite;
-                margin: 0 auto 20px;
+                margin: 0 auto;
             }
 
             @keyframes notification-spin {
@@ -399,9 +407,16 @@
              * @param {boolean} options.allowEscapeKey - Permitir cerrar con tecla ESC (default: true)
              */
             show(options = {}) {
-                // Cerrar notificación existente si hay
+                // Cerrar notificación existente si hay (esperar a que termine)
                 if (this.currentNotification) {
-                    this.close();
+                    // Asegurar que se elimine completamente antes de continuar
+                    const oldOverlay = this.currentNotification;
+                    this.currentNotification = null;
+                    try {
+                        if (oldOverlay && oldOverlay.parentNode) {
+                            oldOverlay.parentNode.removeChild(oldOverlay);
+                        }
+                    } catch (e) { }
                 }
 
                 const {
@@ -446,12 +461,13 @@
                 // Si la opción hideButton es true Y message contiene patrón de loading, mostrar spinner
                 if (hideButton && type === 'info') {
                     // Mostrar spinner para notificación de carga
+                    icon.className = 'notification-loading-container';
                     icon.innerHTML = '<div class="notification-spinner"></div>';
                     icon.style.background = 'transparent';
                     icon.style.boxShadow = 'none';
-                    icon.style.width = 'auto';
-                    icon.style.height = 'auto';
-                    icon.querySelector('.notification-spinner').style.margin = '0 auto 20px';
+                    // Mantener tamaño adecuado para el spinner
+                    icon.style.width = '100px';
+                    icon.style.height = '100px';
                 } else {
                     icon.innerHTML = this.getIcon(type);
                 }
@@ -539,9 +555,6 @@
 
                 // Save current focused element to restore later
                 try { this._lastActiveElement = document.activeElement; } catch (e) { this._lastActiveElement = null; }
-
-                // Debug (use console.log to avoid being filtered out)
-                try { console.log('notify.show:', { type, title, message, hideButton, allowOutsideClick, allowEscapeKey }); } catch (e) { }
 
                 this.currentNotification = overlay;
 
@@ -634,15 +647,15 @@
                         button.style.boxShadow = `0 4px 12px ${buttonShadowColor}`;
                     });
                     button.addEventListener('click', (e) => {
-                        try { console.log('notify.button.click'); } catch (err) { }
-                        closeHandler(e);
+                        e.stopPropagation(); // Evitar que el evento llegue al overlay
+                        e.preventDefault();
+                        closeHandler();
                     });
                 }
 
                 // Click en overlay para cerrar (solo si está permitido)
                 if (allowOutsideClick) {
                     overlay.addEventListener('click', (e) => {
-                        try { console.log('notify.overlay.click', e.target); } catch (err) { }
                         // Close when clicking outside the box (more robust than e.target === overlay)
                         if (!box.contains(e.target)) {
                             closeHandler();
@@ -660,7 +673,6 @@
                 // Tecla ESC para cerrar (solo si está permitido)
                 if (allowEscapeKey) {
                     const escHandler = (e) => {
-                        try { console.log('notify.esc', e.key); } catch (err) { }
                         if (e.key === 'Escape') {
                             closeHandler();
                             document.removeEventListener('keydown', escHandler);
@@ -679,10 +691,15 @@
              * Cerrar notificación actual
              */
             close(callback = null) {
-                if (!this.currentNotification) return Promise.resolve();
+                if (!this.currentNotification) {
+                    return Promise.resolve();
+                }
 
                 const overlay = this.currentNotification;
                 const box = overlay.querySelector('.notification-box');
+
+                // CRÍTICO: Limpiar la referencia INMEDIATAMENTE para evitar conflictos
+                this.currentNotification = null;
 
                 // Animación de salida
                 anime({
@@ -700,7 +717,6 @@
                         duration: 100,
                         easing: 'easeInQuad',
                         complete: () => {
-                            try { console.log('notify.close'); } catch (e) { }
                             // Remove keydown handler if present
                             try {
                                 if (overlay && overlay._escHandler) {
@@ -725,12 +741,21 @@
                                 }
                             } catch (e) { }
 
-                            // Remove this overlay
-                            try { overlay.remove(); } catch (e) { }
-                            this.currentNotification = null;
-                            // Restaurar scroll del body y root
-                            try { document.body.style.overflow = ''; } catch (e) { }
-                            try { document.documentElement.style.overflow = ''; } catch (e) { }
+                            // CRÍTICO: Asegurar eliminación completa del overlay
+                            try {
+                                if (overlay && overlay.parentNode) {
+                                    overlay.parentNode.removeChild(overlay);
+                                }
+                            } catch (e) {
+                                try { overlay.remove(); } catch (er) { }
+                            }
+
+                            // Restaurar scroll SOLO si NO hay otra notificación activa
+                            if (!this.currentNotification) {
+                                try { document.body.style.overflow = ''; } catch (e) { }
+                                try { document.documentElement.style.overflow = ''; } catch (e) { }
+                            }
+
                             // Restore previous focus if possible
                             try {
                                 if (this._lastActiveElement && typeof this._lastActiveElement.focus === 'function') {
@@ -750,7 +775,6 @@
              * Métodos de acceso rápido
              */
             success(message, title = null, options = {}) {
-                try { console.log('notify.success called', { message, title, options }); } catch (e) { }
                 this.show({
                     type: 'success',
                     title: title || this.getDefaultTitle('success'),
@@ -778,7 +802,6 @@
             }
 
             info(message, title = null, options = {}) {
-                try { console.log('notify.info called', { message, title, options }); } catch (e) { }
                 this.show({
                     type: 'info',
                     title: title || this.getDefaultTitle('info'),
@@ -823,8 +846,6 @@
              *   });
              */
             loading(message = 'Cargando...', title = 'Espera', options = {}) {
-                try { console.log('notify.loading called', { message, title, options }); } catch (e) { }
-
                 // No cierra al hacer click fuera ni ESC por defecto
                 const loadingOptions = {
                     type: 'info',

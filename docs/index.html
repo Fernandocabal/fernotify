@@ -320,19 +320,30 @@
     <!-- Dependencias necesarias -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script>
-        // Fallback: Si ../dist no carga (en producción), cargar desde CDN
-        window.notifyLoadedFromCDN = false;
-        if (typeof NotificationSystem === 'undefined' && typeof notify === 'undefined') {
-            window.notifyLoadedFromCDN = true;
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.js';
-            script.onerror = () => {
-                console.error('❌ Error: No se pudo cargar FerNotify. Verifica tu conexión a internet.');
-            };
-            document.head.appendChild(script);
-        }
+            // Sistema robusto de carga que funciona en local y producción
+            (function () {
+                // Crear elemento script para carga relativa (desde local o producción)
+                const scriptLocal = document.createElement('script');
+                scriptLocal.src = '../dist/notification-system.js';
+                scriptLocal.onerror = function () {
+                    console.warn('⚠️ No se pudo cargar FerNotify desde servidor local, usando CDN...');
+                    // Fallback a CDN
+                    const scriptCDN = document.createElement('script');
+                    scriptCDN.src = 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.js';
+                    scriptCDN.onerror = () => {
+                        console.error('❌ Error: No se pudo cargar FerNotify desde CDN. Verifica tu conexión a internet.');
+                    };
+                    scriptCDN.onload = () => {
+                        console.log('✅ FerNotify cargado desde CDN');
+                    };
+                    document.head.appendChild(scriptCDN);
+                };
+                scriptLocal.onload = () => {
+                    console.log('✅ FerNotify cargado desde servidor local');
+                };
+                document.head.appendChild(scriptLocal);
+            })();
     </script>
-    <script src="../dist/notification-system.js"></script>
     <script>
         // Hero animations and theme toggle (depends on anime.js)
         (function () {
@@ -459,9 +470,8 @@
             });
         })();
     </script>
-    <script src="../dist/notification-system.js"></script>
 
-    <!-- Script demo -->
+    <!-- Script demo (se ejecuta después de que notify esté disponible) -->
     <script src="assets/demo.js"></script>
 
 </body>
