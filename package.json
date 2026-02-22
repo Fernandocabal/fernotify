@@ -1,6 +1,6 @@
 {
-    "name": "@fernandocabal/fernotify",
-    "version": "1.1.1",
+    "name": "fernotify",
+    "version": "1.2.1",
     "description": "Sistema moderno de notificaciones con animaciones fluidas y soporte completo de Dark Mode",
     "main": "dist/notification-system.js",
     "module": "dist/notification-system.esm.js",

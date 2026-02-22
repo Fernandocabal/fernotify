@@ -44,15 +44,41 @@
 </script>
 ```
 
+### Método 3: NPM (Node Package Manager)
+
+```bash
+npm install fernotify
+```
+
+Luego importa y usa en tu proyecto:
+
+```javascript
+import NotificationSystem from 'fernotify';
+
+// Crear instancia
+const notify = new NotificationSystem();
+
+// Usar
+notify.success('¡Instalado vía npm!');
+```
+
+Con Webpack/Vite/bundler:
+
+```javascript
+import NotificationSystem from 'fernotify/dist/notification-system.esm.js';
+
+window.notify = new NotificationSystem();
+```
+
 ### Versión Específica (Recomendado en producción)
 
 ```html
 <!-- UMD -->
-<script src="https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@1.0.0/dist/notification-system.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@1.2.1/dist/notification-system.js"></script>
 
 <!-- ES Module -->
 <script type="module">
-  import NotificationSystem from 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@1.0.0/dist/notification-system.esm.js';
+  import NotificationSystem from 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@1.2.1/dist/notification-system.esm.js';
 </script>
 ```
 
@@ -160,6 +186,23 @@ notify.info(message, title?, options?)
 notify.close()  // Cerrar la notificación actual
 ```
 
+### Notificaciones de Carga (NEW) 🆕
+
+```javascript
+// Mostrar spinner de carga
+notify.loading('Procesando solicitud...', 'Por favor espera');
+
+// Cerrar la notificación de carga
+notify.closeLoading();
+
+// Con callback automático
+notify.loading('Cargando...', 'Espera', {
+  timer: 3000  // Auto-cerrar en 3 segundos
+}).then(() => {
+  console.log('Carga completada');
+});
+```
+
 ### Personalización de Animaciones
 
 ```javascript
@@ -195,6 +238,35 @@ document.getElementById('myForm').addEventListener('submit', (e) => {
   // Simular envío
   notify.success('Formulario enviado correctamente', '¡Éxito!');
 });
+```
+
+### Operación Asincrónica con Carga (Recomendado)
+
+```javascript
+async function fetchData() {
+  // Mostrar spinner
+  notify.loading('Obteniendo datos...', 'Cargando');
+  
+  try {
+    const response = await fetch('/api/data');
+    const data = await response.json();
+    
+    // Cerrar loading
+    notify.closeLoading();
+    
+    // Mostrar resultado
+    notify.success('Datos cargados correctamente!');
+    console.log(data);
+  } catch (error) {
+    // Cerrar loading
+    notify.closeLoading();
+    
+    // Mostrar error
+    notify.error('No se pudieron cargar los datos');
+  }
+}
+
+fetchData();
 ```
 
 ### Confirmación de Operación
@@ -275,10 +347,10 @@ Para usar una versión específica, usa tags en la URL del CDN:
 
 ```html
 <!-- Última versión (auto-actualiza) -->
-<script src="https://cdn.jsdelivr.net/gh/Fernandocabal/notification-system@latest/dist/notification-system.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.js"></script>
 
 <!-- Versión fija (recomendado en producción) -->
-<script src="https://cdn.jsdelivr.net/gh/Fernandocabal/notification-system@1.0.0/dist/notification-system.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@1.2.1/dist/notification-system.js"></script>
 ```
 
 ### Crear una nueva versión
