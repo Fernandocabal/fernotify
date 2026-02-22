@@ -220,6 +220,290 @@ function autoSave(content) {
 }
 ```
 
+## Cargas Asincrónicas (NEW) 🆕
+
+### Usando `notify.loading()` para Operaciones Async
+
+El método `notify.loading()` is perfecto para mostrar un spinner mientras se realiza una operación asincrónica:
+
+#### Carga de Datos (API)
+
+```javascript
+async function fetchUserData(userId) {
+    // Mostrar spinner
+    notify.loading('Obteniendo datos del usuario...', 'Cargando');
+    
+    try {
+        const response = await fetch(`/api/users/${userId}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const userData = await response.json();
+        
+        // Cerrar spinner
+        notify.closeLoading();
+        
+        // Mostrar resultado exitoso
+        notify.success(
+            `Usuario ${userData.name} cargado correctamente`,
+            '¡Éxito!'
+        );
+        
+        return userData;
+    } catch (error) {
+        // Cerrar spinner
+        notify.closeLoading();
+        
+        // Mostrar error
+        notify.error(
+            'No se pudieron cargar los datos del usuario',
+            'Error de Conexión'
+        );
+        
+        console.error('Error:', error);
+    }
+}
+
+// Uso
+fetchUserData(123);
+```
+
+#### Subida de Archivo
+
+```javascript
+async function uploadFile(file) {
+    // Validar archivo
+    if (!file) {
+        notify.warning('Por favor selecciona un archivo');
+        return;
+    }
+    
+    // Mostrar spinner con mensaje personalizado
+    notify.loading(
+        'Subiendo tu archivo...',
+        `${file.name}`,
+        { timer: null }  // No auto-cerrar
+    );
+    
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const response = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        // Cerrar loading y mostrar éxito
+        notify.closeLoading();
+        notify.success(
+            'Archivo subido correctamente',
+            '¡Completado!'
+        );
+        
+        return result;
+    } catch (error) {
+        // Cerrar loading y mostrar error
+        notify.closeLoading();
+        notify.error(
+            'Error al subir el archivo. Intenta nuevamente.',
+            'Error de Carga'
+        );
+    }
+}
+
+// Uso con input file
+document.getElementById('fileInput').addEventListener('change', (e) => {
+    uploadFile(e.target.files[0]);
+});
+```
+
+#### Descarga de Archivo
+
+```javascript
+async function downloadFile(fileId, fileName) {
+    // Mostrar spinner de descarga
+    notify.loading(
+        'Preparando descarga...',
+        'Por favor espera'
+    );
+    
+    try {
+        const response = await fetch(`/api/files/${fileId}/download`);
+        
+        if (!response.ok) {
+            throw new Error('Error en la descarga');
+        }
+        
+        const blob = await response.blob();
+        
+        // Crear URL temporal para descargar
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        
+        // Cerrar loading antes de descargar
+        notify.closeLoading();
+        
+        // Iniciar descarga
+        link.click();
+        
+        // Limpiar
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        
+        // Confirmación
+        notify.success('Archivo descargado correctamente');
+    } catch (error) {
+        notify.closeLoading();
+        notify.error('Error al descargar el archivo');
+    }
+}
+```
+
+#### Procesamiento de Formulario
+
+```javascript
+async function processForm(formData) {
+    // Validar datos
+    if (!formData.email || !formData.message) {
+        notify.warning('Por favor completa todos los campos');
+        return;
+    }
+    
+    // Mostrar spinner
+    notify.loading('Procesando tu solicitud...', 'Enviando');
+    
+    try {
+        const response = await fetch('/api/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Error en el servidor');
+        }
+        
+        const result = await response.json();
+        
+        // Cerrar loading
+        notify.closeLoading();
+        
+        // Mostrar éxito y limpiar formulario
+        notify.success(
+            'Tu solicitud ha sido enviada correctamente',
+            '¡Gracias!',
+            {
+                timer: 3000,
+                onClose: () => {
+                    document.getElementById('contactForm').reset();
+                }
+            }
+        );
+    } catch (error) {
+        notify.closeLoading();
+        notify.error(
+            'Hubo un error al procesar tu solicitud',
+            'Error'
+        );
+    }
+}
+
+// Uso
+document.getElementById('contactForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    processForm({
+        email: document.getElementById('email').value,
+        message: document.getElementById('message').value
+    });
+});
+```
+
+#### Auto-guardado Mejorado
+
+```javascript
+let autoSaveTimer;
+let isSaving = false;
+
+async function autoSaveDocument(content, documentId) {
+    // Evitar guardar múltiples veces simultáneamente
+    if (isSaving) return;
+    
+    clearTimeout(autoSaveTimer);
+    
+    autoSaveTimer = setTimeout(async () => {
+        isSaving = true;
+        
+        // Mostrar spinner silencioso (sin mensaje, solo indicador visual)
+        notify.loading('Guardando cambios...', null, {
+            buttonText: 'OK',
+            timer: null
+        });
+        
+        try {
+            const response = await fetch(`/api/documents/${documentId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ content })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Error al guardar');
+            }
+            
+            // Cerrar loading silenciosamente
+            notify.closeLoading();
+            
+            // Mostrar confirmación breve
+            notify.success(
+                'Cambios guardados',
+                null,
+                {
+                    timer: 1500  // Desaparece automáticamente
+                }
+            );
+        } catch (error) {
+            notify.closeLoading();
+            notify.warning(
+                'No se pudieron guardar los cambios',
+                'Error de Guardado'
+            );
+        } finally {
+            isSaving = false;
+        }
+    }, 3000);  // Guardar 3 segundos después del último cambio
+}
+
+// Uso
+document.getElementById('editor').addEventListener('input', (e) => {
+    autoSaveDocument(e.target.value, 'doc-123');
+});
+```
+
+### Con Timer Auto-cierre
+
+Si necesitas que el loading se cierre automáticamente después de cierto tiempo:
+
+```javascript
+notify.loading('Procesando...', 'Espera', {
+    timer: 3000  // Auto-cerrar en 3 segundos
+}).then(() => {
+    console.log('Loading cerrado automáticamente');
+});
+```
+
 ## Dark Mode y Temas
 
 El sistema de notificaciones **detecta automáticamente** el tema activo en tu web y ajusta sus colores en consecuencia.
@@ -372,6 +656,62 @@ Cada tipo tiene su propio estilo:
     buttonText: 'OK',                                 // Opcional (default: 'OK')
     timer: 5000,                                      // Opcional (ms, null = sin timer)
     onClose: () => { }                                // Opcional (callback)
+}
+```
+
+### `notify.loading(message, title?, options?)` (NEW) 🆕
+
+Muestra un spinner para operaciones asincrónicas. Perfecto para cargas de datos, subidas de archivos, procesamiento de formularios, etc.
+
+```javascript
+// Uso básico
+notify.loading('Cargando datos...');
+
+// Con título y opciones
+notify.loading(
+    'Procesando solicitud...',
+    'Por favor espera',
+    {
+        buttonText: 'OK',
+        timer: null,           // null = sin auto-cerrar
+        onClose: () => { }     // Callback opcional
+    }
+);
+
+// Con auto-cierre
+notify.loading('Guardando...', null, {
+    timer: 3000,  // Auto-cierra en 3 segundos
+    onClose: () => {
+        console.log('Loading completado');
+    }
+});
+```
+
+**Parámetros:**
+- `message` (string, requerido): Texto del loading
+- `title` (string, opcional): Título del loading
+- `options` (object, opcional): Configuración adicional
+  - `buttonText`: Texto del botón (default: 'OK')
+  - `timer`: Milisegundos antes de auto-cerrar (default: null)
+  - `onClose`: Función callback cuando se cierre
+
+**Retorna:** Promise que se resuelve cuando se cierra
+
+### `notify.closeLoading()`
+
+Cierra el loading activo y muestra la siguiente notificación en la cola (si la hay).
+
+```javascript
+// En tu función async
+notify.loading('Cargando datos...');
+
+try {
+    const data = await fetch('/api/data');
+    notify.closeLoading();  // Cerrar loading
+    notify.success('Datos cargados!');
+} catch (error) {
+    notify.closeLoading();  // Cerrar loading
+    notify.error('Error en la carga');
 }
 ```
 
