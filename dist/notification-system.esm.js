@@ -507,8 +507,9 @@
                 }
 
                 // helper closure to close notification (used by buttons and other handlers)
+                // returns the Promise from `close()` so callers can chain after the overlay is gone
                 const closeHandler = () => {
-                    this.close(onClose);
+                    return this.close(onClose);
                 };
 
                 // Crear (opcional) botón o botonera. Se pueden definir múltiples botones
@@ -535,10 +536,22 @@
                             btnEl.addEventListener('click', (e) => {
                                 e.stopPropagation();
                                 e.preventDefault();
-                                if (typeof btn.onClick === 'function') {
-                                    try { btn.onClick(); } catch (err) { console.error(err); }
+                                // Close first, then run the handler to avoid the new notification
+                                // being closed by the outer close call.
+                                try {
+                                    closeHandler().then(() => {
+                                        if (typeof btn.onClick === 'function') {
+                                            try {
+                                                const res = btn.onClick();
+                                                if (res && typeof res.then === 'function') res.catch(err => console.error(err));
+                                            } catch (err) { console.error(err); }
+                                        }
+                                    }).catch(() => {
+                                        // ignore close errors
+                                    });
+                                } catch (err) {
+                                    console.error(err);
                                 }
-                                closeHandler();
                             });
 
                             // hover effects for each button
@@ -571,8 +584,14 @@
 
                         cancelBtn.addEventListener('click', (e) => {
                             e.stopPropagation(); e.preventDefault();
-                            try { if (typeof options.onCancel === 'function') options.onCancel(); } catch (err) { console.error(err); }
-                            closeHandler();
+                            // Close first, then call onCancel
+                            closeHandler().then(() => {
+                                try {
+                                    if (typeof options.onCancel === 'function') {
+                                        const res = options.onCancel(); if (res && typeof res.then === 'function') res.catch(err => console.error(err));
+                                    }
+                                } catch (err) { console.error(err); }
+                            }).catch(() => { });
                         });
 
                         cancelBtn.addEventListener('mouseenter', () => { cancelBtn.style.boxShadow = `0 6px 16px ${cancelShadow}`; });
@@ -590,6 +609,8 @@
                         confirmBtn.addEventListener('click', async (e) => {
                             e.stopPropagation(); e.preventDefault();
                             try {
+                                // Close first to avoid closing any notification that onConfirm may open
+                                await closeHandler();
                                 if (typeof options.onConfirm === 'function') {
                                     const res = options.onConfirm();
                                     if (res && typeof res.then === 'function') {
@@ -597,7 +618,6 @@
                                     }
                                 }
                             } catch (err) { console.error(err); }
-                            closeHandler();
                         });
 
                         confirmBtn.addEventListener('mouseenter', () => { confirmBtn.style.boxShadow = `0 6px 16px ${confirmShadow}`; });
@@ -763,7 +783,8 @@
                     button.addEventListener('click', (e) => {
                         e.stopPropagation(); // Evitar que el evento llegue al overlay
                         e.preventDefault();
-                        closeHandler();
+                        // ensure close returns a promise and run any legacy onClose after
+                        closeHandler().catch(() => { });
                     });
                 }
 

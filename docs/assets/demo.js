@@ -50,6 +50,35 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             },
             {
+                title: 'Confirmación (onConfirm / onCancel)',
+                desc: 'Atajo práctico usando onConfirm y onCancel (muestra spinner durante la operación).',
+                code: "notify.show({\\n  type: 'info',\\n  title: '¿Eliminar elemento?',\\n  message: 'Esta acción no se puede deshacer.',\\n  confirmText: 'Sí, eliminar',\\n  cancelText: 'Cancelar',\\n  onConfirm: async () => {\\n    notify.loading('Eliminando...', 'Por favor espera');\\n    await fetch('/api/delete', { method: 'POST' });\\n    notify.closeLoading();\\n    notify.success('Eliminado');\\n  },\\n  onCancel: () => notify.info('Cancelado'),\\n  confirmColor: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',\\n  confirmShadow: 'rgba(5,150,105,0.22)',\\n  cancelColor: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)',\\n  cancelShadow: 'rgba(0,0,0,0.08)'\\n});",
+                run: (done) => {
+                    notify.show({
+                        type: 'info',
+                        title: '¿Eliminar elemento?',
+                        message: 'Esta acción no se puede deshacer.',
+                        confirmText: 'Sí, eliminar',
+                        cancelText: 'Cancelar',
+                        onConfirm: async () => {
+                            // Mostrar spinner mientras se realiza la operación
+                            notify.loading('Eliminando...', 'Por favor espera');
+                            await new Promise((r) => setTimeout(r, 900));
+                            // Cerrar spinner y mostrar resultado
+                            notify.closeLoading();
+                            notify.success('Elemento eliminado correctamente');
+                        },
+                        onCancel: () => { notify.info('Operación cancelada'); },
+                        confirmColor: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                        confirmShadow: 'rgba(5,150,105,0.22)',
+                        cancelColor: 'linear-gradient(135deg, #b2b3b5 0%, #aeb1b6 100%)',
+                        cancelShadow: 'rgba(0,0,0,0.08)',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    }).then(() => { if (done) done(); });
+                }
+            },
+            {
                 title: 'Auto-cierre (sin botón)',
                 desc: 'Notificación que se cierra sola, sin botón de acción.',
                 code: "notify.info('Esta notificación se cierra sola.', 'Info', {\\n  hideButton: true,\\n  timer: 3000\\n});",
