@@ -1,14 +1,58 @@
-/**
- * Sistema de Notificaciones Modernas (TypeScript port)
- * Migrated from existing `notification-system.js` implementation.
- */
 declare const anime: any;
 
-declare global {
-    interface Window { notify: any; Notification: any; }
+type NotifyType = 'success' | 'error' | 'warning' | 'info' | string;
+
+interface ButtonOptions {
+    text?: string;
+    color?: string;
+    shadowColor?: string;
+    onClick?: (() => void) | (() => Promise<unknown>);
 }
 
-export { };
+interface AnimationOptions {
+    overlayDuration?: number;
+    overlayEasing?: string;
+    boxDuration?: number;
+    boxDelay?: number;
+    boxEasing?: string;
+    boxStartScale?: number;
+    iconDuration?: number;
+    iconDelay?: number;
+    iconRotate?: number;
+    overlayOpacity?: number;
+}
+
+interface NotificationOptions {
+    type?: NotifyType;
+    title?: string;
+    message?: string;
+    html?: string;
+    content?: HTMLElement;
+    buttonText?: string;
+    buttonColor?: string;
+    onClose?: (() => void) | null;
+    timer?: number | null;
+    allowOutsideClick?: boolean;
+    allowEscapeKey?: boolean;
+    hideButton?: boolean;
+    buttons?: ButtonOptions[] | null;
+    onConfirm?: (() => void) | (() => Promise<unknown>) | null;
+    onCancel?: (() => void) | (() => Promise<unknown>) | null;
+    confirmText?: string;
+    cancelText?: string;
+    confirmColor?: string;
+    confirmShadow?: string;
+    cancelColor?: string;
+    cancelShadow?: string;
+    anim?: AnimationOptions;
+    showCloseButton?: boolean;
+}
+
+interface OverlayMeta {
+    _externalResolve?: () => void;
+    _focusTrap?: (e: KeyboardEvent) => void;
+    _escHandler?: (e: KeyboardEvent) => void;
+}
 
 (function ensureAnimeDependency() {
     if (typeof anime !== 'undefined') {
@@ -25,9 +69,9 @@ export { };
 
     function initFerNotify() {
         class NotificationSystem {
-            currentNotification: any;
-            _lastActiveElement: any;
-            _currentLoadingPromise: any;
+            currentNotification: HTMLDivElement | null;
+            _lastActiveElement: HTMLElement | null;
+            _currentLoadingPromise: Promise<void> | null;
 
             constructor() {
                 this.currentNotification = null;
@@ -338,7 +382,7 @@ export { };
             }
 
             getIcon(type: string) {
-                const icons: any = {
+                const icons: Record<string, string> = {
                     'success': '<i class="bx bx-check" aria-hidden="true"></i>',
                     'error': '<i class="bx bx-x" aria-hidden="true"></i>',
                     'warning': '<i class="bx bx-error" aria-hidden="true"></i>',
@@ -348,7 +392,7 @@ export { };
             }
 
             getDefaultTitle(type: string) {
-                const titles: any = {
+                const titles: Record<string, string> = {
                     'success': '¡Éxito!',
                     'error': 'Error',
                     'warning': 'Advertencia',
@@ -358,7 +402,7 @@ export { };
             }
 
             getButtonGradient(type: string) {
-                const gradients: any = {
+                const gradients: Record<string, string> = {
                     'success': 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                     'error': 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
                     'warning': 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
@@ -368,7 +412,7 @@ export { };
             }
 
             getButtonShadow(type: string) {
-                const shadows: any = {
+                const shadows: Record<string, string> = {
                     'success': 'rgba(16, 185, 129, 0.4)',
                     'error': 'rgba(239, 68, 68, 0.4)',
                     'warning': 'rgba(245, 158, 11, 0.4)',
@@ -377,7 +421,7 @@ export { };
                 return shadows[type] || shadows.info;
             }
 
-            show(options: any = {}) {
+            show(options: NotificationOptions = {}): Promise<void> {
                 // Cerrar notificación existente si hay (esperar a que termine)
                 if (this.currentNotification) {
                     const oldOverlay = this.currentNotification;
@@ -408,7 +452,7 @@ export { };
                 try { document.body.style.overflow = 'hidden'; } catch (e) { }
                 try { document.documentElement.style.overflow = 'hidden'; } catch (e) { }
 
-                const overlay = document.createElement('div');
+                const overlay = document.createElement('div') as HTMLDivElement;
                 overlay.className = 'notification-overlay';
                 overlay.tabIndex = -1;
                 overlay.setAttribute('role', 'dialog');
@@ -440,7 +484,7 @@ export { };
                 messageElement.className = 'notification-message';
                 messageElement.textContent = message;
 
-                let customContent = null as any;
+                let customContent: HTMLElement | null = null;
                 if (options.html || options.content) {
                     customContent = document.createElement('div');
                     customContent.className = 'notification-content';
@@ -455,14 +499,14 @@ export { };
                     return this.close(onClose);
                 };
 
-                let button = null as any;
-                let buttonContainer = null as any;
+                let button: HTMLButtonElement | null = null;
+                let buttonContainer: HTMLElement | null = null;
                 if (!hideButton) {
                     if (Array.isArray(buttons) && buttons.length) {
                         buttonContainer = document.createElement('div');
                         buttonContainer.className = 'notification-button-group';
 
-                        buttons.forEach((btn: any) => {
+                        buttons.forEach((btn: ButtonOptions) => {
                             const btnEl = document.createElement('button');
                             btnEl.className = 'notification-button';
                             btnEl.textContent = btn.text || 'OK';
@@ -472,7 +516,7 @@ export { };
                             btnEl.style.background = finalBtnColor;
                             btnEl.style.boxShadow = `0 4px 12px ${btnShadow}`;
 
-                            btnEl.addEventListener('click', (e) => {
+                            btnEl.addEventListener('click', (e: MouseEvent) => {
                                 e.stopPropagation();
                                 e.preventDefault();
                                 try {
@@ -480,8 +524,10 @@ export { };
                                         if (typeof btn.onClick === 'function') {
                                             try {
                                                 const res = btn.onClick();
-                                                if (res && typeof res.then === 'function') res.catch((err: any) => console.error(err));
-                                            } catch (err) { console.error(err); }
+                                                if (res && typeof (res as Promise<unknown>).then === 'function') {
+                                                    (res as Promise<unknown>).catch((err: unknown) => console.error(err));
+                                                }
+                                            } catch (err: unknown) { console.error(err); }
                                         }
                                     }).catch(() => { });
                                 } catch (err) {
@@ -496,7 +542,7 @@ export { };
                                 btnEl.style.boxShadow = `0 4px 12px ${btnShadow}`;
                             });
 
-                            buttonContainer.appendChild(btnEl);
+                            buttonContainer!.appendChild(btnEl);
                         });
                     } else if (options.onConfirm || options.onCancel || options.confirmText || options.cancelText) {
                         buttonContainer = document.createElement('div');
@@ -513,14 +559,17 @@ export { };
                         cancelBtn.style.background = cancelColor;
                         cancelBtn.style.boxShadow = `0 4px 12px ${cancelShadow}`;
 
-                        cancelBtn.addEventListener('click', (e) => {
+                        cancelBtn.addEventListener('click', (e: MouseEvent) => {
                             e.stopPropagation(); e.preventDefault();
                             closeHandler().then(() => {
                                 try {
                                     if (typeof options.onCancel === 'function') {
-                                        const res = options.onCancel(); if (res && typeof res.then === 'function') res.catch((err: any) => console.error(err));
+                                        const res = options.onCancel();
+                                        if (res && typeof (res as Promise<unknown>).then === 'function') {
+                                            (res as Promise<unknown>).catch((err: unknown) => console.error(err));
+                                        }
                                     }
-                                } catch (err) { console.error(err); }
+                                } catch (err: unknown) { console.error(err); }
                             }).catch(() => { });
                         });
 
@@ -535,7 +584,7 @@ export { };
                         confirmBtn.style.background = confirmColor;
                         confirmBtn.style.boxShadow = `0 4px 12px ${confirmShadow}`;
 
-                        confirmBtn.addEventListener('click', async (e) => {
+                        confirmBtn.addEventListener('click', async (e: MouseEvent) => {
                             e.stopPropagation(); e.preventDefault();
                             try {
                                 await closeHandler();
@@ -565,13 +614,13 @@ export { };
                     }
                 }
 
-                let closeBtn = null as any;
+                let closeBtn: HTMLButtonElement | null = null;
                 if (showCloseButton) {
                     closeBtn = document.createElement('button');
                     closeBtn.setAttribute('aria-label', 'Cerrar');
                     closeBtn.className = 'notification-close';
                     closeBtn.innerHTML = '&times;';
-                    closeBtn.addEventListener('click', (e) => {
+                    closeBtn.addEventListener('click', (e: MouseEvent) => {
                         e.stopPropagation();
                         closeHandler();
                     });
@@ -596,8 +645,9 @@ export { };
                 overlay.appendChild(box);
                 document.body.appendChild(overlay);
 
+                const overlayMeta = overlay as HTMLDivElement & OverlayMeta;
                 const closePromise = new Promise<void>((resolveClose) => {
-                    try { (overlay as any)._externalResolve = resolveClose; } catch (e) { }
+                    try { overlayMeta._externalResolve = resolveClose; } catch (e) { }
                 });
 
                 try {
@@ -607,7 +657,7 @@ export { };
                     }
                 } catch (e) { }
 
-                try { this._lastActiveElement = document.activeElement; } catch (e) { this._lastActiveElement = null; }
+                try { this._lastActiveElement = document.activeElement as HTMLElement | null; } catch (e) { this._lastActiveElement = null; }
 
                 this.currentNotification = overlay;
 
@@ -624,8 +674,8 @@ export { };
 
                 const focusTrap = (e: KeyboardEvent) => {
                     if (e.key !== 'Tab') return;
-                    const focusable = Array.from(box.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'))
-                        .filter((el: any) => el.offsetParent !== null);
+                    const focusableNodes = Array.from(box.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'));
+                    const focusable = focusableNodes.filter((el): el is HTMLElement => el instanceof HTMLElement && el.offsetParent !== null);
                     if (!focusable.length) {
                         e.preventDefault();
                         return;
@@ -640,7 +690,7 @@ export { };
                         last.focus();
                     }
                 };
-                (overlay as any)._focusTrap = focusTrap;
+                overlayMeta._focusTrap = focusTrap;
                 document.addEventListener('keydown', focusTrap);
 
                 const anim = options.anim || {};
@@ -690,7 +740,7 @@ export { };
                     button.addEventListener('mouseleave', () => {
                         button.style.boxShadow = `0 4px 12px ${buttonShadowColor}`;
                     });
-                    button.addEventListener('click', (e) => {
+                    button.addEventListener('click', (e: MouseEvent) => {
                         e.stopPropagation();
                         e.preventDefault();
                         closeHandler().catch(() => { });
@@ -698,7 +748,7 @@ export { };
                 }
 
                 if (allowOutsideClick) {
-                    overlay.addEventListener('click', (e) => {
+                    overlay.addEventListener('click', (e: MouseEvent) => {
                         if (!box.contains(e.target as Node)) {
                             closeHandler();
                         }
@@ -713,24 +763,25 @@ export { };
 
                 if (allowEscapeKey) {
                     const escHandler = (e: KeyboardEvent) => {
-                        if ((e as any).key === 'Escape') {
+                        if (e.key === 'Escape') {
                             closeHandler();
                             document.removeEventListener('keydown', escHandler);
                         }
                     };
-                    (overlay as any)._escHandler = escHandler;
+                    overlayMeta._escHandler = escHandler;
                     document.addEventListener('keydown', escHandler);
                 }
 
                 return closePromise;
             }
 
-            close(callback: any = null) {
+            close(callback: (() => void) | null = null): Promise<void> {
                 if (!this.currentNotification) {
                     return Promise.resolve();
                 }
 
-                const overlay = this.currentNotification;
+                const overlay = this.currentNotification as HTMLDivElement;
+                const overlayMeta = overlay as HTMLDivElement & OverlayMeta;
                 const box = overlay.querySelector('.notification-box');
 
                 this.currentNotification = null;
@@ -751,23 +802,23 @@ export { };
                         easing: 'easeInQuad',
                         complete: () => {
                             try {
-                                if (overlay && (overlay as any)._escHandler) {
-                                    document.removeEventListener('keydown', (overlay as any)._escHandler);
-                                    (overlay as any)._escHandler = null;
+                                if (overlayMeta && overlayMeta._escHandler) {
+                                    document.removeEventListener('keydown', overlayMeta._escHandler);
+                                    overlayMeta._escHandler = undefined;
                                 }
                             } catch (e) { }
 
                             try {
-                                if (overlay && (overlay as any)._focusTrap) {
-                                    document.removeEventListener('keydown', (overlay as any)._focusTrap);
-                                    (overlay as any)._focusTrap = null;
+                                if (overlayMeta && overlayMeta._focusTrap) {
+                                    document.removeEventListener('keydown', overlayMeta._focusTrap);
+                                    overlayMeta._focusTrap = undefined;
                                 }
                             } catch (e) { }
 
                             try {
-                                if (overlay && typeof (overlay as any)._externalResolve === 'function') {
-                                    try { (overlay as any)._externalResolve(); } catch (er) { }
-                                    (overlay as any)._externalResolve = null;
+                                if (overlayMeta && typeof overlayMeta._externalResolve === 'function') {
+                                    try { overlayMeta._externalResolve(); } catch (er) { }
+                                    overlayMeta._externalResolve = undefined;
                                 }
                             } catch (e) { }
 
@@ -798,7 +849,7 @@ export { };
                 });
             }
 
-            success(message: string, title: string | null = null, options: any = {}) {
+            success(message: string, title: string | null = null, options: NotificationOptions = {}) {
                 this.show({
                     type: 'success',
                     title: title || this.getDefaultTitle('success'),
@@ -807,7 +858,7 @@ export { };
                 });
             }
 
-            error(message: string, title: string | null = null, options: any = {}) {
+            error(message: string, title: string | null = null, options: NotificationOptions = {}) {
                 this.show({
                     type: 'error',
                     title: title || this.getDefaultTitle('error'),
@@ -816,7 +867,7 @@ export { };
                 });
             }
 
-            warning(message: string, title: string | null = null, options: any = {}) {
+            warning(message: string, title: string | null = null, options: NotificationOptions = {}) {
                 this.show({
                     type: 'warning',
                     title: title || this.getDefaultTitle('warning'),
@@ -825,7 +876,7 @@ export { };
                 });
             }
 
-            info(message: string, title: string | null = null, options: any = {}) {
+            info(message: string, title: string | null = null, options: NotificationOptions = {}) {
                 this.show({
                     type: 'info',
                     title: title || this.getDefaultTitle('info'),
@@ -833,8 +884,7 @@ export { };
                     ...options
                 });
             }
-
-            loading(message: string = 'Cargando...', title: string = 'Espera', options: any = {}) {
+            loading(message: string = 'Cargando...', title: string = 'Espera', options: NotificationOptions = {}) {
                 const loadingOptions = {
                     type: 'info',
                     title,
@@ -852,13 +902,13 @@ export { };
                 return loadingPromise;
             }
 
-            closeLoading(callback: any = null) {
+            closeLoading(callback: (() => void) | null = null) {
                 this._currentLoadingPromise = null;
                 return this.close(callback);
             }
 
-            hide(callback: any = null) { return this.close(callback); }
-            hiden(callback: any = null) { return this.close(callback); }
+            hide(callback: (() => void) | null = null) { return this.close(callback); }
+            hiden(callback: (() => void) | null = null) { return this.close(callback); }
 
             _formatTime(seconds: number) {
                 const s = Math.max(0, Math.floor(seconds));
@@ -868,8 +918,8 @@ export { };
             }
         }
 
-        window.notify = new NotificationSystem();
+        (window as any).notify = new NotificationSystem();
 
-        window.Notification = window.notify;
+        (window as any).Notification = (window as any).notify;
     }
 })();

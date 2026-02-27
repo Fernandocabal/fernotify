@@ -6,7 +6,8 @@
             "DOM",
             "ES2017"
         ],
-        "strict": false,
+        "strict": true,
+        "noImplicitAny": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
         "sourceMap": true,

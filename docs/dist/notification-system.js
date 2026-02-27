@@ -1,3 +1,4 @@
+"use strict";
 (function ensureAnimeDependency() {
     if (typeof anime !== 'undefined') {
         initFerNotify();
@@ -444,8 +445,9 @@
                                         if (typeof btn.onClick === 'function') {
                                             try {
                                                 const res = btn.onClick();
-                                                if (res && typeof res.then === 'function')
+                                                if (res && typeof res.then === 'function') {
                                                     res.catch((err) => console.error(err));
+                                                }
                                             }
                                             catch (err) {
                                                 console.error(err);
@@ -485,8 +487,9 @@
                                 try {
                                     if (typeof options.onCancel === 'function') {
                                         const res = options.onCancel();
-                                        if (res && typeof res.then === 'function')
+                                        if (res && typeof res.then === 'function') {
                                             res.catch((err) => console.error(err));
+                                        }
                                     }
                                 }
                                 catch (err) {
@@ -566,9 +569,10 @@
                 }
                 overlay.appendChild(box);
                 document.body.appendChild(overlay);
+                const overlayMeta = overlay;
                 const closePromise = new Promise((resolveClose) => {
                     try {
-                        overlay._externalResolve = resolveClose;
+                        overlayMeta._externalResolve = resolveClose;
                     }
                     catch (e) { }
                 });
@@ -607,8 +611,8 @@
                 const focusTrap = (e) => {
                     if (e.key !== 'Tab')
                         return;
-                    const focusable = Array.from(box.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'))
-                        .filter((el) => el.offsetParent !== null);
+                    const focusableNodes = Array.from(box.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'));
+                    const focusable = focusableNodes.filter((el) => el instanceof HTMLElement && el.offsetParent !== null);
                     if (!focusable.length) {
                         e.preventDefault();
                         return;
@@ -624,7 +628,7 @@
                         last.focus();
                     }
                 };
-                overlay._focusTrap = focusTrap;
+                overlayMeta._focusTrap = focusTrap;
                 document.addEventListener('keydown', focusTrap);
                 const anim = options.anim || {};
                 const overlayDuration = typeof anim.overlayDuration === 'number' ? anim.overlayDuration : 150;
@@ -694,7 +698,7 @@
                             document.removeEventListener('keydown', escHandler);
                         }
                     };
-                    overlay._escHandler = escHandler;
+                    overlayMeta._escHandler = escHandler;
                     document.addEventListener('keydown', escHandler);
                 }
                 return closePromise;
@@ -704,6 +708,7 @@
                     return Promise.resolve();
                 }
                 const overlay = this.currentNotification;
+                const overlayMeta = overlay;
                 const box = overlay.querySelector('.notification-box');
                 this.currentNotification = null;
                 anime({
@@ -721,26 +726,26 @@
                         easing: 'easeInQuad',
                         complete: () => {
                             try {
-                                if (overlay && overlay._escHandler) {
-                                    document.removeEventListener('keydown', overlay._escHandler);
-                                    overlay._escHandler = null;
+                                if (overlayMeta && overlayMeta._escHandler) {
+                                    document.removeEventListener('keydown', overlayMeta._escHandler);
+                                    overlayMeta._escHandler = undefined;
                                 }
                             }
                             catch (e) { }
                             try {
-                                if (overlay && overlay._focusTrap) {
-                                    document.removeEventListener('keydown', overlay._focusTrap);
-                                    overlay._focusTrap = null;
+                                if (overlayMeta && overlayMeta._focusTrap) {
+                                    document.removeEventListener('keydown', overlayMeta._focusTrap);
+                                    overlayMeta._focusTrap = undefined;
                                 }
                             }
                             catch (e) { }
                             try {
-                                if (overlay && typeof overlay._externalResolve === 'function') {
+                                if (overlayMeta && typeof overlayMeta._externalResolve === 'function') {
                                     try {
-                                        overlay._externalResolve();
+                                        overlayMeta._externalResolve();
                                     }
                                     catch (er) { }
-                                    overlay._externalResolve = null;
+                                    overlayMeta._externalResolve = undefined;
                                 }
                             }
                             catch (e) { }
@@ -815,5 +820,4 @@
         window.Notification = window.notify;
     }
 })();
-export {};
 //# sourceMappingURL=notification-system.js.map
