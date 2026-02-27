@@ -39,12 +39,14 @@
         "node": ">=12.0.0"
     },
     "scripts": {
-        "build": "node build.js",
+        "ts:build": "tsc -p tsconfig.json && node -e \"require('fs').copyFileSync('build/notification-system.js','notification-system.js')\"",
+        "build": "npm run ts:build && node build.js",
         "build:watch": "node -e \"require('fs').watch('notification-system.js', () => require('child_process').exec('node build.js'))\"",
         "prepublishOnly": "npm run build",
         "publish-npm": "npm publish --access public"
     },
     "devDependencies": {
-        "terser": "^5.46.0"
+        "terser": "^5.46.0",
+        "typescript": "^5.4.0"
     }
 }

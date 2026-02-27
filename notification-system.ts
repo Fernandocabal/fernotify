@@ -1,23 +1,19 @@
 /**
- * Sistema de Notificaciones Modernas (ESM)
- * Librería ligera de notificaciones con animaciones fluidas
- * 
- * RECOMENDADO: Cargar dependencias antes de importar:
- * <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
- * <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
- * 
- * Uso:
- * import NotificationSystem from '@fernandocabal/fernotify';
- * const notify = new NotificationSystem();
- * notify.success('¡Hola!');
+ * Sistema de Notificaciones Modernas (TypeScript port)
+ * Migrated from existing `notification-system.js` implementation.
  */
+declare const anime: any;
 
-// Importar el código UMD y ejecutarlo para generar window.notify
+declare global {
+    interface Window { notify: any; Notification: any; }
+}
+
+export { };
+
 (function ensureAnimeDependency() {
     if (typeof anime !== 'undefined') {
         initFerNotify();
-    }
-    else {
+    } else {
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js';
         script.onload = initFerNotify;
@@ -26,8 +22,13 @@
         };
         document.head.appendChild(script);
     }
+
     function initFerNotify() {
         class NotificationSystem {
+            currentNotification: any;
+            _lastActiveElement: any;
+            _currentLoadingPromise: any;
+
             constructor() {
                 this.currentNotification = null;
                 this._lastActiveElement = null;
@@ -35,6 +36,7 @@
                 this.injectStyles();
                 this.loadBoxicons();
             }
+
             loadBoxicons() {
                 if (!document.querySelector('link[href*="boxicons"]')) {
                     const link = document.createElement('link');
@@ -43,6 +45,7 @@
                     document.head.appendChild(link);
                 }
             }
+
             injectStyles() {
                 const style = document.createElement('style');
                 style.textContent = `
@@ -333,8 +336,9 @@
         `;
                 document.head.appendChild(style);
             }
-            getIcon(type) {
-                const icons = {
+
+            getIcon(type: string) {
+                const icons: any = {
                     'success': '<i class="bx bx-check" aria-hidden="true"></i>',
                     'error': '<i class="bx bx-x" aria-hidden="true"></i>',
                     'warning': '<i class="bx bx-error" aria-hidden="true"></i>',
@@ -342,8 +346,9 @@
                 };
                 return icons[type] || icons.info;
             }
-            getDefaultTitle(type) {
-                const titles = {
+
+            getDefaultTitle(type: string) {
+                const titles: any = {
                     'success': '¡Éxito!',
                     'error': 'Error',
                     'warning': 'Advertencia',
@@ -351,8 +356,9 @@
                 };
                 return titles[type] || 'Notificación';
             }
-            getButtonGradient(type) {
-                const gradients = {
+
+            getButtonGradient(type: string) {
+                const gradients: any = {
                     'success': 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                     'error': 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
                     'warning': 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
@@ -360,8 +366,9 @@
                 };
                 return gradients[type] || gradients.info;
             }
-            getButtonShadow(type) {
-                const shadows = {
+
+            getButtonShadow(type: string) {
+                const shadows: any = {
                     'success': 'rgba(16, 185, 129, 0.4)',
                     'error': 'rgba(239, 68, 68, 0.4)',
                     'warning': 'rgba(245, 158, 11, 0.4)',
@@ -369,7 +376,8 @@
                 };
                 return shadows[type] || shadows.info;
             }
-            show(options = {}) {
+
+            show(options: any = {}) {
                 // Cerrar notificación existente si hay (esperar a que termine)
                 if (this.currentNotification) {
                     const oldOverlay = this.currentNotification;
@@ -378,29 +386,41 @@
                         if (oldOverlay && oldOverlay.parentNode) {
                             oldOverlay.parentNode.removeChild(oldOverlay);
                         }
-                    }
-                    catch (e) { }
+                    } catch (e) { }
                 }
-                const { type = 'info', title = this.getDefaultTitle(type), message = '', buttonText = 'OK', buttonColor = null, onClose = null, timer = null, allowOutsideClick = true, allowEscapeKey = true, hideButton = false, buttons = null } = options;
+
+                const {
+                    type = 'info',
+                    title = this.getDefaultTitle(type),
+                    message = '',
+                    buttonText = 'OK',
+                    buttonColor = null,
+                    onClose = null,
+                    timer = null,
+                    allowOutsideClick = true,
+                    allowEscapeKey = true,
+                    hideButton = false,
+                    buttons = null
+                } = options;
+
                 const showCloseButton = options.showCloseButton === true;
-                try {
-                    document.body.style.overflow = 'hidden';
-                }
-                catch (e) { }
-                try {
-                    document.documentElement.style.overflow = 'hidden';
-                }
-                catch (e) { }
+
+                try { document.body.style.overflow = 'hidden'; } catch (e) { }
+                try { document.documentElement.style.overflow = 'hidden'; } catch (e) { }
+
                 const overlay = document.createElement('div');
                 overlay.className = 'notification-overlay';
                 overlay.tabIndex = -1;
                 overlay.setAttribute('role', 'dialog');
                 overlay.setAttribute('aria-modal', 'true');
                 overlay.style.pointerEvents = 'auto';
+
                 const box = document.createElement('div');
                 box.className = 'notification-box';
+
                 const icon = document.createElement('div');
                 icon.className = `notification-icon ${type}`;
+
                 if (hideButton && type === 'info') {
                     icon.className = 'notification-loading-container';
                     icon.innerHTML = '<div class="notification-spinner"></div>';
@@ -408,49 +428,50 @@
                     icon.style.boxShadow = 'none';
                     icon.style.width = '100px';
                     icon.style.height = '100px';
-                }
-                else {
+                } else {
                     icon.innerHTML = this.getIcon(type);
                 }
+
                 const titleElement = document.createElement('h3');
                 titleElement.className = 'notification-title';
                 titleElement.textContent = title;
+
                 const messageElement = document.createElement('p');
                 messageElement.className = 'notification-message';
                 messageElement.textContent = message;
-                let customContent = null;
+
+                let customContent = null as any;
                 if (options.html || options.content) {
                     customContent = document.createElement('div');
                     customContent.className = 'notification-content';
                     if (options.html) {
-                        try {
-                            customContent.innerHTML = options.html;
-                        }
-                        catch (e) {
-                            customContent.textContent = options.html;
-                        }
-                    }
-                    else if (options.content && options.content instanceof HTMLElement) {
+                        try { customContent.innerHTML = options.html; } catch (e) { customContent.textContent = options.html; }
+                    } else if (options.content && options.content instanceof HTMLElement) {
                         customContent.appendChild(options.content);
                     }
                 }
+
                 const closeHandler = () => {
                     return this.close(onClose);
                 };
-                let button = null;
-                let buttonContainer = null;
+
+                let button = null as any;
+                let buttonContainer = null as any;
                 if (!hideButton) {
                     if (Array.isArray(buttons) && buttons.length) {
                         buttonContainer = document.createElement('div');
                         buttonContainer.className = 'notification-button-group';
-                        buttons.forEach((btn) => {
+
+                        buttons.forEach((btn: any) => {
                             const btnEl = document.createElement('button');
                             btnEl.className = 'notification-button';
                             btnEl.textContent = btn.text || 'OK';
+
                             const finalBtnColor = btn.color || this.getButtonGradient(type);
                             const btnShadow = btn.shadowColor || this.getButtonShadow(type);
                             btnEl.style.background = finalBtnColor;
                             btnEl.style.boxShadow = `0 4px 12px ${btnShadow}`;
+
                             btnEl.addEventListener('click', (e) => {
                                 e.stopPropagation();
                                 e.preventDefault();
@@ -459,33 +480,31 @@
                                         if (typeof btn.onClick === 'function') {
                                             try {
                                                 const res = btn.onClick();
-                                                if (res && typeof res.then === 'function')
-                                                    res.catch((err) => console.error(err));
-                                            }
-                                            catch (err) {
-                                                console.error(err);
-                                            }
+                                                if (res && typeof res.then === 'function') res.catch((err: any) => console.error(err));
+                                            } catch (err) { console.error(err); }
                                         }
                                     }).catch(() => { });
-                                }
-                                catch (err) {
+                                } catch (err) {
                                     console.error(err);
                                 }
                             });
+
                             btnEl.addEventListener('mouseenter', () => {
                                 btnEl.style.boxShadow = `0 6px 16px ${btnShadow}`;
                             });
                             btnEl.addEventListener('mouseleave', () => {
                                 btnEl.style.boxShadow = `0 4px 12px ${btnShadow}`;
                             });
+
                             buttonContainer.appendChild(btnEl);
                         });
-                    }
-                    else if (options.onConfirm || options.onCancel || options.confirmText || options.cancelText) {
+                    } else if (options.onConfirm || options.onCancel || options.confirmText || options.cancelText) {
                         buttonContainer = document.createElement('div');
                         buttonContainer.className = 'notification-button-group';
+
                         const cancelText = options.cancelText || 'Cancelar';
                         const confirmText = options.confirmText || 'Aceptar';
+
                         const cancelBtn = document.createElement('button');
                         cancelBtn.className = 'notification-button';
                         cancelBtn.textContent = cancelText;
@@ -493,24 +512,21 @@
                         const cancelShadow = options.cancelShadow || 'rgba(107,114,128,0.25)';
                         cancelBtn.style.background = cancelColor;
                         cancelBtn.style.boxShadow = `0 4px 12px ${cancelShadow}`;
+
                         cancelBtn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            e.preventDefault();
+                            e.stopPropagation(); e.preventDefault();
                             closeHandler().then(() => {
                                 try {
                                     if (typeof options.onCancel === 'function') {
-                                        const res = options.onCancel();
-                                        if (res && typeof res.then === 'function')
-                                            res.catch((err) => console.error(err));
+                                        const res = options.onCancel(); if (res && typeof res.then === 'function') res.catch((err: any) => console.error(err));
                                     }
-                                }
-                                catch (err) {
-                                    console.error(err);
-                                }
+                                } catch (err) { console.error(err); }
                             }).catch(() => { });
                         });
+
                         cancelBtn.addEventListener('mouseenter', () => { cancelBtn.style.boxShadow = `0 6px 16px ${cancelShadow}`; });
                         cancelBtn.addEventListener('mouseleave', () => { cancelBtn.style.boxShadow = `0 4px 12px ${cancelShadow}`; });
+
                         const confirmBtn = document.createElement('button');
                         confirmBtn.className = 'notification-button';
                         confirmBtn.textContent = confirmText;
@@ -518,9 +534,9 @@
                         const confirmShadow = options.confirmShadow || this.getButtonShadow(type);
                         confirmBtn.style.background = confirmColor;
                         confirmBtn.style.boxShadow = `0 4px 12px ${confirmShadow}`;
+
                         confirmBtn.addEventListener('click', async (e) => {
-                            e.stopPropagation();
-                            e.preventDefault();
+                            e.stopPropagation(); e.preventDefault();
                             try {
                                 await closeHandler();
                                 if (typeof options.onConfirm === 'function') {
@@ -529,27 +545,27 @@
                                         await res;
                                     }
                                 }
-                            }
-                            catch (err) {
-                                console.error(err);
-                            }
+                            } catch (err) { console.error(err); }
                         });
+
                         confirmBtn.addEventListener('mouseenter', () => { confirmBtn.style.boxShadow = `0 6px 16px ${confirmShadow}`; });
                         confirmBtn.addEventListener('mouseleave', () => { confirmBtn.style.boxShadow = `0 4px 12px ${confirmShadow}`; });
+
                         buttonContainer.appendChild(cancelBtn);
                         buttonContainer.appendChild(confirmBtn);
-                    }
-                    else if (buttonText) {
+                    } else if (buttonText) {
                         button = document.createElement('button');
                         button.className = 'notification-button';
                         button.textContent = buttonText;
+
                         const finalButtonColor = buttonColor || this.getButtonGradient(type);
                         const buttonShadowColor = this.getButtonShadow(type);
                         button.style.background = finalButtonColor;
                         button.style.boxShadow = `0 4px 12px ${buttonShadowColor}`;
                     }
                 }
-                let closeBtn = null;
+
+                let closeBtn = null as any;
                 if (showCloseButton) {
                     closeBtn = document.createElement('button');
                     closeBtn.setAttribute('aria-label', 'Cerrar');
@@ -560,87 +576,73 @@
                         closeHandler();
                     });
                 }
+
                 box.appendChild(icon);
                 if (customContent) {
                     const descId = 'notify-desc-' + Date.now();
                     customContent.id = descId;
                     overlay.setAttribute('aria-describedby', descId);
                     box.appendChild(customContent);
-                }
-                else {
+                } else {
                     box.appendChild(titleElement);
                     box.appendChild(messageElement);
                 }
-                if (closeBtn)
-                    box.appendChild(closeBtn);
+                if (closeBtn) box.appendChild(closeBtn);
                 if (buttonContainer) {
                     box.appendChild(buttonContainer);
-                }
-                else if (button) {
+                } else if (button) {
                     box.appendChild(button);
                 }
                 overlay.appendChild(box);
                 document.body.appendChild(overlay);
-                const closePromise = new Promise((resolveClose) => {
-                    try {
-                        overlay._externalResolve = resolveClose;
-                    }
-                    catch (e) { }
+
+                const closePromise = new Promise<void>((resolveClose) => {
+                    try { (overlay as any)._externalResolve = resolveClose; } catch (e) { }
                 });
+
                 try {
                     const live = document.getElementById('notify-live');
                     if (live) {
                         live.textContent = `${title}: ${message}`;
                     }
-                }
-                catch (e) { }
-                try {
-                    this._lastActiveElement = document.activeElement;
-                }
-                catch (e) {
-                    this._lastActiveElement = null;
-                }
+                } catch (e) { }
+
+                try { this._lastActiveElement = document.activeElement; } catch (e) { this._lastActiveElement = null; }
+
                 this.currentNotification = overlay;
+
                 try {
                     const focusable = box.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])');
                     if (focusable && focusable.length) {
-                        focusable[0].focus();
-                    }
-                    else if (button) {
-                        button.focus();
-                    }
-                    else {
+                        (focusable[0] as HTMLElement).focus();
+                    } else if (button) {
+                        (button as HTMLElement).focus();
+                    } else {
                         overlay.focus();
                     }
-                }
-                catch (e) {
-                    try {
-                        overlay.focus();
-                    }
-                    catch (err) { }
-                }
-                const focusTrap = (e) => {
-                    if (e.key !== 'Tab')
-                        return;
+                } catch (e) { try { overlay.focus(); } catch (err) { } }
+
+                const focusTrap = (e: KeyboardEvent) => {
+                    if (e.key !== 'Tab') return;
                     const focusable = Array.from(box.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'))
-                        .filter((el) => el.offsetParent !== null);
+                        .filter((el: any) => el.offsetParent !== null);
                     if (!focusable.length) {
                         e.preventDefault();
                         return;
                     }
-                    const first = focusable[0];
-                    const last = focusable[focusable.length - 1];
+                    const first = focusable[0] as HTMLElement;
+                    const last = focusable[focusable.length - 1] as HTMLElement;
                     if (!e.shiftKey && document.activeElement === last) {
                         e.preventDefault();
                         first.focus();
-                    }
-                    else if (e.shiftKey && document.activeElement === first) {
+                    } else if (e.shiftKey && document.activeElement === first) {
                         e.preventDefault();
                         last.focus();
                     }
                 };
-                overlay._focusTrap = focusTrap;
+                (overlay as any)._focusTrap = focusTrap;
                 document.addEventListener('keydown', focusTrap);
+
                 const anim = options.anim || {};
                 const overlayDuration = typeof anim.overlayDuration === 'number' ? anim.overlayDuration : 150;
                 const overlayEasing = anim.overlayEasing || 'easeOutQuad';
@@ -654,12 +656,14 @@
                 if (typeof anim.overlayOpacity === 'number') {
                     overlay.style.backgroundColor = `rgba(0,0,0,${anim.overlayOpacity})`;
                 }
+
                 anime({
                     targets: overlay,
                     opacity: [0, 1],
                     duration: overlayDuration,
                     easing: overlayEasing
                 });
+
                 anime({
                     targets: box,
                     scale: [boxStartScale, 1],
@@ -668,6 +672,7 @@
                     easing: boxEasing,
                     delay: boxDelay
                 });
+
                 anime({
                     targets: icon,
                     scale: [0, 1],
@@ -676,6 +681,7 @@
                     easing: boxEasing,
                     delay: iconDelay
                 });
+
                 if (button) {
                     const buttonShadowColor = this.getButtonShadow(type);
                     button.addEventListener('mouseenter', () => {
@@ -690,37 +696,45 @@
                         closeHandler().catch(() => { });
                     });
                 }
+
                 if (allowOutsideClick) {
                     overlay.addEventListener('click', (e) => {
-                        if (!box.contains(e.target)) {
+                        if (!box.contains(e.target as Node)) {
                             closeHandler();
                         }
                     });
                 }
+
                 if (timer) {
                     setTimeout(() => {
                         closeHandler();
                     }, timer);
                 }
+
                 if (allowEscapeKey) {
-                    const escHandler = (e) => {
-                        if (e.key === 'Escape') {
+                    const escHandler = (e: KeyboardEvent) => {
+                        if ((e as any).key === 'Escape') {
                             closeHandler();
                             document.removeEventListener('keydown', escHandler);
                         }
                     };
-                    overlay._escHandler = escHandler;
+                    (overlay as any)._escHandler = escHandler;
                     document.addEventListener('keydown', escHandler);
                 }
+
                 return closePromise;
             }
-            close(callback = null) {
+
+            close(callback: any = null) {
                 if (!this.currentNotification) {
                     return Promise.resolve();
                 }
+
                 const overlay = this.currentNotification;
                 const box = overlay.querySelector('.notification-box');
+
                 this.currentNotification = null;
+
                 anime({
                     targets: box,
                     scale: 0.8,
@@ -728,7 +742,8 @@
                     duration: 100,
                     easing: 'easeInQuad'
                 });
-                return new Promise((resolve) => {
+
+                return new Promise<void>((resolve) => {
                     anime({
                         targets: overlay,
                         opacity: 0,
@@ -736,110 +751,125 @@
                         easing: 'easeInQuad',
                         complete: () => {
                             try {
-                                if (overlay && overlay._escHandler) {
-                                    document.removeEventListener('keydown', overlay._escHandler);
-                                    overlay._escHandler = null;
+                                if (overlay && (overlay as any)._escHandler) {
+                                    document.removeEventListener('keydown', (overlay as any)._escHandler);
+                                    (overlay as any)._escHandler = null;
                                 }
-                            }
-                            catch (e) { }
+                            } catch (e) { }
+
                             try {
-                                if (overlay && overlay._focusTrap) {
-                                    document.removeEventListener('keydown', overlay._focusTrap);
-                                    overlay._focusTrap = null;
+                                if (overlay && (overlay as any)._focusTrap) {
+                                    document.removeEventListener('keydown', (overlay as any)._focusTrap);
+                                    (overlay as any)._focusTrap = null;
                                 }
-                            }
-                            catch (e) { }
+                            } catch (e) { }
+
                             try {
-                                if (overlay && typeof overlay._externalResolve === 'function') {
-                                    try {
-                                        overlay._externalResolve();
-                                    }
-                                    catch (er) { }
-                                    overlay._externalResolve = null;
+                                if (overlay && typeof (overlay as any)._externalResolve === 'function') {
+                                    try { (overlay as any)._externalResolve(); } catch (er) { }
+                                    (overlay as any)._externalResolve = null;
                                 }
-                            }
-                            catch (e) { }
+                            } catch (e) { }
+
                             try {
                                 if (overlay && overlay.parentNode) {
                                     overlay.parentNode.removeChild(overlay);
                                 }
+                            } catch (e) {
+                                try { overlay.remove(); } catch (er) { }
                             }
-                            catch (e) {
-                                try {
-                                    overlay.remove();
-                                }
-                                catch (er) { }
-                            }
+
                             if (!this.currentNotification) {
-                                try {
-                                    document.body.style.overflow = '';
-                                }
-                                catch (e) { }
-                                try {
-                                    document.documentElement.style.overflow = '';
-                                }
-                                catch (e) { }
+                                try { document.body.style.overflow = ''; } catch (e) { }
+                                try { document.documentElement.style.overflow = ''; } catch (e) { }
                             }
+
                             try {
                                 if (this._lastActiveElement && typeof this._lastActiveElement.focus === 'function') {
                                     this._lastActiveElement.focus();
                                 }
-                            }
-                            catch (e) { }
+                            } catch (e) { }
                             this._lastActiveElement = null;
-                            if (callback)
-                                callback();
+
+                            if (callback) callback();
                             resolve();
                         }
                     });
                 });
             }
-            success(message, title = null, options = {}) {
-                this.show(Object.assign({ type: 'success', title: title || this.getDefaultTitle('success'), message }, options));
+
+            success(message: string, title: string | null = null, options: any = {}) {
+                this.show({
+                    type: 'success',
+                    title: title || this.getDefaultTitle('success'),
+                    message,
+                    ...options
+                });
             }
-            error(message, title = null, options = {}) {
-                this.show(Object.assign({ type: 'error', title: title || this.getDefaultTitle('error'), message }, options));
+
+            error(message: string, title: string | null = null, options: any = {}) {
+                this.show({
+                    type: 'error',
+                    title: title || this.getDefaultTitle('error'),
+                    message,
+                    ...options
+                });
             }
-            warning(message, title = null, options = {}) {
-                this.show(Object.assign({ type: 'warning', title: title || this.getDefaultTitle('warning'), message }, options));
+
+            warning(message: string, title: string | null = null, options: any = {}) {
+                this.show({
+                    type: 'warning',
+                    title: title || this.getDefaultTitle('warning'),
+                    message,
+                    ...options
+                });
             }
-            info(message, title = null, options = {}) {
-                this.show(Object.assign({ type: 'info', title: title || this.getDefaultTitle('info'), message }, options));
+
+            info(message: string, title: string | null = null, options: any = {}) {
+                this.show({
+                    type: 'info',
+                    title: title || this.getDefaultTitle('info'),
+                    message,
+                    ...options
+                });
             }
-            loading(message = 'Cargando...', title = 'Espera', options = {}) {
-                const loadingOptions = Object.assign({ type: 'info', title,
-                    message, hideButton: true, allowOutsideClick: false, allowEscapeKey: false }, options);
+
+            loading(message: string = 'Cargando...', title: string = 'Espera', options: any = {}) {
+                const loadingOptions = {
+                    type: 'info',
+                    title,
+                    message,
+                    hideButton: true,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    ...options
+                };
+
                 const loadingPromise = this.show(loadingOptions);
+
                 this._currentLoadingPromise = loadingPromise;
+
                 return loadingPromise;
             }
-            closeLoading(callback = null) {
+
+            closeLoading(callback: any = null) {
                 this._currentLoadingPromise = null;
                 return this.close(callback);
             }
-            hide(callback = null) { return this.close(callback); }
-            hiden(callback = null) { return this.close(callback); }
-            _formatTime(seconds) {
+
+            hide(callback: any = null) { return this.close(callback); }
+            hiden(callback: any = null) { return this.close(callback); }
+
+            _formatTime(seconds: number) {
                 const s = Math.max(0, Math.floor(seconds));
                 const mm = Math.floor(s / 60).toString().padStart(2, '0');
                 const ss = (s % 60).toString().padStart(2, '0');
                 return `${mm}:${ss}`;
             }
         }
+
         window.notify = new NotificationSystem();
+
         window.Notification = window.notify;
     }
 })();
-export {};
-//# sourceMappingURL=notification-system.js.map
-
-// Extraer la clase desde la instancia global
-const NotificationSystem = window.notify?.constructor || function() {
-    throw new Error('NotificationSystem no se pudo cargar. Verifica que anime.js esté disponible.');
-};
-
-// Reexportar para módulos ESM
-export default NotificationSystem;
-export { NotificationSystem };
-
-// La instancia global también está disponible como window.notify

@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "target": "ES2017",
+        "module": "ES2020",
+        "lib": [
+            "DOM",
+            "ES2017"
+        ],
+        "strict": false,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "sourceMap": true,
+        "outDir": "./build",
+        "rootDir": "./",
+        "allowJs": true
+    },
+    "include": [
+        "notification-system.ts"
+    ]
+}
