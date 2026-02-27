@@ -167,6 +167,11 @@ notify.show({
   title: 'Título',              // Opcional
   message: 'Mensaje',           // Requerido
   buttonText: 'OK',             // Opcional (default: 'OK')
+  // Para confirmaciones rápidas hay atajos:
+  // `onConfirm` (función) se ejecuta al pulsar el botón de confirmar.
+  // `onCancel` (función) se ejecuta al pulsar el botón de cancelar.
+  // Puedes personalizar textos con `confirmText` / `cancelText` y colores con
+  // `confirmColor` / `cancelColor`.
   timer: 3000,                  // Opcional (ms, null = sin timer)
   allowOutsideClick: true,      // Opcional (default: true)
   allowEscapeKey: true,         // Opcional (default: true)
@@ -269,24 +274,75 @@ async function fetchData() {
 fetchData();
 ```
 
-### Confirmación de Operación
+### Confirmación de Operación (dos botones)
 
 ```javascript
 notify.show({
   type: 'warning',
   title: '¿Estás seguro?',
   message: 'Esta acción no se puede deshacer',
-  buttonText: 'Sí, continuar',
+  buttons: [
+    {
+      text: 'Cancelar',
+      color: 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)',
+      onClick: () => {
+        console.log('Operación cancelada');
+      }
+    },
+    {
+      text: 'Sí, continuar',
+      color: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+      onClick: () => {
+        deleteUser();
+      }
+    }
+  ],
   allowOutsideClick: false,
-  allowEscapeKey: false,
-  onClose: () => {
-    // Ejecutar acción después de confirmar
-    deleteUser();
-  }
+  allowEscapeKey: false
 });
 ```
 
 ### Notificación con Contenido HTML
+
+### Confirmación (atajo `onConfirm` / `onCancel`)
+
+```javascript
+notify.show({
+  type: 'warning',
+  title: '¿Eliminar registro?',
+  message: 'Esta acción no se puede deshacer.',
+  confirmText: 'Sí, eliminar',
+  cancelText: 'Cancelar',
+  onConfirm: async () => {
+    await performDelete(id);
+    notify.success('Registro eliminado correctamente');
+  },
+  onCancel: () => {
+    console.log('El usuario canceló la operación');
+  },
+  allowOutsideClick: false,
+  allowEscapeKey: false
+});
+```
+
+### Personalizar colores y sombras (ejemplo)
+
+```javascript
+notify.show({
+  type: 'warning',
+  title: 'Eliminar elemento',
+  message: '¿Estás seguro?',
+  confirmText: 'Sí, borrar',
+  cancelText: 'No, cancelar',
+  onConfirm: () => fetch('/api/delete', { method: 'POST' }),
+  onCancel: () => console.log('Cancelado'),
+  // Colores y sombras pueden ser cualquier string CSS (gradiente o color simple)
+  confirmColor: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+  confirmShadow: 'rgba(5,150,105,0.22)',
+  cancelColor: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)',
+  cancelShadow: 'rgba(0,0,0,0.08)'
+});
+```
 
 ```javascript
 const form = document.createElement('form');

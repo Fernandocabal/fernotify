@@ -249,6 +249,15 @@
                 transform: translateY(0);
             }
 
+            /* group container for multiple action buttons */
+            .notification-button-group {
+                display: flex;
+                gap: 12px;
+                justify-content: center;
+                flex-wrap: wrap;
+                margin-top: 10px;
+            }
+
             .notification-icon-checkmark {
                 animation: checkmark-draw 0.6s ease-in-out;
             }
@@ -408,14 +417,17 @@
                     type = 'info',
                     title = this.getDefaultTitle(type),
                     message = '',
-                    buttonText = 'OK',
+                    buttonText = 'OK',                // legacy single-button support
                     buttonColor = null,
                     onClose = null,
                     timer = null,
                     allowOutsideClick = true,
                     allowEscapeKey = true,
                     // New option: hideButton true -> do not render action button
-                    hideButton = false
+                    hideButton = false,
+                    // New option: array of button descriptors for multi-button dialogs
+                    // [{ text, color, shadowColor, onClick }]
+                    buttons = null
                 } = options;
 
                 // Option to show a small close 'X' in the corner
@@ -479,18 +491,119 @@
                     }
                 }
 
-                // Crear (opcional) botón. Si hideButton === true o buttonText es falsy, no renderizamos.
-                let button = null;
-                if (!hideButton && buttonText) {
-                    button = document.createElement('button');
-                    button.className = 'notification-button';
-                    button.textContent = buttonText;
+                // helper closure to close notification (used by buttons and other handlers)
+                const closeHandler = () => {
+                    this.close(onClose);
+                };
 
-                    // Aplicar color del botón (personalizado o automático según tipo)
-                    const finalButtonColor = buttonColor || this.getButtonGradient(type);
-                    const buttonShadowColor = this.getButtonShadow(type);
-                    button.style.background = finalButtonColor;
-                    button.style.boxShadow = `0 4px 12px ${buttonShadowColor}`;
+                // Crear (opcional) botón o botonera. Se pueden definir múltiples botones
+                let button = null;
+                let buttonContainer = null;
+                if (!hideButton) {
+                    // 1) Si se pasa explicitamente `buttons` (array), respetar esa configuración
+                    if (Array.isArray(buttons) && buttons.length) {
+                        // build a group container for multiple buttons
+                        buttonContainer = document.createElement('div');
+                        buttonContainer.className = 'notification-button-group';
+
+                        buttons.forEach((btn) => {
+                            const btnEl = document.createElement('button');
+                            btnEl.className = 'notification-button';
+                            btnEl.textContent = btn.text || 'OK';
+
+                            // color/shadow may be provided per button, otherwise fall back to type
+                            const finalBtnColor = btn.color || this.getButtonGradient(type);
+                            const btnShadow = btn.shadowColor || this.getButtonShadow(type);
+                            btnEl.style.background = finalBtnColor;
+                            btnEl.style.boxShadow = `0 4px 12px ${btnShadow}`;
+
+                            btnEl.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                if (typeof btn.onClick === 'function') {
+                                    try { btn.onClick(); } catch (err) { console.error(err); }
+                                }
+                                closeHandler();
+                            });
+
+                            // hover effects for each button
+                            btnEl.addEventListener('mouseenter', () => {
+                                btnEl.style.boxShadow = `0 6px 16px ${btnShadow}`;
+                            });
+                            btnEl.addEventListener('mouseleave', () => {
+                                btnEl.style.boxShadow = `0 4px 12px ${btnShadow}`;
+                            });
+
+                            buttonContainer.appendChild(btnEl);
+                        });
+
+                        // 2) Conveniencia para diálogos de confirmación: onConfirm / onCancel
+                    } else if (options.onConfirm || options.onCancel || options.confirmText || options.cancelText) {
+                        buttonContainer = document.createElement('div');
+                        buttonContainer.className = 'notification-button-group';
+
+                        // Cancel button (may be optional if only onConfirm provided)
+                        const cancelText = options.cancelText || 'Cancelar';
+                        const confirmText = options.confirmText || 'Aceptar';
+
+                        const cancelBtn = document.createElement('button');
+                        cancelBtn.className = 'notification-button';
+                        cancelBtn.textContent = cancelText;
+                        const cancelColor = options.cancelColor || 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)';
+                        const cancelShadow = options.cancelShadow || 'rgba(107,114,128,0.25)';
+                        cancelBtn.style.background = cancelColor;
+                        cancelBtn.style.boxShadow = `0 4px 12px ${cancelShadow}`;
+
+                        cancelBtn.addEventListener('click', (e) => {
+                            e.stopPropagation(); e.preventDefault();
+                            try { if (typeof options.onCancel === 'function') options.onCancel(); } catch (err) { console.error(err); }
+                            closeHandler();
+                        });
+
+                        cancelBtn.addEventListener('mouseenter', () => { cancelBtn.style.boxShadow = `0 6px 16px ${cancelShadow}`; });
+                        cancelBtn.addEventListener('mouseleave', () => { cancelBtn.style.boxShadow = `0 4px 12px ${cancelShadow}`; });
+
+                        // Confirm button
+                        const confirmBtn = document.createElement('button');
+                        confirmBtn.className = 'notification-button';
+                        confirmBtn.textContent = confirmText;
+                        const confirmColor = options.confirmColor || this.getButtonGradient(type);
+                        const confirmShadow = options.confirmShadow || this.getButtonShadow(type);
+                        confirmBtn.style.background = confirmColor;
+                        confirmBtn.style.boxShadow = `0 4px 12px ${confirmShadow}`;
+
+                        confirmBtn.addEventListener('click', async (e) => {
+                            e.stopPropagation(); e.preventDefault();
+                            try {
+                                if (typeof options.onConfirm === 'function') {
+                                    const res = options.onConfirm();
+                                    if (res && typeof res.then === 'function') {
+                                        await res;
+                                    }
+                                }
+                            } catch (err) { console.error(err); }
+                            closeHandler();
+                        });
+
+                        confirmBtn.addEventListener('mouseenter', () => { confirmBtn.style.boxShadow = `0 6px 16px ${confirmShadow}`; });
+                        confirmBtn.addEventListener('mouseleave', () => { confirmBtn.style.boxShadow = `0 4px 12px ${confirmShadow}`; });
+
+                        // Order: cancel first, confirm second
+                        buttonContainer.appendChild(cancelBtn);
+                        buttonContainer.appendChild(confirmBtn);
+
+                        // 3) Fallback: botón único legacy
+                    } else if (buttonText) {
+                        button = document.createElement('button');
+                        button.className = 'notification-button';
+                        button.textContent = buttonText;
+
+                        // Aplicar color del botón (personalizado o automático según tipo)
+                        const finalButtonColor = buttonColor || this.getButtonGradient(type);
+                        const buttonShadowColor = this.getButtonShadow(type);
+                        button.style.background = finalButtonColor;
+                        button.style.boxShadow = `0 4px 12px ${buttonShadowColor}`;
+                    }
                 }
 
                 // Close 'X' button in corner (optional)
@@ -521,7 +634,11 @@
                 }
                 // Append close button last so it's visually on top
                 if (closeBtn) box.appendChild(closeBtn);
-                if (button) box.appendChild(button);
+                if (buttonContainer) {
+                    box.appendChild(buttonContainer);
+                } else if (button) {
+                    box.appendChild(button);
+                }
                 overlay.appendChild(box);
                 document.body.appendChild(overlay);
 
@@ -620,9 +737,6 @@
                 });
 
                 // Efecto hover y listener del botón (solo si existe)
-                const closeHandler = () => {
-                    this.close(onClose);
-                };
                 if (button) {
                     const buttonShadowColor = this.getButtonShadow(type);
                     button.addEventListener('mouseenter', () => {

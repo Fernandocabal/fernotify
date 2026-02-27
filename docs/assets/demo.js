@@ -33,6 +33,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 run: (done) => { notify.show({ type: 'warning', title: 'Advertencia', message: '¿Estás seguro de continuar?', buttonText: 'Sí, continuar', timer: 5000, onClose: () => { console.log('Notificación cerrada'); if (done) done(); } }); }
             },
             {
+                title: 'Confirmación (dos botones)',
+                desc: 'Mostrar diálogo con botón cancelar y confirmar.',
+                code: "notify.show({\\n  type: 'warning',\\n  title: '¿Eliminar registro?',\\n  message: 'Esta acción no se puede deshacer.',\\n  buttons: [\\n    { text: 'Cancelar', color: 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)' },\\n    { text: 'Eliminar', color: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', onClick: () => console.log('eliminado') }\\n  ],\\n  allowOutsideClick: false\\n});",
+                run: (done) => {
+                    notify.show({
+                        type: 'warning',
+                        title: '¿Eliminar registro?',
+                        message: 'Esta acción no se puede deshacer.',
+                        buttons: [
+                            { text: 'Cancelar', color: 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)' },
+                            { text: 'Eliminar', color: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', onClick: () => { console.log('eliminado'); } }
+                        ],
+                        allowOutsideClick: false
+                    }).then(() => { if (done) done(); });
+                }
+            },
+            {
                 title: 'Auto-cierre (sin botón)',
                 desc: 'Notificación que se cierra sola, sin botón de acción.',
                 code: "notify.info('Esta notificación se cierra sola.', 'Info', {\\n  hideButton: true,\\n  timer: 3000\\n});",
@@ -181,11 +198,23 @@ document.addEventListener('DOMContentLoaded', function () {
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', renderExamples); else renderExamples();
 
         function pgCollect() {
+            let buttons = null;
+            try {
+                const raw = document.getElementById('pg-buttons').value;
+                if (raw && raw.trim()) {
+                    buttons = JSON.parse(raw);
+                }
+            } catch (e) {
+                console.warn('pgCollect: invalid buttons JSON', e);
+                buttons = null;
+            }
+
             return {
                 type: document.getElementById('pg-type').value,
                 title: document.getElementById('pg-title').value,
                 message: document.getElementById('pg-message').value,
                 buttonText: document.getElementById('pg-buttonText').value,
+                buttons,
                 timer: Number(document.getElementById('pg-timer').value) || null,
                 anim: {
                     overlayOpacity: Number(document.getElementById('pg-overlayOpacity').value),
@@ -199,7 +228,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         function pgGenerateCode(opts) {
             const anim = JSON.stringify(opts.anim, null, 2);
-            return `notify.show({\\n  type: '${opts.type}',\\n  title: '${opts.title.replace(/'/g, "\\\\'")}',\\n  message: '${opts.message.replace(/'/g, "\\\\'")}',\\n  buttonText: '${opts.buttonText}',\\n  timer: ${opts.timer || 'null'},\\n  anim: ${anim}\\n});`;
+            let btnPart = '';
+            if (Array.isArray(opts.buttons)) {
+                btnPart = `  buttons: ${JSON.stringify(opts.buttons, null, 2)},\\n`;
+            } else {
+                btnPart = `  buttonText: '${opts.buttonText}',\\n`;
+            }
+            return `notify.show({\\n  type: '${opts.type}',\\n  title: '${opts.title.replace(/'/g, "\\'")}',\\n  message: '${opts.message.replace(/'/g, "\\'")}',\\n${btnPart}  timer: ${opts.timer || 'null'},\\n  anim: ${anim}\\n});`;
         }
 
         const pgRunBtn = document.getElementById('pg-run');
@@ -213,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function () {
             pgCodeEl.textContent = preview;
         }
 
-        ['pg-type', 'pg-title', 'pg-message', 'pg-buttonText', 'pg-timer', 'pg-overlayOpacity', 'pg-overlayDuration', 'pg-boxDuration', 'pg-boxStartScale', 'pg-iconRotate'].forEach(id => {
+        ['pg-type', 'pg-title', 'pg-message', 'pg-buttonText', 'pg-buttons', 'pg-timer', 'pg-overlayOpacity', 'pg-overlayDuration', 'pg-boxDuration', 'pg-boxStartScale', 'pg-iconRotate'].forEach(id => {
             const el = document.getElementById(id);
             if (!el) return;
             el.addEventListener('input', updatePlaygroundPreview);
@@ -224,15 +259,20 @@ document.addEventListener('DOMContentLoaded', function () {
             pgRunBtn.disabled = true;
             const prev = pgRunBtn.innerHTML;
             pgRunBtn.innerHTML = "<i class='bx bx-loader animate-spin'></i> Running";
-            notify.show({
+            const params = {
                 type: opts.type,
                 title: opts.title,
                 message: opts.message,
-                buttonText: opts.buttonText,
                 timer: opts.timer || null,
                 anim: opts.anim,
                 onClose: () => { pgRunBtn.disabled = false; pgRunBtn.innerHTML = prev; }
-            }).then(() => { if (pgRunBtn.disabled) { pgRunBtn.disabled = false; pgRunBtn.innerHTML = prev; } });
+            };
+            if (Array.isArray(opts.buttons)) {
+                params.buttons = opts.buttons;
+            } else {
+                params.buttonText = opts.buttonText;
+            }
+            notify.show(params).then(() => { if (pgRunBtn.disabled) { pgRunBtn.disabled = false; pgRunBtn.innerHTML = prev; } });
             setTimeout(() => { if (pgRunBtn.disabled) { pgRunBtn.disabled = false; pgRunBtn.innerHTML = prev; } }, 6000);
         });
 
@@ -251,6 +291,25 @@ document.addEventListener('DOMContentLoaded', function () {
             setTimeout(() => { notify.closeLoading(); }, 3000);
         });
         document.getElementById('btn-custom').addEventListener('click', () => { notify.show({ type: 'info', title: 'Notificación Personalizada', message: 'Esta notificación se cierra automáticamente en 3 segundos.', buttonText: 'Entendido', timer: 3000 }); });
+        document.getElementById('btn-confirm').addEventListener('click', () => {
+            notify.show({
+                type: 'warning',
+                title: '¿Eliminar elemento?',
+                message: 'Esta acción no se puede deshacer.',
+                confirmText: 'Sí, eliminar',
+                cancelText: 'Cancelar',
+                onConfirm: async () => {
+                    // Simular operación async
+                    await new Promise((r) => setTimeout(r, 600));
+                    notify.success('Elemento eliminado correctamente');
+                },
+                onCancel: () => {
+                    notify.info('Operación cancelada');
+                },
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            });
+        });
 
     } // FIN initDemo
 });

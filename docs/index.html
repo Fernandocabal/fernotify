@@ -78,7 +78,8 @@
                     </h1>
                     <p id="hero-sub" class="text-white/95 dark:text-slate-100/90 max-w-2xl" data-animate>
                         Biblioteca ligera para mostrar modales y notificaciones con animaciones fluidas. Soporta
-                        contenido HTML, formularios, accesibilidad y personalización de animación.
+                        contenido HTML, formularios, accesibilidad, múltiples botones de acción y personalización de
+                        animación.
                     </p>
                     <div class="mt-4 flex gap-3" data-animate>
                         <a href="#examples"
@@ -110,6 +111,7 @@
                 <button id="btn-error" class="px-3 py-1 rounded bg-red-500 text-white">Error</button>
                 <button id="btn-warning" class="px-3 py-1 rounded bg-amber-500 text-white">Warning</button>
                 <button id="btn-info" class="px-3 py-1 rounded bg-sky-500 text-white">Info</button>
+                <button id="btn-confirm" class="px-3 py-1 rounded bg-amber-600 text-white">Confirm</button>
                 <button id="btn-loading" class="px-3 py-1 rounded bg-purple-500 text-white">Loading</button>
                 <button id="btn-custom" class="px-3 py-1 rounded bg-indigo-600 text-white">Custom</button>
             </div>
@@ -181,7 +183,8 @@
                     class="p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow-sm">
                     <h3 class="font-semibold mb-3 text-slate-900 dark:text-slate-100">📦 ES Module</h3>
                     <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">Para proyectos modernos con
-                        import/export. Las dependencias se cargan automáticamente.</p>
+                        import/export. Las dependencias se cargan automáticamente. También puedes definir<br>"buttons"
+                        (array JSON) para diálogos con varios botones desde el playground.</p>
                     <pre class="bg-slate-50 dark:bg-slate-900 p-3 rounded text-xs overflow-auto"><code class="text-slate-900 dark:text-slate-100">&lt;script type="module"&gt;
   import NotificationSystem from 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.esm.js';
   
@@ -227,6 +230,8 @@ notify.success('¡Instalado vía npm!');</code></pre>
 
         <section class="mb-8">
             <h2 class="text-lg font-semibold mb-3 text-slate-800 dark:text-slate-100">Ejemplos</h2>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Incluye demostraciones de notificaciones con uno
+                o varios botones (use el playground para probar <code>buttons</code>).</p>
             <div id="examples" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </section>
 
@@ -257,6 +262,13 @@ notify.success('¡Instalado vía npm!');</code></pre>
                         <input id="pg-buttonText"
                             class="w-full border rounded px-2 py-1 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500 transition"
                             value="Aceptar">
+                    </label>
+                    <label class="block">Botones (JSON)
+                        <textarea id="pg-buttons" rows="3"
+                            class="w-full border rounded px-2 py-1 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500 transition"
+                            placeholder='ej: [{"text":"Cancelar"},{"text":"Aceptar","color":"#10b981"}]'></textarea>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Define un array JSON con propiedades
+                            text, color y onClick.</p>
                     </label>
                     <label class="block">Timer (ms)
                         <input id="pg-timer"

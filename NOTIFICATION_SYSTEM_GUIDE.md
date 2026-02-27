@@ -146,7 +146,7 @@ async function loadData() {
 }
 ```
 
-### Confirmación de Eliminación
+### Confirmación de Eliminación (dos botones)
 
 ```javascript
 function deleteItem(id) {
@@ -154,12 +154,52 @@ function deleteItem(id) {
         type: 'warning',
         title: '¿Estás seguro?',
         message: 'Esta acción no se puede deshacer. El registro será eliminado permanentemente.',
-        buttonText: 'Sí, eliminar',
-        onClose: async () => {
-            // Usuario confirmó, proceder con eliminación
+        buttons: [
+            {
+                text: 'Cancelar',
+                color: 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)',
+                onClick: () => {
+                    // El usuario decidió no continuar; simplemente cerramos
+                    console.log('Eliminación cancelada');
+                }
+            },
+            {
+                text: 'Sí, eliminar',
+                color: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                onClick: async () => {
+                    await performDelete(id);
+                    notify.success('Registro eliminado correctamente');
+                }
+            }
+        ],
+        allowOutsideClick: false,
+        allowEscapeKey: false
+    });
+}
+```
+
+### Confirmación simplificada con `onConfirm` / `onCancel`
+
+Si prefieres no definir un array de botones, puedes usar los atajos `onConfirm` y `onCancel`.
+`onConfirm` puede devolver una promesa (se espera antes de cerrar la notificación).
+
+```javascript
+function deleteItem(id) {
+    notify.show({
+        type: 'warning',
+        title: '¿Eliminar registro?',
+        message: 'Esta acción no se puede deshacer.',
+        confirmText: 'Sí, eliminar',
+        cancelText: 'Cancelar',
+        onConfirm: async () => {
             await performDelete(id);
             notify.success('Registro eliminado correctamente');
-        }
+        },
+        onCancel: () => {
+            console.log('Eliminación cancelada por el usuario');
+        },
+        allowOutsideClick: false,
+        allowEscapeKey: false
     });
 }
 ```
@@ -653,8 +693,17 @@ Cada tipo tiene su propio estilo:
     type: 'success' | 'error' | 'warning' | 'info',  // Requerido
     title: 'Título',                                  // Opcional
     message: 'Mensaje detallado',                     // Requerido
-    buttonText: 'OK',                                 // Opcional (default: 'OK')
-    timer: 5000,                                      // Opcional (ms, null = sin timer)
+    buttonText: 'OK',                                 // Opcional (default: 'OK')    // Array de botones. Cada elemento puede contener:
+    // { text, color?, shadowColor?, onClick? }
+    // Si se proporciona, `buttonText` se ignora y se renderiza
+    // una botonera con el contenido del array.
+    buttons: [],    timer: 5000,                                      // Opcional (ms, null = sin timer)
+    // Atajos para confirmaciones: si prefieres no definir un array de botones,
+    // puedes usar `onConfirm` y `onCancel` junto con `confirmText` / `cancelText`:
+    // onConfirm: () => { /* acción confirmada */ },
+    // onCancel: () => { /* acción cancelada */ },
+    // confirmText: 'Sí, eliminar',
+    // cancelText: 'Cancelar',
     onClose: () => { }                                // Opcional (callback)
 }
 ```
