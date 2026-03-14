@@ -413,10 +413,10 @@ interface OverlayMeta {
 
             getButtonShadow(type: string) {
                 const shadows: Record<string, string> = {
-                    'success': 'rgba(16, 185, 129, 0.4)',
-                    'error': 'rgba(239, 68, 68, 0.4)',
-                    'warning': 'rgba(245, 158, 11, 0.4)',
-                    'info': 'rgba(59, 130, 246, 0.4)'
+                    'success': 'rgba(16, 185, 129, 0)',
+                    'error': 'rgba(239, 68, 68, 0)',
+                    'warning': 'rgba(245, 159, 11, 0)',
+                    'info': 'rgba(59, 131, 246, 0)'
                 };
                 return shadows[type] || shadows.info;
             }
