@@ -50,6 +50,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             },
             {
+                title: 'Pregunta (question)',
+                desc: 'Mostrar notificación tipo pregunta con botones y callbacks.',
+                code: "notify.question('¿Deseas continuar con la operación?', 'Confirmar', {\\n  confirmText: 'Sí',\\n  cancelText: 'No',\\n  onConfirm: () => notify.success('Continúa ejecutando...'),\\n  onCancel: () => notify.info('Operación cancelada')\\n});",
+                run: (done) => {
+                    notify.question('¿Deseas continuar con la operación?', 'Confirmar', {
+                        confirmText: 'Sí',
+                        cancelText: 'No',
+                        onConfirm: () => { notify.success('Continúa ejecutando...'); },
+                        onCancel: () => { notify.info('Operación cancelada'); },
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    });
+                    if (done) setTimeout(done, 1600);
+                }
+            },
+            {
                 title: 'Confirmación (onConfirm / onCancel)',
                 desc: 'Atajo práctico usando onConfirm y onCancel (muestra spinner durante la operación).',
                 code: "notify.show({\\n  type: 'info',\\n  title: '¿Eliminar elemento?',\\n  message: 'Esta acción no se puede deshacer.',\\n  confirmText: 'Sí, eliminar',\\n  cancelText: 'Cancelar',\\n  onConfirm: async () => {\\n    notify.loading('Eliminando...', 'Por favor espera');\\n    await fetch('/api/delete', { method: 'POST' });\\n    notify.closeLoading();\\n    notify.success('Eliminado');\\n  },\\n  onCancel: () => notify.info('Cancelado'),\\n  confirmColor: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',\\n  confirmShadow: 'rgba(5,150,105,0.22)',\\n  cancelColor: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)',\\n  cancelShadow: 'rgba(0,0,0,0.08)'\\n});",
@@ -315,6 +331,16 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('btn-error').addEventListener('click', () => { notify.error('Ha ocurrido un error inesperado.', 'Error'); });
         document.getElementById('btn-warning').addEventListener('click', () => { notify.warning('Revisa los datos antes de continuar.', 'Advertencia'); });
         document.getElementById('btn-info').addEventListener('click', () => { notify.info('Esta es una notificación informativa.', 'Información'); });
+        document.getElementById('btn-question').addEventListener('click', () => {
+            notify.question('¿Estás seguro que quieres ejecutar esta acción?', 'Confirmar', {
+                confirmText: 'Sí',
+                cancelText: 'No',
+                onConfirm: () => notify.success('Acción confirmada'),
+                onCancel: () => notify.info('Acción cancelada'),
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            });
+        });
         document.getElementById('btn-loading').addEventListener('click', () => {
             notify.loading('Procesando solicitud...', 'Por favor espera');
             setTimeout(() => { notify.closeLoading(); }, 3000);

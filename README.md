@@ -8,7 +8,7 @@
 
 ## Características
 
-- **4 tipos de notificaciones**: Success, Error, Warning, Info
+- **5 tipos de notificaciones**: Success, Error, Warning, Info, Question
 - **Dark Mode automático**: Detecta el tema de tu web
 - **Animaciones fluidas**: Powered by anime.js
 - **Ligero y rápido**: ~10KB sin dependencias (excepto anime.js)
@@ -98,6 +98,9 @@ notify.warning('Esta acción no se puede deshacer');
 
 // Info
 notify.info('Hay una nueva actualización disponible');
+
+// Question (nuevo)
+notify.question('¿Seguro que quieres continuar?', 'Confirmación');
 ```
 
 ### Con Título Personalizado
@@ -188,6 +191,7 @@ notify.success(message, title?, options?)
 notify.error(message, title?, options?)
 notify.warning(message, title?, options?)
 notify.info(message, title?, options?)
+notify.question(message, title?, options?)
 notify.close()  // Cerrar la notificación actual
 ```
 

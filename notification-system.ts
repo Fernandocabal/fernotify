@@ -261,6 +261,14 @@ interface OverlayMeta {
             .notification-icon.info::before {
                 background: #3b82f6;
             }
+            .notification-icon.question {
+                background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+                color: white;
+            }
+
+            .notification-icon.question::before {
+                background: #3b82f6;
+            }
 
             .notification-title {
                 font-size: 24px;
@@ -386,7 +394,8 @@ interface OverlayMeta {
                     'success': '<i class="bx bx-check" aria-hidden="true"></i>',
                     'error': '<i class="bx bx-x" aria-hidden="true"></i>',
                     'warning': '<i class="bx bx-error" aria-hidden="true"></i>',
-                    'info': '<i class="bx bx-info-circle" aria-hidden="true"></i>'
+                    'info': '<i class="bx bx-info-circle" aria-hidden="true"></i>',
+                    'question': '<i class="bx bx-question-mark" aria-hidden="true"></i>'
                 };
                 return icons[type] || icons.info;
             }
@@ -396,7 +405,8 @@ interface OverlayMeta {
                     'success': '¡Éxito!',
                     'error': 'Error',
                     'warning': 'Advertencia',
-                    'info': 'Información'
+                    'info': 'Información',
+                    'question': 'Pregunta'
                 };
                 return titles[type] || 'Notificación';
             }
@@ -406,7 +416,8 @@ interface OverlayMeta {
                     'success': 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                     'error': 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
                     'warning': 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                    'info': 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'
+                    'info': 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                    'question': 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)'
                 };
                 return gradients[type] || gradients.info;
             }
@@ -416,7 +427,8 @@ interface OverlayMeta {
                     'success': 'rgba(16, 185, 129, 0)',
                     'error': 'rgba(239, 68, 68, 0)',
                     'warning': 'rgba(245, 159, 11, 0)',
-                    'info': 'rgba(59, 131, 246, 0)'
+                    'info': 'rgba(59, 131, 246, 0)',
+                    'question': 'rgba(108, 99, 245, 0)'
                 };
                 return shadows[type] || shadows.info;
             }
@@ -871,6 +883,15 @@ interface OverlayMeta {
                 this.show({
                     type: 'warning',
                     title: title || this.getDefaultTitle('warning'),
+                    message,
+                    ...options
+                });
+            }
+
+            question(message: string, title: string | null = null, options: NotificationOptions = {}) {
+                this.show({
+                    type: 'question',
+                    title: title || this.getDefaultTitle('question'),
                     message,
                     ...options
                 });
