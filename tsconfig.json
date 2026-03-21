@@ -16,6 +16,7 @@
         "allowJs": true
     },
     "include": [
-        "notification-system.ts"
+        "notification-system.ts",
+        "types/"
     ]
 }

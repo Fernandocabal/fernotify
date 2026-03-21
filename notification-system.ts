@@ -1,5 +1,3 @@
-declare const anime: any;
-
 type NotifyType = 'success' | 'error' | 'warning' | 'info' | string;
 
 interface ButtonOptions {
@@ -939,8 +937,9 @@ interface OverlayMeta {
             }
         }
 
-        (window as any).notify = new NotificationSystem();
-
-        (window as any).Notification = (window as any).notify;
+        const notifyInstance = new NotificationSystem();
+        const w = window as unknown as { notify: NotificationSystem; Notification: NotificationSystem };
+        w.notify = notifyInstance;
+        w.Notification = notifyInstance;
     }
 })();

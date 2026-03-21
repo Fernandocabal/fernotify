@@ -846,8 +846,10 @@
                 return `${mm}:${ss}`;
             }
         }
-        window.notify = new NotificationSystem();
-        window.Notification = window.notify;
+        const notifyInstance = new NotificationSystem();
+        const w = window;
+        w.notify = notifyInstance;
+        w.Notification = notifyInstance;
     }
 })();
 //# sourceMappingURL=notification-system.js.map
