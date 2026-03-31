@@ -212,6 +212,53 @@
                 desc: 'Toast centrado en la parte superior de la pantalla.',
                 code: "notify.toastInfo('Actualización disponible.', 'Info', { position: 'top-center' });",
                 run: (done) => { notify.toastInfo('Actualización disponible.', 'Info', { position: 'top-center' }); if (done) done(); }
+            },
+            {
+                title: 'Toast — Loading → Éxito (await) ✅',
+                desc: '⚠️ IMPORTANTE — Usa await para esperar la animación de salida (~300 ms) antes de mostrar el toast siguiente. Sin await, ambos toasts se solapan brevemente.',
+                code: "// ✅ Correcto: sin solapamiento\nnotify.toastLoading('Subiendo archivo...', 'Espera');\nsetTimeout(async () => {\n  await notify.closeToastLoading(); // espera ~300ms de salida\n  notify.toastSuccess('Archivo subido correctamente.');\n}, 2500);",
+                run: (done) => {
+                    notify.toastLoading('Subiendo archivo...', 'Espera');
+                    setTimeout(async () => {
+                        await notify.closeToastLoading();
+                        notify.toastSuccess('Archivo subido correctamente.');
+                        if (done) done();
+                    }, 2500);
+                }
+            },
+            {
+                title: 'Toast — Loading → Éxito (replace) ⚡',
+                desc: 'Alternativa: replaceToastLoading() elimina el spinner al instante y muestra el resultado sin animación de salida ni hueco visual. Ideal si prefieres una transición directa.',
+                code: "// ⚡ Alternativa: reemplazo instantáneo, sin solapamiento ni hueco\nnotify.toastLoading('Subiendo archivo...', 'Espera');\nsetTimeout(() => {\n  notify.replaceToastLoading('Archivo subido correctamente.', { type: 'success', showProgress: false, duration: 1500 });\n}, 1500);",
+                run: (done) => {
+                    notify.toastLoading('Subiendo archivo...', 'Espera',{ position: 'top-center' });
+                    setTimeout(() => {
+                        notify.replaceToastLoading('Archivo subido correctamente.', {title: 'Éxito', type: 'success', showProgress: false, duration: 0, position: 'top-center' });
+                        if (done) done();
+                    }, 1500);
+                }
+            },
+            {
+                title: 'Toast — Loading → Error (sin await) ⚠️',
+                desc: '⚠️ SIN AWAIT — Ejemplo del problema: closeToastLoading() y toastError() se llaman juntos. El spinner y el error se solapan ~300ms mientras dura la animación de salida.',
+                code: "// ⚠️ Sin await: se solapan brevemente ~300ms\nnotify.toastLoading('Conectando...', 'Cargando');\nsetTimeout(() => {\n  notify.closeToastLoading(); // no se espera la salida\n  notify.toastError('Sin conexión.', 'Error'); // aparece mientras el spinner sale\n}, 2000);",
+                run: (done) => {
+                    notify.toastLoading('Conectando...', 'Cargando');
+                    setTimeout(() => {
+                        notify.closeToastLoading();
+                        notify.toastError('Sin conexión. Inténtalo de nuevo.', 'Error de red');
+                        if (done) done();
+                    }, 2000);
+                }
+            },
+            {
+                title: 'Toast — Deduplicación por ID',
+                desc: 'Haz clic varias veces seguidas: solo existe un toast; su contador se resetea en vez de crear duplicados.',
+                code: "// Aunque se llame muchas veces, solo existe un toast\nnotify.toastError('Email o contraseña incorrectos.', 'Error', {\n  id: 'login-error',\n  duration: 4000\n});",
+                run: (done) => {
+                    notify.toastError('Email o contraseña incorrectos.', 'Error', { id: 'login-error', duration: 4000 });
+                    if (done) done();
+                }
             }
         ];
 
@@ -336,18 +383,28 @@
         const tpgCodeEl = document.getElementById('tpg-code').querySelector('code');
 
         function tpgCollect() {
+            const idVal = document.getElementById('tpg-id') ? document.getElementById('tpg-id').value.trim() : '';
+            const closeableEl = document.getElementById('tpg-closeable');
             return {
                 type: document.getElementById('tpg-type').value,
                 title: document.getElementById('tpg-title').value,
                 message: document.getElementById('tpg-message').value,
                 duration: Number(document.getElementById('tpg-duration').value),
                 position: document.getElementById('tpg-position').value,
-                showProgress: document.getElementById('tpg-showProgress').value !== 'false'
+                showProgress: document.getElementById('tpg-showProgress').value !== 'false',
+                id: idVal || undefined,
+                closeable: closeableEl ? closeableEl.value !== 'false' : true
             };
         }
 
         function updateToastPlaygroundPreview() {
             const o = tpgCollect();
+            const isLoading = o.type === 'loading';
+            if (isLoading) {
+                const titlePart = o.title ? `, '${o.title.replace(/'/g, "\\'")}'` : '';
+                tpgCodeEl.textContent = `notify.toastLoading('${o.message.replace(/'/g, "\\'")}')${titlePart ? `\n// title: ${titlePart}` : ''};\n// ... operación asíncrona ...\nnotify.closeToastLoading();`;
+                return;
+            }
             const lines = [
                 `  type: '${o.type}',`
             ];
@@ -356,15 +413,21 @@
             lines.push(`  duration: ${o.duration},`);
             lines.push(`  position: '${o.position}',`);
             if (!o.showProgress) lines.push(`  showProgress: false,`);
+            if (o.id) lines.push(`  id: '${o.id.replace(/'/g, "\\'")}',`);
+            if (!o.closeable) lines.push(`  closeable: false,`);
             tpgCodeEl.textContent = `notify.toast({\n${lines.join('\n')}\n});`;
         }
 
-        ['tpg-type', 'tpg-title', 'tpg-message', 'tpg-duration', 'tpg-position', 'tpg-showProgress']
+        ['tpg-type', 'tpg-title', 'tpg-message', 'tpg-duration', 'tpg-position', 'tpg-showProgress', 'tpg-id', 'tpg-closeable']
             .forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('input', updateToastPlaygroundPreview); });
 
         tpgRunBtn.addEventListener('click', () => {
             const o = tpgCollect();
-            notify.toast({ type: o.type, title: o.title || undefined, message: o.message, duration: o.duration, position: o.position, showProgress: o.showProgress });
+            if (o.type === 'loading') {
+                notify.toastLoading(o.message, o.title || undefined);
+            } else {
+                notify.toast({ type: o.type, title: o.title || undefined, message: o.message, duration: o.duration, position: o.position, showProgress: o.showProgress, id: o.id, closeable: o.closeable });
+            }
         });
 
         tpgCopyBtn.addEventListener('click', async () => {
@@ -405,6 +468,13 @@
         document.getElementById('btn-toast-warning').addEventListener('click', () => { notify.toastWarning('Tu sesión expirará pronto.', 'Advertencia'); });
         document.getElementById('btn-toast-info').addEventListener('click', () => { notify.toastInfo('Hay una nueva actualización disponible.', 'Info'); });
         document.getElementById('btn-toast-question').addEventListener('click', () => { notify.toastQuestion('Nueva solicitud pendiente de revisión.', 'Revisión'); });
+        document.getElementById('btn-toast-loading').addEventListener('click', () => {
+            notify.toastLoading('Procesando solicitud...', 'Espera');
+            setTimeout(async () => {
+                await notify.closeToastLoading();
+                notify.toastSuccess('Operación completada.');
+            }, 3000);
+        });
 
     } // FIN initDemo
 });

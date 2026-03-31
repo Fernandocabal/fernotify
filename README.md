@@ -226,10 +226,12 @@ notify.toastQuestion('Nueva solicitud pendiente.');
 
 // Método genérico con opciones completas
 notify.toast('Mensaje aquí', {
-  type: 'success',          // 'success' | 'error' | 'warning' | 'info' | 'question'
+  type: 'success',          // 'success' | 'error' | 'warning' | 'info' | 'question' | 'loading'
   title: 'Título opcional',
   duration: 4000,           // ms hasta auto-cierre (0 = sin auto-cierre, default: 4000)
-  position: 'top-right'    // 'top-right' | 'top-left' | 'top-center' | 'bottom-right' | 'bottom-left'
+  position: 'top-right',   // 'top-right' | 'top-left' | 'top-center' | 'bottom-right' | 'bottom-left'
+  id: 'my-toast',          // ID para deduplicación (optional)
+  closeable: true           // false = oculta el botón × (default: true)
 });
 ```
 
@@ -240,6 +242,48 @@ notify.toast('Mensaje aquí', {
 - Botón × para cierre manual
 - Animación de entrada/salida suave
 - Soporte completo de dark mode
+
+### Toast de carga 🔄
+
+Muestra un toast con spinner para operaciones asíncronas. Solo puede existir uno a la vez y no se puede cerrar manualmente; ciérralo con `closeToastLoading()`.
+
+```javascript
+async function fetchData() {
+  notify.toastLoading('Obteniendo datos...', 'Cargando');
+
+  try {
+    const res = await fetch('/api/data');
+    const data = await res.json();
+    notify.closeToastLoading();
+    notify.toastSuccess('Datos cargados correctamente');
+  } catch {
+    notify.closeToastLoading();
+    notify.toastError('No se pudieron cargar los datos');
+  }
+}
+
+fetchData();
+```
+
+```javascript
+// Firma completa
+notify.toastLoading(message?, title?, options?)
+notify.closeToastLoading()
+```
+
+### Deduplicación de toasts por ID
+
+Asigna un `id` a un toast para evitar duplicados. Si ya hay un toast visible con ese ID, se resetea su cuenta regresiva en lugar de crear uno nuevo.
+
+```javascript
+// Aunque el usuario haga clic muchas veces, solo existe un toast
+button.addEventListener('click', () => {
+  notify.toastError('Email o contraseña incorrectos', 'Error', {
+    id: 'login-error',
+    duration: 4000
+  });
+});
+```
 
 ### Personalización de Animaciones
 

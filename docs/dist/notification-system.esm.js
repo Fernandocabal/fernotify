@@ -45,6 +45,7 @@ var __rest = (this && this.__rest) || function (s, e) {
                 this._lastActiveElement = null;
                 this._currentLoadingPromise = null;
                 this._toastContainers = new Map();
+                this._toastInstances = new Map();
                 this.injectStyles();
                 this.loadBoxicons();
             }
@@ -408,6 +409,7 @@ var __rest = (this && this.__rest) || function (s, e) {
             .notify-toast-icon.warning  { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
             .notify-toast-icon.info     { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
             .notify-toast-icon.question { background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%); }
+            .notify-toast-icon.loading  { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); }
 
             .notify-toast-content { flex: 1; min-width: 0; }
             .notify-toast-title {
@@ -416,11 +418,13 @@ var __rest = (this && this.__rest) || function (s, e) {
                 color: #1f2937;
                 margin-bottom: 2px;
                 line-height: 1.3;
+                cursor: default;
             }
             .notify-toast-message {
                 font-size: 13px;
                 color: #6b7280;
                 line-height: 1.5;
+                cursor: default;
             }
 
             .notify-toast-close {
@@ -443,6 +447,9 @@ var __rest = (this && this.__rest) || function (s, e) {
             }
             .notify-toast-close:hover { background: rgba(0,0,0,0.1); color: #374151; }
 
+            /* Sin botón de cierre: reducir padding derecho */
+            .notify-toast.notify-toast-no-close { padding-right: 14px; }
+
             .notify-toast-progress {
                 position: absolute;
                 bottom: 0;
@@ -456,12 +463,41 @@ var __rest = (this && this.__rest) || function (s, e) {
             .notify-toast-progress.warning  { background: #f59e0b; }
             .notify-toast-progress.info     { background: #3b82f6; }
             .notify-toast-progress.question { background: #8b5cf6; }
+            .notify-toast-progress.loading  { background: #6366f1; }
+
+            /* Spinner para toast de carga */
+            .notify-toast-spinner {
+                width: 18px;
+                height: 18px;
+                border: 2.5px solid rgba(255,255,255,0.35);
+                border-top-color: white;
+                border-radius: 50%;
+                animation: notification-spin 0.8s linear infinite;
+                flex-shrink: 0;
+            }
 
             .dark .notify-toast { background: #0f1724; box-shadow: 0 4px 24px rgba(0,0,0,0.35); }
             .dark .notify-toast-title   { color: #e6eef8; }
             .dark .notify-toast-message { color: #cbd5e1; }
             .dark .notify-toast-close   { background: rgba(255,255,255,0.06); color: #94a3b8; }
             .dark .notify-toast-close:hover { background: rgba(255,255,255,0.1); color: #e2e8f0; }
+
+            /* Respeta la preferencia de movimiento reducido del sistema */
+            @media (prefers-reduced-motion: reduce) {
+                .notify-toast {
+                    transition: opacity 0.1s ease !important;
+                    transform: none !important;
+                }
+                .notify-toast.notify-toast-visible {
+                    transform: none !important;
+                }
+                .notify-toast-spinner {
+                    animation-duration: 1.5s !important;
+                }
+                .notify-toast-progress {
+                    transition: none !important;
+                }
+            }
         `;
                 document.head.appendChild(style);
             }
@@ -471,7 +507,8 @@ var __rest = (this && this.__rest) || function (s, e) {
                     'error': '<i class="bx bx-x" aria-hidden="true"></i>',
                     'warning': '<i class="bx bx-error" aria-hidden="true"></i>',
                     'info': '<i class="bx bx-info-circle" aria-hidden="true"></i>',
-                    'question': '<i class="bx bx-question-mark" aria-hidden="true"></i>'
+                    'question': '<i class="bx bx-question-mark" aria-hidden="true"></i>',
+                    'loading': '<div class="notify-toast-spinner" aria-hidden="true"></div>'
                 };
                 return icons[type] || icons.info;
             }
@@ -969,16 +1006,27 @@ var __rest = (this && this.__rest) || function (s, e) {
                 return `${mm}:${ss}`;
             }
             showToast(message, options = {}) {
-                var _a;
+                var _a, _b;
                 const type = options.type || 'info';
                 const title = (_a = options.title) !== null && _a !== void 0 ? _a : null;
                 const duration = typeof options.duration === 'number' ? options.duration : 4000;
                 const position = options.position || 'top-right';
                 const showProgress = options.showProgress !== false;
+                const toastId = (_b = options.id) !== null && _b !== void 0 ? _b : null;
+                const closeable = options.closeable !== false;
+                // Deduplicación: si ya existe un toast con este ID, resetear su cuenta regresiva
+                if (toastId !== null) {
+                    const existing = this._toastInstances.get(toastId);
+                    if (existing) {
+                        existing.reset(duration);
+                        return;
+                    }
+                }
                 let container = this._toastContainers.get(position);
                 if (!container || !document.body.contains(container)) {
                     container = document.createElement('div');
                     container.className = `notify-toast-container notify-toast-${position}`;
+                    container.setAttribute('aria-label', 'Notificaciones');
                     document.body.appendChild(container);
                     this._toastContainers.set(position, container);
                 }
@@ -986,6 +1034,20 @@ var __rest = (this && this.__rest) || function (s, e) {
                 const isCenter = position === 'top-center';
                 const toast = document.createElement('div');
                 toast.className = 'notify-toast';
+                if (!closeable) {
+                    toast.classList.add('notify-toast-no-close');
+                }
+                // Accesibilidad: role + aria-live según la urgencia del tipo
+                // role="alert" implica aria-live="assertive" + aria-atomic="true" → lector lo interrumpe
+                // role="status" implica aria-live="polite" + aria-atomic="true" → lector espera pausa
+                if (type === 'error' || type === 'warning') {
+                    toast.setAttribute('role', 'alert');
+                }
+                else {
+                    toast.setAttribute('role', 'status');
+                }
+                toast.setAttribute('aria-atomic', 'true');
+                toast.setAttribute('aria-live', type === 'error' || type === 'warning' ? 'assertive' : 'polite');
                 const iconEl = document.createElement('div');
                 iconEl.className = `notify-toast-icon ${type}`;
                 iconEl.innerHTML = this.getIcon(type);
@@ -1001,17 +1063,22 @@ var __rest = (this && this.__rest) || function (s, e) {
                 msgEl.className = 'notify-toast-message';
                 msgEl.textContent = message;
                 contentEl.appendChild(msgEl);
-                const closeBtn = document.createElement('button');
-                closeBtn.className = 'notify-toast-close';
-                closeBtn.setAttribute('aria-label', 'Cerrar notificación');
-                closeBtn.innerHTML = '&times;';
                 toast.appendChild(iconEl);
                 toast.appendChild(contentEl);
-                toast.appendChild(closeBtn);
+                if (closeable) {
+                    const closeBtn = document.createElement('button');
+                    closeBtn.className = 'notify-toast-close';
+                    closeBtn.setAttribute('aria-label', 'Cerrar notificación');
+                    closeBtn.innerHTML = '&times;';
+                    closeBtn.addEventListener('click', removeToast);
+                    toast.appendChild(closeBtn);
+                }
                 let progressEl = null;
                 if (duration > 0 && showProgress) {
                     progressEl = document.createElement('div');
                     progressEl.className = `notify-toast-progress ${type}`;
+                    progressEl.setAttribute('role', 'progressbar');
+                    progressEl.setAttribute('aria-hidden', 'true'); // decorativo: el timer no añade info que el usuario necesite leer
                     toast.appendChild(progressEl);
                 }
                 if (isBottom || isCenter) {
@@ -1024,19 +1091,34 @@ var __rest = (this && this.__rest) || function (s, e) {
                 let timerId = null;
                 let remaining = duration;
                 let timerStartedAt = 0;
-                const removeToast = () => {
+                function removeToast() {
                     if (dismissed)
-                        return;
+                        return Promise.resolve();
                     dismissed = true;
+                    // Si el foco estaba dentro del toast, sacarlo antes de que el nodo desaparezca
+                    // para evitar que el foco se pierda silenciosamente en el documento
+                    if (toast.contains(document.activeElement)) {
+                        try {
+                            document.activeElement.blur();
+                        }
+                        catch (e) { }
+                    }
                     toast.classList.remove('notify-toast-visible');
-                    setTimeout(() => {
-                        if (toast.parentNode)
-                            toast.parentNode.removeChild(toast);
-                    }, 300);
-                };
+                    return new Promise(resolve => {
+                        setTimeout(() => {
+                            if (toast.parentNode)
+                                toast.parentNode.removeChild(toast);
+                            resolve();
+                        }, 300);
+                    });
+                }
                 const startCountdown = (ms) => {
                     timerStartedAt = Date.now();
-                    timerId = setTimeout(removeToast, ms);
+                    timerId = setTimeout(() => {
+                        if (toastId !== null)
+                            this._toastInstances.delete(toastId);
+                        removeToast();
+                    }, ms);
                     if (progressEl) {
                         progressEl.style.transition = `width ${ms}ms linear`;
                         progressEl.style.width = '0%';
@@ -1060,7 +1142,46 @@ var __rest = (this && this.__rest) || function (s, e) {
                         return;
                     startCountdown(remaining);
                 };
-                closeBtn.addEventListener('click', removeToast);
+                const resetCountdown = (newDuration) => {
+                    if (dismissed)
+                        return;
+                    if (timerId !== null) {
+                        clearTimeout(timerId);
+                        timerId = null;
+                    }
+                    remaining = newDuration;
+                    if (newDuration > 0) {
+                        if (progressEl) {
+                            progressEl.style.transition = 'none';
+                            progressEl.style.width = '100%';
+                            // Forzar reflow para que la transición se aplique desde el inicio
+                            void progressEl.offsetWidth;
+                        }
+                        startCountdown(newDuration);
+                    }
+                    else if (progressEl) {
+                        progressEl.style.transition = 'none';
+                        progressEl.style.width = '100%';
+                    }
+                };
+                if (toastId !== null) {
+                    const silentDismiss = () => {
+                        if (dismissed)
+                            return;
+                        dismissed = true;
+                        if (timerId !== null)
+                            clearTimeout(timerId);
+                        if (toast.contains(document.activeElement)) {
+                            try {
+                                document.activeElement.blur();
+                            }
+                            catch (e) { }
+                        }
+                        if (toast.parentNode)
+                            toast.parentNode.removeChild(toast);
+                    };
+                    this._toastInstances.set(toastId, { reset: resetCountdown, dismiss: removeToast, _silentDismiss: silentDismiss });
+                }
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
                         toast.classList.add('notify-toast-visible');
@@ -1069,7 +1190,7 @@ var __rest = (this && this.__rest) || function (s, e) {
                         }
                     });
                 });
-                if (duration > 0) {
+                if (duration > 0 && closeable) {
                     toast.addEventListener('mouseenter', pauseCountdown);
                     toast.addEventListener('mouseleave', resumeCountdown);
                 }
@@ -1097,6 +1218,38 @@ var __rest = (this && this.__rest) || function (s, e) {
             }
             toastQuestion(message, title, options = {}) {
                 this.showToast(message, Object.assign(Object.assign({}, options), { type: 'question', title: title !== null && title !== void 0 ? title : options.title }));
+            }
+            /**
+             * Muestra un toast de carga con spinner.
+             * - No se puede cerrar manualmente (closeable: false por defecto).
+             * - No tiene cuenta regresiva (duration: 0 por defecto).
+             * - Solo puede existir uno a la vez (id '__loading__').
+             * Ciérralo con notify.closeToastLoading().
+             */
+            toastLoading(message = 'Cargando...', title, options = {}) {
+                this.showToast(message, Object.assign(Object.assign({ position: 'top-right' }, options), { type: 'loading', title: title !== null && title !== void 0 ? title : options.title, id: '__loading__', closeable: false, duration: 0, showProgress: false }));
+            }
+            /** Cierra el toast de carga activo (si existe). Devuelve una Promise que resuelve cuando la animación de salida termina (≈300 ms). */
+            closeToastLoading() {
+                const entry = this._toastInstances.get('__loading__');
+                if (entry) {
+                    this._toastInstances.delete('__loading__');
+                    return entry.dismiss();
+                }
+                return Promise.resolve();
+            }
+            /**
+             * Reemplaza el toast de carga activo por un toast de resultado en el mismo lugar,
+             * sin animación de salida/entrada — no hay solapamiento ni hueco visual.
+             * Si no existe un toast de carga activo, simplemente muestra un toast normal.
+             */
+            replaceToastLoading(message, options = {}) {
+                const entry = this._toastInstances.get('__loading__');
+                if (entry) {
+                    this._toastInstances.delete('__loading__');
+                    entry._silentDismiss();
+                }
+                this.showToast(message, options);
             }
         }
         const notifyInstance = new NotificationSystem();

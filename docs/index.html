@@ -8,13 +8,20 @@
         content="Herramienta de notificaciones para gestionar y enviar notificaciones push en aplicaciones web.">
     <meta name="author" content="Fernandocabal">
     <meta name="theme-color" content="#6D28D9">
+    <link rel="canonical" href="https://fernotify.pages.dev/" />
     <!-- Open Graph / Social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="FerNotify" />
     <meta property="og:title" content="FerNotify — Sistema de Notificaciones" />
     <meta property="og:description"
         content="Biblioteca ligera para mostrar modales y notificaciones con animaciones fluidas. Soporta contenido HTML, formularios y accesibilidad." />
     <meta property="og:url" content="https://fernotify.pages.dev/" />
     <meta property="og:image" content="https://fernotify.pages.dev/assets/img/logoMeta.webp" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@fernandocab_" />
+    <meta name="twitter:title" content="FerNotify — Sistema de Notificaciones" />
+    <meta name="twitter:description"
+        content="Biblioteca ligera para mostrar modales y notificaciones con animaciones fluidas." />
 
     <!-- Icons & Manifest -->
     <link rel="icon" type="image/webp" href="assets/img/logoMeta.webp">
@@ -22,7 +29,43 @@
     <link rel="mask-icon" href="assets/icons/safari-pinned-tab.svg" color="#6D28D9">
     <meta name="msapplication-TileColor" content="#6D28D9" />
     <meta name="msapplication-config" content="browserconfig.xml" />
-    <title>Fernotify | Documentación</title>
+    <title>FerNotify — Sistema de Notificaciones JavaScript</title>
+    <!-- JSON-LD: Site identity for Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "FerNotify",
+      "url": "https://fernotify.pages.dev/",
+      "description": "Biblioteca JavaScript ligera para mostrar modales y notificaciones con animaciones fluidas.",
+      "author": {
+        "@type": "Person",
+        "name": "Fernandocabal",
+        "url": "https://github.com/Fernandocabal"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "FerNotify",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Web",
+      "url": "https://fernotify.pages.dev/",
+      "description": "Biblioteca JavaScript ligera para mostrar modales y notificaciones con animaciones fluidas.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Fernandocabal",
+        "url": "https://github.com/Fernandocabal"
+      }
+    }
+    </script>
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -129,6 +172,8 @@
                         class="px-3 py-1 rounded border border-sky-500 text-sky-600 dark:text-sky-400 text-sm">Info</button>
                     <button id="btn-toast-question"
                         class="px-3 py-1 rounded border border-violet-500 text-violet-600 dark:text-violet-400 text-sm">Pregunta</button>
+                    <button id="btn-toast-loading"
+                        class="px-3 py-1 rounded border border-indigo-500 text-indigo-600 dark:text-indigo-400 text-sm">Loading</button>
                 </div>
             </div>
         </header>
@@ -244,6 +289,258 @@ notify.success('¡Instalado vía npm!');</code></pre>
                 </div>
         </section>
 
+        <!-- React / Frameworks Section -->
+        <section class="mb-8">
+            <h2 class="text-lg font-semibold mb-3 text-slate-800 dark:text-slate-100">⚛️ Uso con React / Frameworks</h2>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                FerNotify opera completamente fuera del árbol de React — manipula <code
+                    class="px-1 py-0.5 bg-slate-100 dark:bg-slate-800 rounded border text-xs">document.body</code>
+                directamente.
+                No hay conflicto con el Virtual DOM. Sin embargo, hay patrones recomendados según el entorno.
+            </p>
+
+            <!-- Tabs -->
+            <div class="mb-1 flex flex-wrap gap-2" id="react-tabs">
+                <button onclick="showReactTab('vite')" id="tab-vite"
+                    class="react-tab px-3 py-1.5 rounded text-sm font-medium bg-indigo-600 text-white">React +
+                    Vite</button>
+                <button onclick="showReactTab('hook')" id="tab-hook"
+                    class="react-tab px-3 py-1.5 rounded text-sm font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300">Hook
+                    personalizado</button>
+                <button onclick="showReactTab('next')" id="tab-next"
+                    class="react-tab px-3 py-1.5 rounded text-sm font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300">Next.js
+                    (SSR)</button>
+                <button onclick="showReactTab('context')" id="tab-context"
+                    class="react-tab px-3 py-1.5 rounded text-sm font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300">Context
+                    / Singleton</button>
+            </div>
+
+            <!-- Tab: React + Vite -->
+            <div id="react-panel-vite"
+                class="react-panel p-4 sm:p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow-sm space-y-4">
+                <div
+                    class="p-3 bg-green-50 dark:bg-green-900/20 rounded border border-green-200 dark:border-green-800 text-sm text-green-800 dark:text-green-300">
+                    <strong>✅ Caso más simple y recomendado.</strong> En React + Vite (solo cliente) no hay
+                    restricciones: importa, instancia y usa donde quieras.
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">1. Instalar</p>
+                    <pre
+                        class="bg-slate-50 dark:bg-slate-900 p-3 rounded text-xs overflow-auto"><code class="text-slate-900 dark:text-slate-100">npm install fernotify</code></pre>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">2. Crear instancia
+                        singleton en un módulo separado — <code
+                            class="px-1 bg-slate-100 dark:bg-slate-700 rounded">src/lib/notify.ts</code></p>
+                    <pre class="bg-slate-50 dark:bg-slate-900 p-3 rounded text-xs overflow-auto"><code class="text-slate-900 dark:text-slate-100">import NotificationSystem from 'fernotify';
+
+// Una sola instancia para toda la app
+const notify = new NotificationSystem();
+export default notify;</code></pre>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">3. Usar en cualquier
+                        componente</p>
+                    <pre class="bg-slate-50 dark:bg-slate-900 p-3 rounded text-xs overflow-auto"><code class="text-slate-900 dark:text-slate-100">import notify from '@/lib/notify';
+
+export function SaveButton() {
+  const handleSave = async () => {
+    notify.toastLoading('Guardando...', 'Espera');
+    try {
+      await fetch('/api/save', { method: 'POST', body: JSON.stringify(data) });
+      await notify.closeToastLoading();
+      notify.toastSuccess('Guardado correctamente');
+    } catch {
+      await notify.closeToastLoading();
+      notify.toastError('Error al guardar');
+    }
+  };
+
+  return &lt;button onClick={handleSave}&gt;Guardar&lt;/button&gt;;
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Tab: Hook personalizado -->
+            <div id="react-panel-hook"
+                class="react-panel hidden p-4 sm:p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow-sm space-y-4">
+                <div
+                    class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800 text-sm text-blue-800 dark:text-blue-300">
+                    <strong>💡 Útil</strong> si prefieres el patrón de hooks o necesitas testear componentes con mocks
+                    de notify.
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1"><code
+                            class="px-1 bg-slate-100 dark:bg-slate-700 rounded">src/hooks/useNotify.ts</code></p>
+                    <pre class="bg-slate-50 dark:bg-slate-900 p-3 rounded text-xs overflow-auto"><code class="text-slate-900 dark:text-slate-100">import { useRef } from 'react';
+import NotificationSystem from 'fernotify';
+
+// La instancia se crea una sola vez por componente y no se pierde entre renders
+export function useNotify() {
+  const ref = useRef&lt;NotificationSystem | null&gt;(null);
+  if (!ref.current) ref.current = new NotificationSystem();
+  return ref.current;
+}</code></pre>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Uso en componente</p>
+                    <pre class="bg-slate-50 dark:bg-slate-900 p-3 rounded text-xs overflow-auto"><code class="text-slate-900 dark:text-slate-100">import { useNotify } from '@/hooks/useNotify';
+
+export function LoginForm() {
+  const notify = useNotify();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    notify.toastLoading('Iniciando sesión...');
+    try {
+      await login(credentials);
+      await notify.closeToastLoading();
+      notify.toastSuccess('¡Bienvenido!');
+    } catch {
+      // replaceToastLoading: sin animación de salida, reemplazo directo
+      notify.replaceToastLoading('Credenciales incorrectas', { type: 'error' });
+    }
+  };
+}</code></pre>
+                </div>
+                <div
+                    class="p-3 bg-amber-50 dark:bg-slate-700 rounded border border-amber-200 dark:border-slate-600 text-sm text-slate-700 dark:text-slate-300">
+                    <strong>⚠️ Nota:</strong> si varios componentes usan <code
+                        class="px-1 bg-white dark:bg-slate-900 rounded border text-xs">useNotify()</code> se crean
+                    instancias separadas. Para una instancia única en toda la app, usa el patrón singleton de
+                    <strong>src/lib/notify.ts</strong> o el Context del siguiente tab.
+                </div>
+            </div>
+
+            <!-- Tab: Next.js SSR -->
+            <div id="react-panel-next"
+                class="react-panel hidden p-4 sm:p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow-sm space-y-4">
+                <div
+                    class="p-3 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800 text-sm text-amber-800 dark:text-amber-300">
+                    <strong>⚠️ SSR: <code class="px-1 bg-white dark:bg-slate-900 rounded border text-xs">window</code> y
+                        <code class="px-1 bg-white dark:bg-slate-900 rounded border text-xs">document</code> no existen
+                        en el servidor.</strong>
+                    Importar FerNotify en el nivel de módulo fallará durante el render de servidor. Usa cualquiera de
+                    estos patrones:
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Opción A — Import dinámico
+                        con <code class="px-1 bg-slate-100 dark:bg-slate-700 rounded">next/dynamic</code> (recomendado
+                        para páginas / layouts)</p>
+                    <pre class="bg-slate-50 dark:bg-slate-900 p-3 rounded text-xs overflow-auto"><code class="text-slate-900 dark:text-slate-100">// src/lib/notify.ts
+let notify: InstanceType&lt;typeof import('fernotify').default&gt; | null = null;
+
+export async function getNotify() {
+  if (typeof window === 'undefined') return null; // SSR: no-op
+  if (!notify) {
+    const { default: NotificationSystem } = await import('fernotify');
+    notify = new NotificationSystem();
+  }
+  return notify;
+}</code></pre>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Opción B — Guard de cliente
+                        en componentes</p>
+                    <pre class="bg-slate-50 dark:bg-slate-900 p-3 rounded text-xs overflow-auto"><code class="text-slate-900 dark:text-slate-100">// Solo se ejecuta en el cliente
+'use client'; // App Router
+
+import { useEffect, useRef } from 'react';
+import type NotificationSystem from 'fernotify';
+
+export function useNotify() {
+  const ref = useRef&lt;InstanceType&lt;typeof NotificationSystem&gt; | null&gt;(null);
+
+  useEffect(() => {
+    // useEffect solo corre en el cliente, nunca en SSR
+    import('fernotify').then(({ default: NS }) => {
+      ref.current = new NS();
+    });
+  }, []);
+
+  return ref;
+}</code></pre>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Opción C — Componente
+                        marcado con <code class="px-1 bg-slate-100 dark:bg-slate-700 rounded">'use client'</code> (App
+                        Router)</p>
+                    <pre class="bg-slate-50 dark:bg-slate-900 p-3 rounded text-xs overflow-auto"><code class="text-slate-900 dark:text-slate-100">'use client';
+
+import NotificationSystem from 'fernotify';
+// ✅ Seguro: este archivo solo se procesa en el cliente
+const notify = new NotificationSystem();
+export default notify;</code></pre>
+                </div>
+            </div>
+
+            <!-- Tab: Context / Singleton -->
+            <div id="react-panel-context"
+                class="react-panel hidden p-4 sm:p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow-sm space-y-4">
+                <div
+                    class="p-3 bg-purple-50 dark:bg-purple-900/20 rounded border border-purple-200 dark:border-purple-800 text-sm text-purple-800 dark:text-purple-300">
+                    <strong>🏗️ Para apps grandes</strong> que quieren inyectar una instancia mockeable en tests o
+                    compartir la misma instancia por toda la app vía Context.
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1"><code
+                            class="px-1 bg-slate-100 dark:bg-slate-700 rounded">src/context/NotifyContext.tsx</code></p>
+                    <pre class="bg-slate-50 dark:bg-slate-900 p-3 rounded text-xs overflow-auto"><code class="text-slate-900 dark:text-slate-100">import { createContext, useContext, useRef } from 'react';
+import NotificationSystem from 'fernotify';
+
+const NotifyContext = createContext&lt;NotificationSystem | null&gt;(null);
+
+export function NotifyProvider({ children }: { children: React.ReactNode }) {
+  const ref = useRef&lt;NotificationSystem | null&gt;(null);
+  if (!ref.current) ref.current = new NotificationSystem();
+
+  return (
+    &lt;NotifyContext.Provider value={ref.current}&gt;
+      {children}
+    &lt;/NotifyContext.Provider&gt;
+  );
+}
+
+export function useNotify() {
+  const ctx = useContext(NotifyContext);
+  if (!ctx) throw new Error('useNotify debe usarse dentro de &lt;NotifyProvider&gt;');
+  return ctx;
+}</code></pre>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Envolver la app en <code
+                            class="px-1 bg-slate-100 dark:bg-slate-700 rounded">main.tsx</code></p>
+                    <pre class="bg-slate-50 dark:bg-slate-900 p-3 rounded text-xs overflow-auto"><code class="text-slate-900 dark:text-slate-100">import { NotifyProvider } from '@/context/NotifyContext';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  &lt;NotifyProvider&gt;
+    &lt;App /&gt;
+  &lt;/NotifyProvider&gt;
+);</code></pre>
+                </div>
+                <div
+                    class="p-3 bg-slate-50 dark:bg-slate-700 rounded border border-slate-200 dark:border-slate-600 text-sm text-slate-700 dark:text-slate-300">
+                    <strong>💡 Ventaja:</strong> en tests puedes envolver con un <code
+                        class="px-1 bg-white dark:bg-slate-900 rounded border text-xs">NotifyProvider</code> que provea
+                    un mock de la instancia, sin tocar la implementación.
+                </div>
+            </div>
+
+            <script>
+                function showReactTab(tab) {
+                    document.querySelectorAll('.react-panel').forEach(p => p.classList.add('hidden'));
+                    document.querySelectorAll('.react-tab').forEach(b => {
+                        b.classList.remove('bg-indigo-600', 'text-white');
+                        b.classList.add('bg-white', 'dark:bg-slate-800', 'border', 'border-slate-200', 'dark:border-slate-600', 'text-slate-700', 'dark:text-slate-300');
+                    });
+                    document.getElementById('react-panel-' + tab).classList.remove('hidden');
+                    const btn = document.getElementById('tab-' + tab);
+                    btn.classList.add('bg-indigo-600', 'text-white');
+                    btn.classList.remove('bg-white', 'dark:bg-slate-800', 'border', 'border-slate-200', 'dark:border-slate-600', 'text-slate-700', 'dark:text-slate-300');
+                }
+            </script>
+        </section>
+
         <section class="mb-8">
             <h2 class="text-lg font-semibold mb-3 text-slate-800 dark:text-slate-100">🍞 Toast — Notificaciones no
                 bloqueantes</h2>
@@ -267,7 +564,11 @@ notify.success('¡Instalado vía npm!');</code></pre>
 notify.toastError('Ocurrió un error');
 notify.toastWarning('Revisa los datos');
 notify.toastInfo('Nueva actualización');
-notify.toastQuestion('¿Continuar?');</code></pre>
+notify.toastQuestion('¿Continuar?');
+
+// Carga con spinner (no se puede cerrar manualmente)
+notify.toastLoading('Enviando...', 'Espera');
+notify.closeToastLoading(); // cierra el spinner</code></pre>
                             </div>
                             <div
                                 class="p-3 bg-white dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-700">
@@ -276,10 +577,27 @@ notify.toastQuestion('¿Continuar?');</code></pre>
                                 <pre class="text-xs text-slate-700 dark:text-slate-300 overflow-auto"><code>notify.toast('Mensaje', {
   type: 'success',
   title: 'Título opcional',
-  duration: 6000,  // ms (0 = sin auto-cierre)
-  position: 'bottom-right'
+  duration: 6000,   // 0 = sin auto-cierre
+  position: 'bottom-right',
+  id: 'mi-toast',  // deduplicación
+  closeable: false  // oculta el botón ×
 });</code></pre>
                             </div>
+                        </div>
+                        <div
+                            class="p-3 bg-indigo-50 dark:bg-slate-800 rounded text-sm text-slate-700 dark:text-slate-300 mb-4">
+                            <strong>&#x1F504; Toast de carga:</strong>
+                            <code
+                                class="mx-1 px-1 py-0.5 bg-white dark:bg-slate-900 rounded border text-xs">toastLoading(msg, title?)</code>
+                            muestra un spinner no cerrable. Solo puede existir uno a la vez. Ciérralo con
+                            <code
+                                class="mx-1 px-1 py-0.5 bg-white dark:bg-slate-900 rounded border text-xs">closeToastLoading()</code>
+                            para mostrar el resultado de la operación.
+                            <br class="mt-1">
+                            <strong class="mt-1 block">🏷️ Deduplicación:</strong> asigna un
+                            <code class="mx-1 px-1 py-0.5 bg-white dark:bg-slate-900 rounded border text-xs">id</code>
+                            para que, si el toast ya está visible (ej. botón clicado repetidamente), se resetee su
+                            cuenta regresiva en lugar de crear un duplicado.
                         </div>
                         <div
                             class="p-3 bg-violet-100 dark:bg-slate-800 rounded text-sm text-slate-700 dark:text-slate-300">
@@ -302,7 +620,8 @@ notify.toastQuestion('¿Continuar?');</code></pre>
 
         <section class="mb-8">
             <h2 class="text-lg font-semibold mb-3 text-slate-800 dark:text-slate-100">Ejemplos — Notificaciones</h2>
-            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Demostraciones de modales de notificación con uno o varios botones.</p>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Demostraciones de modales de notificación con uno
+                o varios botones.</p>
             <div id="examples-notify" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </section>
 
@@ -402,7 +721,8 @@ notify.toastQuestion('¿Continuar?');</code></pre>
 
         <section class="mb-8">
             <h2 class="text-lg font-semibold mb-3 text-slate-800 dark:text-slate-100">Ejemplos — Toast</h2>
-            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Notificaciones no bloqueantes, apilables y con pausa al pasar el mouse.</p>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Notificaciones no bloqueantes, apilables y con
+                pausa al pasar el mouse.</p>
             <div id="examples-toast" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </section>
 
@@ -418,6 +738,7 @@ notify.toastQuestion('¿Continuar?');</code></pre>
                             <option value="warning">warning</option>
                             <option value="info">info</option>
                             <option value="question">question</option>
+                            <option value="loading">loading</option>
                         </select>
                     </label>
                     <label class="block">Título
@@ -434,6 +755,13 @@ notify.toastQuestion('¿Continuar?');</code></pre>
                         <input id="tpg-duration" type="number" value="4000"
                             class="w-full border rounded px-2 py-1 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500 transition">
                     </label>
+                    <label class="block">ID (deduplicación)
+                        <input id="tpg-id"
+                            class="w-full border rounded px-2 py-1 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500 transition"
+                            placeholder="Dejar vacío para no deduplicar">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Si ya hay un toast con este ID, se
+                            resetea su contador.</p>
+                    </label>
                 </div>
                 <div class="space-y-2">
                     <label class="block">Posición
@@ -448,6 +776,13 @@ notify.toastQuestion('¿Continuar?');</code></pre>
                     </label>
                     <label class="block">Mostrar barra de progreso
                         <select id="tpg-showProgress"
+                            class="w-full border rounded px-2 py-1 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500 transition">
+                            <option value="true">true</option>
+                            <option value="false">false</option>
+                        </select>
+                    </label>
+                    <label class="block">Closeable (mostrar botón ×)
+                        <select id="tpg-closeable"
                             class="w-full border rounded px-2 py-1 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500 transition">
                             <option value="true">true</option>
                             <option value="false">false</option>
@@ -501,39 +836,39 @@ notify.toastQuestion('¿Continuar?');</code></pre>
     <!-- Dependencias necesarias -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script>
-            // Sistema robusto de carga que funciona en local y producción
-            (function () {
-                function loadNotificationSystem() {
-                    // Si ya está cargado, no hacer nada
-                    if (typeof notify !== 'undefined' && typeof notify.success === 'function') {
-                        return;
-                    }
-
-                    // Intentar cargar desde ruta relativa (funciona en local y producción)
-                    const script = document.createElement('script');
-                    script.src = './dist/notification-system.js';
-                    script.onerror = function () {
-                        console.warn('⚠️ No se pudo cargar FerNotify desde ./dist/notification-system.js, usando CDN...');
-                        // Fallback a CDN
-                        const scriptCDN = document.createElement('script');
-                        scriptCDN.src = 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.js';
-                        scriptCDN.onerror = () => {
-                            console.error('❌ Error: No se pudo cargar FerNotify desde CDN. Verifica tu conexión a internet.');
-                        };
-                        scriptCDN.onload = () => {
-                            console.log('✅ FerNotify cargado desde CDN');
-                        };
-                        document.head.appendChild(scriptCDN);
-                    };
-                    script.onload = () => {
-                        console.log('✅ FerNotify cargado desde servidor local');
-                    };
-                    document.head.appendChild(script);
+        // Sistema robusto de carga que funciona en local y producción
+        (function () {
+            function loadNotificationSystem() {
+                // Si ya está cargado, no hacer nada
+                if (typeof notify !== 'undefined' && typeof notify.success === 'function') {
+                    return;
                 }
 
-                // Cargar la librería
-                loadNotificationSystem();
-            })();
+                // Intentar cargar desde ruta relativa (funciona en local y producción)
+                const script = document.createElement('script');
+                script.src = './dist/notification-system.js';
+                script.onerror = function () {
+                    console.warn('⚠️ No se pudo cargar FerNotify desde ./dist/notification-system.js, usando CDN...');
+                    // Fallback a CDN
+                    const scriptCDN = document.createElement('script');
+                    scriptCDN.src = 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.js';
+                    scriptCDN.onerror = () => {
+                        console.error('❌ Error: No se pudo cargar FerNotify desde CDN. Verifica tu conexión a internet.');
+                    };
+                    scriptCDN.onload = () => {
+                        console.log('✅ FerNotify cargado desde CDN');
+                    };
+                    document.head.appendChild(scriptCDN);
+                };
+                script.onload = () => {
+                    console.log('✅ FerNotify cargado desde servidor local');
+                };
+                document.head.appendChild(script);
+            }
+
+            // Cargar la librería
+            loadNotificationSystem();
+        })();
     </script>
     <script>
         // Hero animations and theme toggle (depends on anime.js)
