@@ -212,6 +212,35 @@ notify.loading('Cargando...', 'Espera', {
 });
 ```
 
+### Toast — Notificaciones no bloqueantes 🍞
+
+Los toasts aparecen en la esquina de la pantalla **sin interrumpir al usuario**, se apilan automáticamente y se cierran solos (o con el botón ×).
+
+```javascript
+// Métodos abreviados (mismo patrón que los modales)
+notify.toastSuccess('Cambios guardados.', 'Título opcional');
+notify.toastError('Error al procesar.', 'Error');
+notify.toastWarning('Revisa los datos.');
+notify.toastInfo('Nueva versión disponible.');
+notify.toastQuestion('Nueva solicitud pendiente.');
+
+// Método genérico con opciones completas
+notify.toast('Mensaje aquí', {
+  type: 'success',          // 'success' | 'error' | 'warning' | 'info' | 'question'
+  title: 'Título opcional',
+  duration: 4000,           // ms hasta auto-cierre (0 = sin auto-cierre, default: 4000)
+  position: 'top-right'    // 'top-right' | 'top-left' | 'top-center' | 'bottom-right' | 'bottom-left'
+});
+```
+
+**Características:**
+- Sin overlay — no bloquea la UI
+- Apilables: se acumulan uno bajo otro
+- Progress bar que indica el tiempo restante
+- Botón × para cierre manual
+- Animación de entrada/salida suave
+- Soporte completo de dark mode
+
 ### Personalización de Animaciones
 
 ```javascript

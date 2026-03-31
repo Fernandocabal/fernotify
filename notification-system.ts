@@ -1,4 +1,4 @@
-type NotifyType = 'success' | 'error' | 'warning' | 'info' | string;
+type NotifyType = 'success' | 'error' | 'warning' | 'info' | 'question' | string;
 
 interface ButtonOptions {
     text?: string;
@@ -52,6 +52,15 @@ interface OverlayMeta {
     _escHandler?: (e: KeyboardEvent) => void;
 }
 
+interface ToastOptions {
+    type?: NotifyType;
+    title?: string;
+    message?: string;
+    duration?: number;
+    position?: 'top-right' | 'top-left' | 'top-center' | 'bottom-right' | 'bottom-left';
+    showProgress?: boolean;
+}
+
 (function ensureAnimeDependency() {
     if (typeof anime !== 'undefined') {
         initFerNotify();
@@ -70,11 +79,13 @@ interface OverlayMeta {
             currentNotification: HTMLDivElement | null;
             _lastActiveElement: HTMLElement | null;
             _currentLoadingPromise: Promise<void> | null;
+            _toastContainers: Map<string, HTMLDivElement>;
 
             constructor() {
                 this.currentNotification = null;
                 this._lastActiveElement = null;
                 this._currentLoadingPromise = null;
+                this._toastContainers = new Map();
                 this.injectStyles();
                 this.loadBoxicons();
             }
@@ -383,6 +394,117 @@ interface OverlayMeta {
             .dark .notification-loading-text {
                 color: #cbd5e1;
             }
+
+            /* ==================== Toast ==================== */
+            .notify-toast-container {
+                position: fixed;
+                z-index: 10000;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                pointer-events: none;
+                width: 360px;
+                max-width: calc(100vw - 40px);
+            }
+            .notify-toast-top-right  { top: 20px; right: 20px; }
+            .notify-toast-top-left   { top: 20px; left: 20px; }
+            .notify-toast-top-center { top: 20px; left: 50%; transform: translateX(-50%); }
+            .notify-toast-bottom-right { bottom: 20px; right: 20px; flex-direction: column-reverse; }
+            .notify-toast-bottom-left  { bottom: 20px; left: 20px; flex-direction: column-reverse; }
+
+            .notify-toast {
+                background: white;
+                border-radius: 12px;
+                padding: 14px 40px 14px 14px;
+                box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                pointer-events: auto;
+                position: relative;
+                overflow: hidden;
+                opacity: 0;
+                transform: translateX(30px);
+                transition: opacity 0.25s ease, transform 0.25s ease;
+            }
+            .notify-toast-top-left .notify-toast,
+            .notify-toast-bottom-left .notify-toast { transform: translateX(-30px); }
+            .notify-toast-top-center .notify-toast { transform: translateY(-20px); }
+            .notify-toast.notify-toast-visible {
+                opacity: 1;
+                transform: translateX(0) translateY(0) !important;
+            }
+
+            .notify-toast-icon {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                flex-shrink: 0;
+                color: white;
+            }
+            .notify-toast-icon.success  { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+            .notify-toast-icon.error    { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+            .notify-toast-icon.warning  { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+            .notify-toast-icon.info     { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+            .notify-toast-icon.question { background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%); }
+
+            .notify-toast-content { flex: 1; min-width: 0; }
+            .notify-toast-title {
+                font-size: 14px;
+                font-weight: 700;
+                color: #1f2937;
+                margin-bottom: 2px;
+                line-height: 1.3;
+            }
+            .notify-toast-message {
+                font-size: 13px;
+                color: #6b7280;
+                line-height: 1.5;
+            }
+
+            .notify-toast-close {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                width: 24px;
+                height: 24px;
+                border-radius: 6px;
+                border: none;
+                background: rgba(0,0,0,0.06);
+                color: #6b7280;
+                cursor: pointer;
+                font-size: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                line-height: 1;
+                padding: 0;
+            }
+            .notify-toast-close:hover { background: rgba(0,0,0,0.1); color: #374151; }
+
+            .notify-toast-progress {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                height: 3px;
+                width: 100%;
+                border-radius: 0 0 0 12px;
+            }
+            .notify-toast-progress.success  { background: #10b981; }
+            .notify-toast-progress.error    { background: #ef4444; }
+            .notify-toast-progress.warning  { background: #f59e0b; }
+            .notify-toast-progress.info     { background: #3b82f6; }
+            .notify-toast-progress.question { background: #8b5cf6; }
+
+            .dark .notify-toast { background: #0f1724; box-shadow: 0 4px 24px rgba(0,0,0,0.35); }
+            .dark .notify-toast-title   { color: #e6eef8; }
+            .dark .notify-toast-message { color: #cbd5e1; }
+            .dark .notify-toast-close   { background: rgba(255,255,255,0.06); color: #94a3b8; }
+            .dark .notify-toast-close:hover { background: rgba(255,255,255,0.1); color: #e2e8f0; }
         `;
                 document.head.appendChild(style);
             }
@@ -934,6 +1056,154 @@ interface OverlayMeta {
                 const mm = Math.floor(s / 60).toString().padStart(2, '0');
                 const ss = (s % 60).toString().padStart(2, '0');
                 return `${mm}:${ss}`;
+            }
+
+            showToast(message: string, options: ToastOptions = {}): void {
+                const type = options.type || 'info';
+                const title = options.title ?? null;
+                const duration = typeof options.duration === 'number' ? options.duration : 4000;
+                const position = options.position || 'top-right';
+                const showProgress = options.showProgress !== false;
+
+                let container = this._toastContainers.get(position);
+                if (!container || !document.body.contains(container)) {
+                    container = document.createElement('div');
+                    container.className = `notify-toast-container notify-toast-${position}`;
+                    document.body.appendChild(container);
+                    this._toastContainers.set(position, container);
+                }
+
+                const isBottom = position.startsWith('bottom');
+                const isCenter = position === 'top-center';
+                const toast = document.createElement('div');
+                toast.className = 'notify-toast';
+
+                const iconEl = document.createElement('div');
+                iconEl.className = `notify-toast-icon ${type}`;
+                iconEl.innerHTML = this.getIcon(type);
+
+                const contentEl = document.createElement('div');
+                contentEl.className = 'notify-toast-content';
+
+                if (title) {
+                    const titleEl = document.createElement('div');
+                    titleEl.className = 'notify-toast-title';
+                    titleEl.textContent = title;
+                    contentEl.appendChild(titleEl);
+                }
+
+                const msgEl = document.createElement('div');
+                msgEl.className = 'notify-toast-message';
+                msgEl.textContent = message;
+                contentEl.appendChild(msgEl);
+
+                const closeBtn = document.createElement('button');
+                closeBtn.className = 'notify-toast-close';
+                closeBtn.setAttribute('aria-label', 'Cerrar notificación');
+                closeBtn.innerHTML = '&times;';
+
+                toast.appendChild(iconEl);
+                toast.appendChild(contentEl);
+                toast.appendChild(closeBtn);
+
+                let progressEl: HTMLDivElement | null = null;
+                if (duration > 0 && showProgress) {
+                    progressEl = document.createElement('div');
+                    progressEl.className = `notify-toast-progress ${type}`;
+                    toast.appendChild(progressEl);
+                }
+
+                if (isBottom || isCenter) {
+                    container.appendChild(toast);
+                } else {
+                    container.insertBefore(toast, container.firstChild);
+                }
+
+                let dismissed = false;
+                let timerId: ReturnType<typeof setTimeout> | null = null;
+                let remaining = duration;
+                let timerStartedAt = 0;
+
+                const removeToast = () => {
+                    if (dismissed) return;
+                    dismissed = true;
+                    toast.classList.remove('notify-toast-visible');
+                    setTimeout(() => {
+                        if (toast.parentNode) toast.parentNode.removeChild(toast);
+                    }, 300);
+                };
+
+                const startCountdown = (ms: number) => {
+                    timerStartedAt = Date.now();
+                    timerId = setTimeout(removeToast, ms);
+                    if (progressEl) {
+                        progressEl.style.transition = `width ${ms}ms linear`;
+                        progressEl.style.width = '0%';
+                    }
+                };
+
+                const pauseCountdown = () => {
+                    if (dismissed || timerId === null) return;
+                    clearTimeout(timerId);
+                    timerId = null;
+                    const elapsed = Date.now() - timerStartedAt;
+                    remaining = Math.max(0, remaining - elapsed);
+                    if (progressEl) {
+                        const pct = (remaining / duration) * 100;
+                        progressEl.style.transition = 'none';
+                        progressEl.style.width = `${pct}%`;
+                    }
+                };
+
+                const resumeCountdown = () => {
+                    if (dismissed || remaining <= 0) return;
+                    startCountdown(remaining);
+                };
+
+                closeBtn.addEventListener('click', removeToast);
+
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        toast.classList.add('notify-toast-visible');
+                        if (duration > 0) {
+                            startCountdown(duration);
+                        }
+                    });
+                });
+
+                if (duration > 0) {
+                    toast.addEventListener('mouseenter', pauseCountdown);
+                    toast.addEventListener('mouseleave', resumeCountdown);
+                }
+            }
+
+            toast(messageOrOptions: string | ToastOptions, options: ToastOptions = {}): void {
+                if (typeof messageOrOptions === 'string') {
+                    this.showToast(messageOrOptions, options);
+                } else {
+                    const { message = '', ...rest } = messageOrOptions;
+                    this.showToast(message, rest);
+                }
+            }
+
+            toastSuccess(message: string, title?: string, options: ToastOptions = {}): void {
+                this.showToast(message, { ...options, type: 'success', title: title ?? options.title });
+            }
+
+            toastError(message: string, title?: string, options: ToastOptions = {}): void {
+                this.showToast(message, { ...options, type: 'error', title: title ?? options.title });
+            }
+
+            toastWarning(message: string, title?: string, options: ToastOptions = {}): void {
+                this.showToast(message, { ...options, type: 'warning', title: title ?? options.title });
+            }
+
+            toastInfo(message: string, title?: string, options: ToastOptions = {}): void {
+                this.showToast(message, { ...options, type: 'info', title: title ?? options.title });
+            }
+
+            toastQuestion(message: string, title?: string, options: ToastOptions = {}): void {
+                this.showToast(message, { ...options, type: 'question', title: title ?? options.title });
             }
         }
 
