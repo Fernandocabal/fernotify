@@ -513,7 +513,7 @@ var __rest = (this && this.__rest) || function (s, e) {
                     'error': 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
                     'warning': 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
                     'info': 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                    'question': 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)'
+                    'question': 'linear-gradient(135deg, #8b5cf6 0%, #8b5cf6 100%)'
                 };
                 return gradients[type] || gradients.info;
             }
@@ -523,7 +523,7 @@ var __rest = (this && this.__rest) || function (s, e) {
                     'error': 'rgba(239, 68, 68, 0)',
                     'warning': 'rgba(245, 159, 11, 0)',
                     'info': 'rgba(59, 131, 246, 0)',
-                    'question': 'rgba(108, 99, 245, 0)'
+                    'question': 'rgba(139, 92, 246, 0)'
                 };
                 return shadows[type] || shadows.info;
             }

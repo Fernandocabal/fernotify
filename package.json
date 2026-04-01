@@ -1,6 +1,6 @@
 {
     "name": "fernotify",
-    "version": "1.2.11",
+    "version": "1.2.12",
     "description": "Sistema moderno de notificaciones con animaciones fluidas y soporte completo de Dark Mode",
     "main": "dist/notification-system.js",
     "module": "dist/notification-system.esm.js",
