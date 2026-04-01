@@ -4,14 +4,17 @@
     "description": "Sistema moderno de notificaciones con animaciones fluidas y soporte completo de Dark Mode",
     "main": "dist/notification-system.js",
     "module": "dist/notification-system.esm.js",
+    "types": "types/index.d.ts",
     "exports": {
         ".": {
+            "types": "./types/index.d.ts",
             "import": "./dist/notification-system.esm.js",
             "require": "./dist/notification-system.js"
         }
     },
     "files": [
         "dist/",
+        "types/",
         "LICENSE",
         "README.md",
         "NOTIFICATION_SYSTEM_GUIDE.md"
