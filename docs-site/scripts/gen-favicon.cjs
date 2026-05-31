@@ -14,7 +14,10 @@ const DEST_ICO_ROOT   = path.join(DOCS_ROOT, 'favicon.ico');
 const DEST_ICO_ASSETS = path.join(DOCS_ROOT, 'assets/favicon.ico');
 const DEST_PNG        = path.join(DOCS_ROOT, 'assets/favicon-32x32.png');
 
-const FAVICON_TAG = '<link rel="icon" type="image/x-icon" href="./favicon.ico">\n    <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">';
+function faviconTag(htmlFile) {
+  const rel = path.relative(path.dirname(htmlFile), DEST_ICO_ROOT).replace(/\\/g, '/');
+  return `<link rel="icon" type="image/x-icon" href="${rel}">\n    <link rel="shortcut icon" type="image/x-icon" href="${rel}">`;
+}
 
 async function main() {
   if (!fs.existsSync(SRC)) {
@@ -38,7 +41,8 @@ async function main() {
   for (const file of htmlFiles) {
     let html = fs.readFileSync(file, 'utf8');
     if (html.includes('rel="icon"') || html.includes("rel='icon'")) continue; // already has it
-    html = html.replace('</head>', `    ${FAVICON_TAG}\n  </head>`);
+    const tag = faviconTag(file);
+    html = html.replace('</head>', `    ${tag}\n  </head>`);
     fs.writeFileSync(file, html, 'utf8');
     injected++;
   }
