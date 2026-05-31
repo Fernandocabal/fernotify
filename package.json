@@ -1,7 +1,7 @@
 {
     "name": "fernotify",
-    "version": "1.2.12",
-    "description": "Sistema moderno de notificaciones con animaciones fluidas y soporte completo de Dark Mode",
+    "version": "2.0.0",
+    "description": "Sistema moderno de notificaciones con animaciones fluidas, Dark Mode y cero dependencias externas",
     "main": "dist/notification-system.js",
     "module": "dist/notification-system.esm.js",
     "types": "types/index.d.ts",
@@ -23,10 +23,11 @@
         "notifications",
         "notificaciones",
         "toast",
-        "anime",
         "dark-mode",
         "alerts",
-        "ui"
+        "ui",
+        "zero-dependency",
+        "modal"
     ],
     "author": "Fernando Caballero <info@ferchudev.com.py>",
     "license": "MIT",
@@ -46,7 +47,9 @@
         "build": "npm run ts:build && node build.js",
         "build:watch": "node -e \"require('fs').watch('notification-system.js', () => require('child_process').exec('node build.js'))\"",
         "prepublishOnly": "npm run build",
-        "publish-npm": "npm publish --access public"
+        "publish-npm": "npm publish --access public",
+        "docs:dev": "cd docs-site && npm run dev",
+        "docs:build": "cd docs-site && npm run build"
     },
     "devDependencies": {
         "terser": "^5.46.0",

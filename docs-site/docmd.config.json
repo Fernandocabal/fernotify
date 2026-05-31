@@ -1,0 +1,75 @@
+{
+  "title": "FerNotify",
+  "url": "https://fernotify.pages.dev",
+  "src": "docs",
+  "out": "../docs",
+  "engine": "js",
+  "layout": {
+    "spa": true,
+    "header": {
+      "enabled": true
+    },
+    "sidebar": {
+      "collapsible": true,
+      "defaultCollapsed": false
+    },
+    "optionsMenu": {
+      "position": "sidebar-top",
+      "components": {
+        "search": true,
+        "themeSwitch": true
+      }
+    },
+    "footer": {
+      "style": "minimal",
+      "content": "© 2026 FerNotify by Fernandocabal — MIT License.",
+      "branding": true
+    }
+  },
+  "theme": {
+    "name": "default",
+    "appearance": "system",
+    "codeHighlight": true
+  },
+  "minify": true,
+  "autoTitleFromH1": true,
+  "copyCode": true,
+  "pageNavigation": true,
+  "versions": {
+    "current": "v2",
+    "all": [
+      { "id": "v2", "label": "v2.0.0", "dir": "docs" },
+      { "id": "v1", "label": "v1.x (legacy)", "dir": "docs-v1" }
+    ]
+  },
+  "navigation": [
+    { "title": "Introducción", "path": "/", "icon": "home" },
+    {
+      "title": "Guía",
+      "icon": "book",
+      "collapsible": false,
+      "children": [
+        { "title": "Instalación", "path": "/installation", "icon": "download" },
+        { "title": "Uso Básico", "path": "/usage", "icon": "play" },
+        { "title": "Migración v1 → v2", "path": "/migration", "icon": "arrow-right" }
+      ]
+    },
+    {
+      "title": "API",
+      "icon": "code",
+      "collapsible": false,
+      "children": [
+        { "title": "Modal (notify)", "path": "/api-modal", "icon": "layers" },
+        { "title": "Toast", "path": "/api-toast", "icon": "bell" }
+      ]
+    },
+    { "title": "Ejemplos", "path": "/examples", "icon": "star" },
+    { "title": "Demo Interactiva", "path": "/demo", "icon": "play" },
+    { "title": "GitHub", "path": "https://github.com/Fernandocabal/fernotify", "icon": "github", "external": true }
+  ],
+  "plugins": {
+    "seo": {
+      "defaultDescription": "FerNotify — Sistema de notificaciones moderno para web. Cero dependencias externas, animaciones CSS nativas, modales y toasts. Compatible con CDN, npm y React/TypeScript."
+    }
+  }
+}

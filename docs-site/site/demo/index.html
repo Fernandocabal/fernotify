@@ -1,0 +1,1446 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.5.x">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_DEFAULT_MODE || 'light';
+    var theme = localValue ? localValue : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    
+    <script>
+      var root = "../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      var siteRoot = "../";
+      if (siteRoot && !siteRoot.endsWith('/')) siteRoot += '/';
+      if (siteRoot === '') siteRoot = './';
+      window.DOCMD_SITE_ROOT = siteRoot;
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <title>
+      Demo Interactiva : FerNotify
+    </title>
+    
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mpuaj63m">
+    
+    <link rel="stylesheet" href="../assets/css/docmd-git.css?v=mpuaj63m">
+    
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mpuaj63m" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mpuaj63m" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="Prueba FerNotify en tiempo real — modales, toasts y playground sin instalar nada.">
+<link rel="canonical" href="https://fernotify.pages.dev/demo/">
+<meta property="og:title" content="Demo Interactiva - FerNotify">
+<meta property="og:description" content="Prueba FerNotify en tiempo real — modales, toasts y playground sin instalar nada.">
+<meta property="og:url" content="https://fernotify.pages.dev/demo/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Demo Interactiva - FerNotify">
+<meta name="twitter:description" content="Prueba FerNotify en tiempo real — modales, toasts y playground sin instalar nada.">
+
+
+
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mpuaj63m" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mpuaj63m" >
+
+    
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_DEFAULT_MODE || 'light';
+    var theme = localValue ? localValue : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/demo.md">
+
+    <a href="#main-content" class="skip-link">skipToContent</a>
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+            <h1><a href="../">
+                FerNotify
+              </a></h1>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+            <div class="sidebar-options-wrapper">
+              
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="toggleTheme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+            </div>
+          
+          
+            <div class="sidebar-version-wrapper">
+              
+
+
+<div class="docmd-version-dropdown">
+  <button class="version-dropdown-toggle" aria-expanded="false" aria-label="selectVersion">
+    
+<svg class="lucide-icon icon-git-branch version-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-git-branch"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 6a9 9 0 0 0-9 9V3" />
+  <circle cx="18" cy="6" r="3" />
+  <circle cx="6" cy="18" r="3" />
+</svg>
+
+    <span class="version-label">
+      v2.0.0
+    </span>
+    
+<svg class="lucide-icon icon-chevron-down version-chevron" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+
+  </button>
+  <ul class="version-dropdown-menu">
+    
+    <li>
+      <a href="/" 
+         class="version-dropdown-item active" 
+         data-spa-ignore
+         data-version-root="/">
+        v2.0.0 <span class="version-latest-badge">latest</span>
+        
+          
+<svg class="lucide-icon icon-check version-check" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-check"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 6 9 17l-5-5" />
+</svg>
+
+        
+      </a>
+    </li>
+    
+    <li>
+      <a href="/v1/" 
+         class="version-dropdown-item " 
+         data-spa-ignore
+         data-version-root="/v1/">
+        v1.x (legacy)
+        
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+            </div>
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="mainNavigation">
+  <ul>
+    
+      <li class="" >
+      
+        <a href="../" class=" "
+          >
+           
+<svg class="lucide-icon icon-home " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-house"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Introducción
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-book " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Guía
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../installation/" class=" "
+          >
+           
+<svg class="lucide-icon icon-download " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-download"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15V3" />
+  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+  <path d="m7 10 5 5 5-5" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Instalación
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../usage/" class=" "
+          >
+           
+<svg class="lucide-icon icon-play " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-play"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Uso Básico
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../migration/" class=" "
+          >
+           
+<svg class="lucide-icon icon-arrow-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Migración v1 → v2
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-code " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-code"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m16 18 6-6-6-6" />
+  <path d="m8 6-6 6 6 6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            API
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../api-modal/" class=" "
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Modal (notify)
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../api-toast/" class=" "
+          >
+           
+<svg class="lucide-icon icon-bell " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-bell"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M10.268 21a2 2 0 0 0 3.464 0" />
+  <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Toast
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../examples/" class=" "
+          >
+           
+<svg class="lucide-icon icon-star " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-star"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Ejemplos
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../demo/" class="active "
+          >
+           
+<svg class="lucide-icon icon-play " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-play"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Demo Interactiva
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="https://github.com/Fernandocabal/fernotify" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+<svg class="lucide-icon icon-github " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-github"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+  <path d="M9 18c-4.51 2-5-2-7-2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            GitHub
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      <div class="main-content-wrapper">
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="toggleSidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  Demo Interactiva
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                
+                  <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                    <ol>
+                      
+                      
+                        <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                          
+                            <span>Demo Interactiva</span>
+                          
+                          
+                        </li>
+                      
+                    </ol>
+                  </nav>
+                
+                
+                <h1 id="demo-interactiva">Demo Interactiva</h1>
+<p>Prueba todos los tipos de modales y toasts directamente en tu navegador. Sin instalar nada.</p>
+<!-- FerNotify v2 -->
+<script src="/assets/notification-system.js"></script>
+<style>
+  @keyframes fn-spin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
+  .fn-demo-section { margin-bottom: 2rem; }
+  .fn-btn-group { display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:.5rem; }
+  .fn-btn {
+    padding:.375rem .75rem; border-radius:.375rem; font-size:.875rem; font-weight:500;
+    border:none; cursor:pointer; transition:opacity .15s;
+  }
+  .fn-btn:hover { opacity:.85; }
+  .fn-btn:disabled { opacity:.5; cursor:not-allowed; }
+  .fn-btn-outline {
+    padding:.375rem .75rem; border-radius:.375rem; font-size:.875rem; font-weight:500;
+    background:transparent; cursor:pointer; transition:background .15s;
+    border: 1px solid currentColor;
+  }
+  .fn-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  @media(max-width:640px){ .fn-grid-2 { grid-template-columns:1fr; } }
+  .fn-card {
+    padding:1rem; border-radius:.5rem; border:1px solid #e2e8f0;
+    background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.06);
+  }
+  .fn-card-title { font-weight:600; font-size:.875rem; margin-bottom:.25rem; }
+  .fn-card-desc  { font-size:.8125rem; color:#64748b; margin-bottom:.75rem; }
+  .fn-card-actions { display:flex; gap:.5rem; margin-bottom:.75rem; }
+  .fn-pre {
+    background:#f8fafc; border:1px solid #e2e8f0; border-radius:.375rem;
+    padding:.75rem; font-size:.75rem; white-space:pre-wrap; word-break:break-all;
+    overflow:auto; max-height:120px; margin:0;
+  }
+  .fn-label { display:block; font-size:.8125rem; font-weight:500; margin-bottom:.75rem; }
+  .fn-label span { display:block; margin-bottom:.25rem; color:#64748b; }
+  .fn-input, .fn-select, .fn-textarea {
+    width:100%; padding:.375rem .5rem; border-radius:.375rem; font-size:.8125rem;
+    border:1px solid #cbd5e1; background:#fff; color:#0f172a;
+    transition:border-color .15s; outline:none; box-sizing:border-box;
+  }
+  .fn-input:focus, .fn-select:focus, .fn-textarea:focus { border-color:#6366f1; }
+  .fn-pg-code {
+    background:#f8fafc; border:1px solid #e2e8f0; border-radius:.375rem;
+    padding:.75rem; font-size:.75rem; white-space:pre-wrap; word-break:break-all;
+    overflow:auto; margin-top:.75rem;
+  }
+  /* dark mode — docmd usa data-theme="dark" en el <html> */
+  [data-theme="dark"] .fn-card { background:#1e293b; border-color:#334155; }
+  [data-theme="dark"] .fn-card-desc { color:#94a3b8; }
+  [data-theme="dark"] .fn-pre { background:#0f172a; border-color:#334155; color:#e2e8f0; }
+  [data-theme="dark"] .fn-input, [data-theme="dark"] .fn-select, [data-theme="dark"] .fn-textarea {
+    background:#1e293b; border-color:#475569; color:#f1f5f9;
+  }
+  [data-theme="dark"] .fn-pg-code { background:#0f172a; border-color:#334155; color:#e2e8f0; }
+  [data-theme="dark"] .fn-label span { color:#94a3b8; }
+</style>
+<hr>
+<h2 id="demo-interactiva-acceso-rápido" class="docmd-heading"><a href="#demo-interactiva-acceso-rápido" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Acceso rápido</h2>
+<div class="fn-demo-section">
+  <div class="fn-btn-group">
+    <button class="fn-btn" style="background:#22c55e;color:#fff;" onclick="notify.success('Operación completada exitosamente.','¡Éxito!')">Éxito</button>
+    <button class="fn-btn" style="background:#ef4444;color:#fff;" onclick="notify.error('Ha ocurrido un error inesperado.','Error')">Error</button>
+    <button class="fn-btn" style="background:#f59e0b;color:#fff;" onclick="notify.warning('Revisa los datos antes de continuar.','Advertencia')">Warning</button>
+    <button class="fn-btn" style="background:#0ea5e9;color:#fff;" onclick="notify.info('Esta es una notificación informativa.','Información')">Info</button>
+    <button class="fn-btn" style="background:#8b5cf6;color:#fff;" onclick="notify.question('¿Estás seguro?','Confirmar',{confirmText:'Sí',cancelText:'No',onConfirm:()=>notify.success('Confirmado'),onCancel:()=>notify.info('Cancelado'),allowOutsideClick:false})">Pregunta</button>
+    <button class="fn-btn" style="background:#6366f1;color:#fff;" id="fn-btn-loading">Loading 3s</button>
+    <button class="fn-btn" style="background:#d97706;color:#fff;" id="fn-btn-confirm">Confirm delete</button>
+  </div>
+  <div class="fn-btn-group" style="align-items:center;">
+    <span style="font-size:.75rem;color:#64748b;font-weight:500;">Toasts →</span>
+    <button class="fn-btn-outline" style="color:#16a34a;" onclick="notify.toastSuccess('Cambios guardados correctamente.','¡Guardado!')">Éxito</button>
+    <button class="fn-btn-outline" style="color:#dc2626;" onclick="notify.toastError('No se pudo conectar al servidor.','Error')">Error</button>
+    <button class="fn-btn-outline" style="color:#d97706;" onclick="notify.toastWarning('Tu sesión expirará pronto.','Advertencia')">Warning</button>
+    <button class="fn-btn-outline" style="color:#0284c7;" onclick="notify.toastInfo('Hay una nueva actualización disponible.','Info')">Info</button>
+    <button class="fn-btn-outline" style="color:#7c3aed;" onclick="notify.toastQuestion('Nueva solicitud pendiente.','Revisión')">Pregunta</button>
+    <button class="fn-btn-outline" style="color:#4f46e5;" id="fn-btn-toast-loading">Loading → Éxito</button>
+  </div>
+</div>
+<hr>
+<h2 id="demo-interactiva-ejemplos-modales" class="docmd-heading"><a href="#demo-interactiva-ejemplos-modales" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Ejemplos — Modales</h2>
+<div id="fn-examples-notify" class="fn-grid-2"></div>
+<hr>
+<h2 id="demo-interactiva-playground-modales" class="docmd-heading"><a href="#demo-interactiva-playground-modales" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Playground — Modales</h2>
+<div class="fn-grid-2" style="margin-bottom:1rem;">
+  <div>
+    <label class="fn-label"><span>Tipo</span>
+      <select id="fn-pg-type" class="fn-select">
+        <option value="success">success</option>
+        <option value="error">error</option>
+        <option value="warning">warning</option>
+        <option value="info">info</option>
+        <option value="question">question</option>
+      </select>
+    </label>
+    <label class="fn-label"><span>Título</span>
+      <input id="fn-pg-title" class="fn-input" value="Título de prueba">
+    </label>
+    <label class="fn-label"><span>Mensaje</span>
+      <input id="fn-pg-message" class="fn-input" value="Mensaje de ejemplo">
+    </label>
+    <label class="fn-label"><span>Texto del botón</span>
+      <input id="fn-pg-buttonText" class="fn-input" value="Aceptar">
+    </label>
+    <label class="fn-label"><span>Botones JSON (opcional)</span>
+      <textarea id="fn-pg-buttons" class="fn-textarea" rows="2" placeholder='[{"text":"Cancelar"},{"text":"OK","color":"#10b981"}]'></textarea>
+    </label>
+    <label class="fn-label"><span>Timer (ms, 0 = sin auto-cierre)</span>
+      <input id="fn-pg-timer" type="number" value="0" class="fn-input">
+    </label>
+    <label class="fn-label"><span>Mostrar botón X</span>
+      <select id="fn-pg-showCloseButton" class="fn-select">
+        <option value="false">false</option>
+        <option value="true">true</option>
+      </select>
+    </label>
+  </div>
+  <div>
+    <label class="fn-label"><span>Overlay Opacity</span>
+      <input id="fn-pg-overlayOpacity" type="number" step="0.1" min="0" max="1" value="0.85" class="fn-input">
+    </label>
+    <label class="fn-label"><span>Overlay Duration (ms)</span>
+      <input id="fn-pg-overlayDuration" type="number" value="200" class="fn-input">
+    </label>
+    <label class="fn-label"><span>Box Duration (ms)</span>
+      <input id="fn-pg-boxDuration" type="number" value="250" class="fn-input">
+    </label>
+    <label class="fn-label"><span>Box Start Scale</span>
+      <input id="fn-pg-boxStartScale" type="number" step="0.1" value="0.8" class="fn-input">
+    </label>
+    <label class="fn-label"><span>Icon Rotate (deg)</span>
+      <input id="fn-pg-iconRotate" type="number" value="0" class="fn-input">
+    </label>
+    <label class="fn-label"><span>Allow Outside Click</span>
+      <select id="fn-pg-allowOutsideClick" class="fn-select">
+        <option value="true">true</option>
+        <option value="false">false</option>
+      </select>
+    </label>
+    <label class="fn-label"><span>Allow Escape Key</span>
+      <select id="fn-pg-allowEscapeKey" class="fn-select">
+        <option value="true">true</option>
+        <option value="false">false</option>
+      </select>
+    </label>
+  </div>
+</div>
+<div class="fn-btn-group">
+  <button class="fn-btn" style="background:#6366f1;color:#fff;" id="fn-pg-run">Ejecutar</button>
+  <button class="fn-btn" style="background:#e2e8f0;color:#0f172a;" id="fn-pg-copy">Copiar código</button>
+</div>
+<pre class="fn-pg-code" id="fn-pg-code"><code></code></pre>
+<hr>
+<h2 id="demo-interactiva-ejemplos-toast" class="docmd-heading"><a href="#demo-interactiva-ejemplos-toast" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Ejemplos — Toast</h2>
+<div id="fn-examples-toast" class="fn-grid-2"></div>
+<hr>
+<h2 id="demo-interactiva-playground-toast" class="docmd-heading"><a href="#demo-interactiva-playground-toast" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Playground — Toast</h2>
+<div class="fn-grid-2" style="margin-bottom:1rem;">
+  <div>
+    <label class="fn-label"><span>Tipo</span>
+      <select id="fn-tpg-type" class="fn-select">
+        <option value="success">success</option>
+        <option value="error">error</option>
+        <option value="warning">warning</option>
+        <option value="info">info</option>
+        <option value="question">question</option>
+        <option value="loading">loading</option>
+      </select>
+    </label>
+    <label class="fn-label"><span>Título</span>
+      <input id="fn-tpg-title" class="fn-input" value="Título toast">
+    </label>
+    <label class="fn-label"><span>Mensaje</span>
+      <input id="fn-tpg-message" class="fn-input" value="Mensaje de toast de ejemplo">
+    </label>
+    <label class="fn-label"><span>Duration (ms) — 0 sin auto-cierre</span>
+      <input id="fn-tpg-duration" type="number" value="4000" class="fn-input">
+    </label>
+    <label class="fn-label"><span>ID (deduplicación)</span>
+      <input id="fn-tpg-id" class="fn-input" placeholder="Vacío = sin deduplicar">
+    </label>
+  </div>
+  <div>
+    <label class="fn-label"><span>Posición</span>
+      <select id="fn-tpg-position" class="fn-select">
+        <option value="top-right">top-right</option>
+        <option value="top-left">top-left</option>
+        <option value="top-center">top-center</option>
+        <option value="bottom-right">bottom-right</option>
+        <option value="bottom-left">bottom-left</option>
+      </select>
+    </label>
+    <label class="fn-label"><span>Barra de progreso</span>
+      <select id="fn-tpg-showProgress" class="fn-select">
+        <option value="true">true</option>
+        <option value="false">false</option>
+      </select>
+    </label>
+    <label class="fn-label"><span>Closeable (botón ×)</span>
+      <select id="fn-tpg-closeable" class="fn-select">
+        <option value="true">true</option>
+        <option value="false">false</option>
+      </select>
+    </label>
+  </div>
+</div>
+<div class="fn-btn-group">
+  <button class="fn-btn" style="background:#7c3aed;color:#fff;" id="fn-tpg-run">Ejecutar Toast</button>
+  <button class="fn-btn" style="background:#e2e8f0;color:#0f172a;" id="fn-tpg-copy">Copiar código</button>
+</div>
+<pre class="fn-pg-code" id="fn-tpg-code"><code></code></pre>
+<!-- Template oculto para tarjetas de ejemplo -->
+<template id="fn-example-template">
+  <div class="fn-card">
+    <div class="fn-card-title"></div>
+    <div class="fn-card-desc"></div>
+    <div class="fn-card-actions">
+      <button class="fn-btn fn-copy-btn" style="background:#e2e8f0;color:#0f172a;">Copiar</button>
+      <button class="fn-btn fn-run-btn"  style="background:#6366f1;color:#fff;">Ejecutar</button>
+    </div>
+    <pre class="fn-pre"><code class="fn-code"></code></pre>
+  </div>
+</template>
+<script>
+(function () {
+  // — Datos de ejemplos de modales —
+  const examplesNotify = [
+    { title:'Éxito básico', desc:'Helper rápido para success.', code:"notify.success('Operación completada.');", run:(done)=>{ notify.success('Operación completada exitosamente.',null,{onClose:done}); } },
+    { title:'Error con título', desc:'Notificación de error con título.', code:"notify.error('Ha ocurrido un error.','Error de Conexión');", run:(done)=>{ notify.error('Ha ocurrido un error.','Error de Conexión',{onClose:done}); } },
+    { title:'Advertencia con timer', desc:'Se cierra automáticamente a los 5 s.', code:"notify.show({\n  type:'warning',\n  title:'Advertencia',\n  message:'¿Estás seguro?',\n  buttonText:'Sí, continuar',\n  timer:5000\n});", run:(done)=>{ notify.show({type:'warning',title:'Advertencia',message:'¿Estás seguro de continuar?',buttonText:'Sí, continuar',timer:5000,onClose:done}); } },
+    { title:'Pregunta (question)', desc:'Con botones confirmar / cancelar.', code:"notify.question('¿Deseas continuar?','Confirmar',{\n  confirmText:'Sí', cancelText:'No',\n  onConfirm:()=>notify.success('Confirmado'),\n  onCancel:()=>notify.info('Cancelado')\n});", run:(done)=>{ notify.question('¿Deseas continuar?','Confirmar',{confirmText:'Sí',cancelText:'No',onConfirm:()=>{notify.success('Continúa...',null,{onClose:done});},onCancel:()=>{notify.info('Cancelado',null,{onClose:done});}}); } },
+    { title:'Confirmación (dos botones)', desc:'Array de botones personalizados.', code:"notify.show({\n  type:'warning',\n  title:'¿Eliminar registro?',\n  message:'Esta acción no se puede deshacer.',\n  buttons:[\n    {text:'Cancelar'},\n    {text:'Eliminar',color:'#ef4444',\n     onClick:()=>console.log('eliminado')}\n  ],\n  allowOutsideClick:false\n});", run:(done)=>{ notify.show({type:'warning',title:'¿Eliminar registro?',message:'Esta acción no se puede deshacer.',buttons:[{text:'Cancelar',color:'#6b7280',onClick:done},{text:'Eliminar',color:'#ef4444',onClick:()=>{notify.success('Eliminado',null,{onClose:done});}}],allowOutsideClick:false}); } },
+    { title:'Auto-cierre (sin botón)', desc:'Se cierra sola en 3 s.', code:"notify.info('Se cierra sola.','Info',{\n  hideButton:true,\n  timer:3000\n});", run:(done)=>{ notify.info('Esta notificación se cierra sola.','Info',{hideButton:true,timer:3000,onClose:done}); } },
+    { title:'Botón X (showCloseButton)', desc:'Cierre manual con botón de esquina.', code:"notify.show({\n  type:'info',\n  title:'Con botón X',\n  message:'Cierra con la X.',\n  showCloseButton:true,\n  hideButton:true\n});", run:(done)=>{ notify.show({type:'info',title:'Con botón X',message:'Puedes cerrar con el botón de la esquina.',showCloseButton:true,hideButton:true,onClose:done}); } },
+    { title:'Formulario (content)', desc:'Modal con contenido DOM dinámico.', code:"const form = document.createElement('form');\nform.innerHTML = '<label>Nombre:<br><input type=\"text\"></label>';\nnotify.show({title:'Formulario',content:form,\n  allowOutsideClick:false,showCloseButton:true});", run:(done)=>{ const form=document.createElement('form'); form.innerHTML='<label>Nombre:<br><input id="fn-form-name" type="text" style="margin-top:6px"></label><div style="margin-top:12px"><button type="submit" style="padding:6px 14px;background:#6366f1;color:white;border:none;border-radius:6px;cursor:pointer">Enviar</button></div>'; form.addEventListener('submit',(e)=>{e.preventDefault();const v=form.querySelector('#fn-form-name').value;notify.close();notify.success('Nombre: '+(v||'(vacío)'),null,{onClose:done});});notify.show({title:'Formulario',content:form,allowOutsideClick:false,showCloseButton:true,onClose:done}); } },
+    { title:'Modal fijo', desc:'Solo cierra con el botón (no ESC, no click fuera).', code:"notify.show({\n  type:'error',\n  message:'Solo cierra con el botón.',\n  allowEscapeKey:false,\n  allowOutsideClick:false,\n  buttonText:'Cerrar'\n});", run:(done)=>{ notify.show({type:'error',message:'Solo cierra con el botón.',allowEscapeKey:false,allowOutsideClick:false,buttonText:'Cerrar',onClose:done}); } },
+    { title:'Quick Zoom', desc:'Animación de entrada rápida con zoom.', code:"notify.show({\n  type:'success',\n  message:'Zoom rápido',\n  anim:{boxDuration:120,overlayDuration:80,boxStartScale:0.6}\n});", run:(done)=>{ notify.show({type:'success',message:'Zoom rápido',anim:{boxDuration:120,overlayDuration:80,boxStartScale:0.6},onClose:done}); } },
+    { title:'Slow Fade', desc:'Aparición lenta y suave.', code:"notify.show({\n  type:'info',\n  message:'Aparece lento',\n  anim:{overlayDuration:500,boxDuration:600,boxEasing:'easeOutQuart'}\n});", run:(done)=>{ notify.show({type:'info',message:'Aparece lento',anim:{overlayDuration:500,boxDuration:600,boxEasing:'easeOutQuart'},onClose:done}); } },
+    { title:'Loading → Éxito', desc:'Spinner de carga que se cierra y muestra resultado.', code:"notify.loading('Procesando...','Espera');\nsetTimeout(()=>{\n  notify.closeLoading();\n  notify.success('Datos cargados');\n},2000);", run:(done)=>{ notify.loading('Obteniendo datos...','Cargando'); setTimeout(()=>{ notify.closeLoading(); notify.success('Datos cargados correctamente',null,{onClose:done}); },2000); } },
+  ];
+
+  // — Datos de ejemplos de toast —
+  const examplesToast = [
+    { title:'Toast — Éxito', desc:'Auto-cierre en 4 s.', code:"notify.toastSuccess('Cambios guardados.','¡Guardado!');", run:(done)=>{ notify.toastSuccess('Cambios guardados correctamente.','¡Guardado!'); if(done)done(); } },
+    { title:'Toast — Error', desc:'Con duración personalizada de 6 s.', code:"notify.toastError('Error de conexión.','Error',{duration:6000});", run:(done)=>{ notify.toastError('No se pudo conectar al servidor.','Error de red',{duration:6000}); if(done)done(); } },
+    { title:'Toast — Acumular varios', desc:'3 toasts seguidos para ver el apilamiento.', code:"notify.toastSuccess('Archivo subido.');\nsetTimeout(()=>notify.toastInfo('Procesando...'),500);\nsetTimeout(()=>notify.toastWarning('Espacio casi agotado.'),1000);", run:(done)=>{ notify.toastSuccess('Archivo subido.'); setTimeout(()=>notify.toastInfo('Procesando...'),500); setTimeout(()=>{ notify.toastWarning('Espacio casi agotado.'); if(done)done(); },1000); } },
+    { title:'Toast — Sin auto-cierre', desc:'Permanece hasta que el usuario lo cierra (duration:0).', code:"notify.toast({type:'info',title:'Persistente',message:'No se cierra sola.',duration:0});", run:(done)=>{ notify.toast({type:'info',title:'Persistente',message:'Esta notificación no se cierra sola.',duration:0}); if(done)done(); } },
+    { title:'Toast — Pausa en hover', desc:'Pasa el mouse sobre el toast para detener el contador.', code:"notify.toastInfo('Pasa el mouse para pausar.','Hover',{duration:8000});", run:(done)=>{ notify.toastInfo('Pasa el mouse encima para pausar el timer.','Hover',{duration:8000}); if(done)done(); } },
+    { title:'Toast — top-left', desc:'Posicionado en esquina superior izquierda.', code:"notify.toastQuestion('Nueva solicitud.','Revisión',{position:'top-left'});", run:(done)=>{ notify.toastQuestion('Nueva solicitud pendiente.','Revisión',{position:'top-left'}); if(done)done(); } },
+    { title:'Toast — top-center', desc:'Centrado en la parte superior de la pantalla.', code:"notify.toastInfo('Actualización disponible.','Info',{position:'top-center'});", run:(done)=>{ notify.toastInfo('Actualización disponible.','Info',{position:'top-center'}); if(done)done(); } },
+    { title:'Toast — Loading → Éxito (await) ✅', desc:'Usa await para evitar solapamiento visual entre spinner y el siguiente toast.', code:"notify.toastLoading('Subiendo archivo...','Espera');\nsetTimeout(async()=>{\n  await notify.closeToastLoading();\n  notify.toastSuccess('Archivo subido.');\n},2500);", run:(done)=>{ notify.toastLoading('Subiendo archivo...','Espera'); setTimeout(async()=>{ await notify.closeToastLoading(); notify.toastSuccess('Archivo subido correctamente.'); if(done)done(); },2500); } },
+    { title:'Toast — Replace ⚡', desc:'replaceToastLoading() sustituye el spinner al instante, sin animación de salida.', code:"notify.toastLoading('Subiendo...','Espera');\nsetTimeout(()=>{\n  notify.replaceToastLoading('Subido.',{type:'success'});\n},1500);", run:(done)=>{ notify.toastLoading('Subiendo archivo...','Espera',{position:'top-center'}); setTimeout(()=>{ notify.replaceToastLoading('Archivo subido correctamente.',{title:'Éxito',type:'success',showProgress:false,duration:0,position:'top-center'}); if(done)done(); },1500); } },
+    { title:'Toast — Deduplicación por ID', desc:'Haz clic varias veces: solo existe un toast; su contador se resetea.', code:"notify.toastError('Email incorrecto.','Error',{\n  id:'login-error',\n  duration:4000\n});", run:(done)=>{ notify.toastError('Email o contraseña incorrectos.','Error',{id:'fn-login-error',duration:4000}); if(done)done(); } },
+  ];
+
+  function renderExamples(containerId, list) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const template = document.getElementById('fn-example-template');
+    container.innerHTML = '';
+    list.forEach(ex => {
+      const node = template.content.cloneNode(true);
+      node.querySelector('.fn-card-title').textContent = ex.title;
+      node.querySelector('.fn-card-desc').textContent  = ex.desc;
+      node.querySelector('.fn-code').textContent = ex.code;
+      const runBtn  = node.querySelector('.fn-run-btn');
+      const copyBtn = node.querySelector('.fn-copy-btn');
+      runBtn.addEventListener('click', () => {
+        if (runBtn.disabled) return;
+        const orig = runBtn.innerHTML;
+        runBtn.disabled = true;
+        runBtn.innerHTML = "<svg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' style='animation:fn-spin .8s linear infinite;vertical-align:middle;margin-right:4px'><path d='M21 12a9 9 0 1 1-6.219-8.56'/></svg>Running";
+        let done = false;
+        const finish = () => { if (done) return; done=true; runBtn.disabled=false; runBtn.innerHTML=orig; };
+        try { const r = ex.run(finish); if (r && r.then) r.then(finish).catch(()=>finish()); } catch(e){ finish(); }
+        setTimeout(finish, 9000);
+      });
+      copyBtn.addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(ex.code); const o=copyBtn.innerHTML; copyBtn.innerHTML='Copiado ✓'; setTimeout(()=>copyBtn.innerHTML=o,1500); } catch(e){}
+      });
+      container.appendChild(node);
+    });
+  }
+
+  // — Playground modal —
+  function pgCollect() {
+    let buttons = null;
+    try { const raw = document.getElementById('fn-pg-buttons').value; if(raw.trim()) buttons=JSON.parse(raw); } catch(e){}
+    return {
+      type: document.getElementById('fn-pg-type').value,
+      title: document.getElementById('fn-pg-title').value,
+      message: document.getElementById('fn-pg-message').value,
+      buttonText: document.getElementById('fn-pg-buttonText').value,
+      buttons,
+      timer: Number(document.getElementById('fn-pg-timer').value)||null,
+      showCloseButton: document.getElementById('fn-pg-showCloseButton').value==='true',
+      allowOutsideClick: document.getElementById('fn-pg-allowOutsideClick').value!=='false',
+      allowEscapeKey: document.getElementById('fn-pg-allowEscapeKey').value!=='false',
+      anim: {
+        overlayOpacity: Number(document.getElementById('fn-pg-overlayOpacity').value),
+        overlayDuration: Number(document.getElementById('fn-pg-overlayDuration').value),
+        boxDuration: Number(document.getElementById('fn-pg-boxDuration').value),
+        boxStartScale: Number(document.getElementById('fn-pg-boxStartScale').value),
+        iconRotate: Number(document.getElementById('fn-pg-iconRotate').value)
+      }
+    };
+  }
+
+  function pgPreview() {
+    const o = pgCollect();
+    const btnPart = Array.isArray(o.buttons)
+      ? `  buttons: ${JSON.stringify(o.buttons,null,2)},\n`
+      : `  buttonText: '${o.buttonText.replace(/'/g,"\\'")}',\n`;
+    const extra = [
+      o.timer ? `  timer: ${o.timer},\n`:'',
+      o.showCloseButton ? `  showCloseButton: true,\n`:'',
+      !o.allowOutsideClick ? `  allowOutsideClick: false,\n`:'',
+      !o.allowEscapeKey ? `  allowEscapeKey: false,\n`:''
+    ].join('');
+    document.querySelector('#fn-pg-code code').textContent =
+      `notify.show({\n  type: '${o.type}',\n  title: '${o.title.replace(/'/g,"\\'")}',\n  message: '${o.message.replace(/'/g,"\\'")}',\n${btnPart}${extra}  anim: ${JSON.stringify(o.anim,null,2)}\n});`;
+  }
+
+  // — Playground toast —
+  function tpgCollect() {
+    return {
+      type: document.getElementById('fn-tpg-type').value,
+      title: document.getElementById('fn-tpg-title').value,
+      message: document.getElementById('fn-tpg-message').value,
+      duration: Number(document.getElementById('fn-tpg-duration').value),
+      position: document.getElementById('fn-tpg-position').value,
+      showProgress: document.getElementById('fn-tpg-showProgress').value!=='false',
+      id: document.getElementById('fn-tpg-id').value.trim()||undefined,
+      closeable: document.getElementById('fn-tpg-closeable').value!=='false'
+    };
+  }
+
+  function tpgPreview() {
+    const o = tpgCollect();
+    if (o.type==='loading') {
+      const t = o.title ? `, '${o.title.replace(/'/g,"\\'")}' ` : '';
+      document.querySelector('#fn-tpg-code code').textContent =
+        `notify.toastLoading('${o.message.replace(/'/g,"\\'")}')${t ? `\n// title: ${t}` : ''};\n// ... operación ...\nawait notify.closeToastLoading();`;
+      return;
+    }
+    const lines = [`  type: '${o.type}',`];
+    if(o.title) lines.push(`  title: '${o.title.replace(/'/g,"\\'")}',`);
+    lines.push(`  message: '${o.message.replace(/'/g,"\\'")}',`);
+    lines.push(`  duration: ${o.duration},`);
+    lines.push(`  position: '${o.position}',`);
+    if(!o.showProgress) lines.push(`  showProgress: false,`);
+    if(o.id) lines.push(`  id: '${o.id.replace(/'/g,"\\'")}',`);
+    if(!o.closeable) lines.push(`  closeable: false,`);
+    document.querySelector('#fn-tpg-code code').textContent = `notify.toast({\n${lines.join('\n')}\n});`;
+  }
+
+  function init() {
+    renderExamples('fn-examples-notify', examplesNotify);
+    renderExamples('fn-examples-toast', examplesToast);
+    pgPreview();
+    tpgPreview();
+
+    // Quick buttons
+    document.getElementById('fn-btn-loading').addEventListener('click', () => {
+      notify.loading('Procesando solicitud...','Por favor espera');
+      setTimeout(()=>notify.closeLoading(), 3000);
+    });
+    document.getElementById('fn-btn-confirm').addEventListener('click', () => {
+      notify.show({
+        type:'warning', title:'¿Eliminar elemento?', message:'Esta acción no se puede deshacer.',
+        confirmText:'Sí, eliminar', cancelText:'Cancelar', allowOutsideClick:false, allowEscapeKey:false,
+        onConfirm: async()=>{ await new Promise(r=>setTimeout(r,600)); notify.success('Elemento eliminado correctamente'); },
+        onCancel: ()=>{ notify.info('Operación cancelada'); }
+      });
+    });
+    document.getElementById('fn-btn-toast-loading').addEventListener('click', () => {
+      notify.toastLoading('Procesando...','Espera');
+      setTimeout(async()=>{ await notify.closeToastLoading(); notify.toastSuccess('Operación completada.'); }, 3000);
+    });
+
+    // Playground modal
+    ['fn-pg-type','fn-pg-title','fn-pg-message','fn-pg-buttonText','fn-pg-buttons','fn-pg-timer',
+     'fn-pg-showCloseButton','fn-pg-allowOutsideClick','fn-pg-allowEscapeKey',
+     'fn-pg-overlayOpacity','fn-pg-overlayDuration','fn-pg-boxDuration','fn-pg-boxStartScale','fn-pg-iconRotate'
+    ].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input',pgPreview); });
+
+    const pgRun = document.getElementById('fn-pg-run');
+    pgRun.addEventListener('click', () => {
+      const o = pgCollect();
+      pgRun.disabled = true;
+      const orig = pgRun.innerHTML;
+      pgRun.innerHTML = 'Ejecutando...';
+      const params = {
+        type:o.type, title:o.title, message:o.message, timer:o.timer||null,
+        anim:o.anim, showCloseButton:o.showCloseButton,
+        allowOutsideClick:o.allowOutsideClick, allowEscapeKey:o.allowEscapeKey,
+        onClose:()=>{ pgRun.disabled=false; pgRun.innerHTML=orig; }
+      };
+      if(Array.isArray(o.buttons)) params.buttons=o.buttons; else params.buttonText=o.buttonText;
+      notify.show(params);
+      setTimeout(()=>{ if(pgRun.disabled){pgRun.disabled=false;pgRun.innerHTML=orig;} },8000);
+    });
+    document.getElementById('fn-pg-copy').addEventListener('click', async()=>{
+      try{ const c=document.querySelector('#fn-pg-code code').textContent; await navigator.clipboard.writeText(c); const b=document.getElementById('fn-pg-copy'); const o=b.innerHTML; b.innerHTML='Copiado ✓'; setTimeout(()=>b.innerHTML=o,1400); }catch(e){}
+    });
+
+    // Playground toast
+    ['fn-tpg-type','fn-tpg-title','fn-tpg-message','fn-tpg-duration','fn-tpg-position','fn-tpg-showProgress','fn-tpg-id','fn-tpg-closeable']
+      .forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input',tpgPreview); });
+
+    document.getElementById('fn-tpg-run').addEventListener('click', ()=>{
+      const o = tpgCollect();
+      if(o.type==='loading'){ notify.toastLoading(o.message,o.title||undefined); return; }
+      notify.toast({type:o.type,title:o.title||undefined,message:o.message,duration:o.duration,position:o.position,showProgress:o.showProgress,id:o.id,closeable:o.closeable});
+    });
+    document.getElementById('fn-tpg-copy').addEventListener('click', async()=>{
+      try{ const c=document.querySelector('#fn-tpg-code code').textContent; await navigator.clipboard.writeText(c); const b=document.getElementById('fn-tpg-copy'); const o=b.innerHTML; b.innerHTML='Copiado ✓'; setTimeout(()=>b.innerHTML=o,1400); }catch(e){}
+    });
+  }
+
+  if (document.readyState==='loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../examples/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>previous</small><strong>
+                            Ejemplos
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <div class="next-page-placeholder">
+                      </div>
+                    
+                  </div>
+                
+              </div>
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">onThisPage<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-2">
+          <a href="#demo-interactiva-acceso-rápido" class="toc-link">Acceso rápido</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#demo-interactiva-ejemplos-modales" class="toc-link">Ejemplos — Modales</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#demo-interactiva-playground-modales" class="toc-link">Playground — Modales</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#demo-interactiva-ejemplos-toast" class="toc-link">Ejemplos — Toast</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#demo-interactiva-playground-toast" class="toc-link">Playground — Toast</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+            </div>
+            <div class="page-footer-actions">
+              
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">© 2026 FerNotify by Fernandocabal — MIT License.</div>
+    
+      <div class="branding-footer">
+        builtWith <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../assets/js/docmd-main.js?v=mpuaj63m"></script>
+      
+      <script src="../assets/js/docmd-git.js?v=mpuaj63m"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mpuaj63m" ></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
+<script src="../assets/js/docmd-search.js?v=mpuaj63m" ></script>
+<script src="../assets/js/init-mermaid.js?v=mpuaj63m" type="module"></script>
+<script src="../assets/js/docmd-git.js?v=mpuaj63m" type="module"></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+  </body>
+</html>

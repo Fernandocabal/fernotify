@@ -63,25 +63,22 @@ function createESMVersion(sourceCode) {
     // Crear una versión ESM que importe el código UMD y reexporte la clase
 
     return `/**
- * Sistema de Notificaciones Modernas (ESM)
- * Librería ligera de notificaciones con animaciones fluidas
- * 
- * RECOMENDADO: Cargar dependencias antes de importar:
- * <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"><\/script>
- * <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
- * 
+ * FerNotify — Sistema de Notificaciones Modernas (ESM)
+ * Librería ligera de notificaciones con animaciones fluidas y cero dependencias externas.
+ * v2.0.0+ no requiere anime.js ni Boxicons.
+ *
  * Uso:
- * import NotificationSystem from '@fernandocabal/fernotify';
+ * import NotificationSystem from 'fernotify';
  * const notify = new NotificationSystem();
  * notify.success('¡Hola!');
  */
 
-// Importar el código UMD y ejecutarlo para generar window.notify
+// Ejecutar el código UMD para registrar window.notify
 ${sourceCode}
 
 // Extraer la clase desde la instancia global
 const NotificationSystem = window.notify?.constructor || function() {
-    throw new Error('NotificationSystem no se pudo cargar. Verifica que anime.js esté disponible.');
+    throw new Error('FerNotify: no se pudo inicializar NotificationSystem.');
 };
 
 // Reexportar para módulos ESM

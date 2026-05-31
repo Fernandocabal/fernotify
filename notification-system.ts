@@ -71,18 +71,29 @@ interface ToastInstance {
     _silentDismiss: () => void;
 }
 
-(function ensureAnimeDependency() {
-    if (typeof anime !== 'undefined') {
-        initFerNotify();
-    } else {
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js';
-        script.onload = initFerNotify;
-        script.onerror = () => {
-            console.error('FerNotify: No se pudo cargar anime.js. Por favor, cargalo manualmente.');
-        };
-        document.head.appendChild(script);
-    }
+(function () {
+    'use strict';
+
+    /** anime.js easing name → CSS cubic-bezier equivalents (unknown names pass through as raw CSS values) */
+    const EASING: Record<string, string> = {
+        easeOutQuad:     'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        easeOutCubic:    'cubic-bezier(0.215, 0.61, 0.355, 1)',
+        easeOutQuart:    'cubic-bezier(0.165, 0.84, 0.44, 1)',
+        easeOutQuint:    'cubic-bezier(0.23, 1, 0.32, 1)',
+        easeOutBack:     'cubic-bezier(0.34, 1.56, 0.64, 1)',
+        easeOutCirc:     'cubic-bezier(0.075, 0.82, 0.165, 1)',
+        easeInQuad:      'cubic-bezier(0.55, 0.085, 0.68, 0.53)',
+        easeInCubic:     'cubic-bezier(0.55, 0.055, 0.675, 0.19)',
+        easeInBack:      'cubic-bezier(0.6, -0.28, 0.735, 0.045)',
+        easeInOutQuad:   'cubic-bezier(0.455, 0.03, 0.515, 0.955)',
+        easeInOutCubic:  'cubic-bezier(0.645, 0.045, 0.355, 1)',
+        easeInOutBack:   'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        linear:          'linear',
+        ease:            'ease',
+        'ease-in':       'ease-in',
+        'ease-out':      'ease-out',
+        'ease-in-out':   'ease-in-out',
+    };
 
     function initFerNotify() {
         class NotificationSystem {
@@ -99,16 +110,6 @@ interface ToastInstance {
                 this._toastContainers = new Map();
                 this._toastInstances = new Map();
                 this.injectStyles();
-                this.loadBoxicons();
-            }
-
-            loadBoxicons() {
-                if (!document.querySelector('link[href*="boxicons"]')) {
-                    const link = document.createElement('link');
-                    link.rel = 'stylesheet';
-                    link.href = 'https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css';
-                    document.head.appendChild(link);
-                }
             }
 
             injectStyles() {
@@ -552,20 +553,78 @@ interface ToastInstance {
                     transition: none !important;
                 }
             }
+
+            /* Inline SVG icon sizing */
+            .notification-icon svg {
+                width: 40px;
+                height: 40px;
+                display: block;
+            }
+            .notify-toast-icon svg {
+                width: 20px;
+                height: 20px;
+                display: block;
+            }
         `;
                 document.head.appendChild(style);
             }
 
-            getIcon(type: string) {
-                const icons: Record<string, string> = {
-                    'success': '<i class="bx bx-check" aria-hidden="true"></i>',
-                    'error': '<i class="bx bx-x" aria-hidden="true"></i>',
-                    'warning': '<i class="bx bx-error" aria-hidden="true"></i>',
-                    'info': '<i class="bx bx-info-circle" aria-hidden="true"></i>',
-                    'question': '<i class="bx bx-question-mark" aria-hidden="true"></i>',
-                    'loading': '<div class="notify-toast-spinner" aria-hidden="true"></div>'
+            private _prefersReducedMotion(): boolean {
+                try {
+                    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                } catch (_e) {
+                    return false;
+                }
+            }
+
+            /** Lightweight CSS transition helper — replaces anime.js with zero external dependency */
+            private _cssAnimate(
+                el: HTMLElement,
+                to: Partial<{ opacity: number; transform: string }>,
+                opts: { duration: number; easing?: string; delay?: number; complete?: () => void }
+            ): void {
+                if (this._prefersReducedMotion()) {
+                    if (to.opacity !== undefined) el.style.opacity = String(to.opacity);
+                    if (to.transform !== undefined) el.style.transform = to.transform;
+                    el.style.transition = '';
+                    if (opts.complete) setTimeout(opts.complete, 0);
+                    return;
+                }
+                // Map legacy anime.js easing names → CSS; unknown values pass through as raw CSS
+                const cssEasing = EASING[opts.easing ?? 'ease'] ?? opts.easing ?? 'ease';
+                const run = () => {
+                    // Double-rAF: ensures initial styles are committed before transition starts (critical in Safari)
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            const props: string[] = [];
+                            if (to.opacity !== undefined) props.push(`opacity ${opts.duration}ms ${cssEasing}`);
+                            if (to.transform !== undefined) props.push(`transform ${opts.duration}ms ${cssEasing}`);
+                            el.style.transition = props.join(', ');
+                            if (to.opacity !== undefined) el.style.opacity = String(to.opacity);
+                            if (to.transform !== undefined) el.style.transform = to.transform;
+                            if (opts.complete) setTimeout(opts.complete!, opts.duration + 50);
+                        });
+                    });
                 };
-                return icons[type] || icons.info;
+                if ((opts.delay ?? 0) > 0) {
+                    setTimeout(run, opts.delay);
+                } else {
+                    run();
+                }
+            }
+
+            getIcon(type: string): string {
+                const svg = (path: string) =>
+                    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg>`;
+                const icons: Record<string, string> = {
+                    success:  svg('<polyline points="20 6 9 17 4 12"/>'),
+                    error:    svg('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'),
+                    warning:  svg('<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'),
+                    info:     svg('<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'),
+                    question: svg('<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>'),
+                    loading:  '<div class="notify-toast-spinner" aria-hidden="true"></div>',
+                };
+                return icons[type] ?? icons['info'];
             }
 
             getDefaultTitle(type: string) {
@@ -887,30 +946,16 @@ interface ToastInstance {
                     overlay.style.backgroundColor = `rgba(0,0,0,${anim.overlayOpacity})`;
                 }
 
-                anime({
-                    targets: overlay,
-                    opacity: [0, 1],
-                    duration: overlayDuration,
-                    easing: overlayEasing
-                });
+                // Set initial animation states before transitions begin
+                overlay.style.opacity = '0';
+                box.style.opacity = '0';
+                box.style.transform = `scale(${boxStartScale})`;
+                icon.style.opacity = '0';
+                icon.style.transform = `scale(0) rotate(${iconRotate}deg)`;
 
-                anime({
-                    targets: box,
-                    scale: [boxStartScale, 1],
-                    opacity: [0, 1],
-                    duration: boxDuration,
-                    easing: boxEasing,
-                    delay: boxDelay
-                });
-
-                anime({
-                    targets: icon,
-                    scale: [0, 1],
-                    rotate: [iconRotate, 0],
-                    duration: iconDuration,
-                    easing: boxEasing,
-                    delay: iconDelay
-                });
+                this._cssAnimate(overlay, { opacity: 1 }, { duration: overlayDuration, easing: overlayEasing });
+                this._cssAnimate(box, { opacity: 1, transform: 'scale(1)' }, { duration: boxDuration, easing: boxEasing, delay: boxDelay });
+                this._cssAnimate(icon, { opacity: 1, transform: 'scale(1) rotate(0deg)' }, { duration: iconDuration, easing: boxEasing, delay: iconDelay });
 
                 if (button) {
                     const buttonShadowColor = this.getButtonShadow(type);
@@ -966,18 +1011,12 @@ interface ToastInstance {
 
                 this.currentNotification = null;
 
-                anime({
-                    targets: box,
-                    scale: 0.8,
-                    opacity: 0,
-                    duration: 100,
-                    easing: 'easeInQuad'
-                });
+                if (box instanceof HTMLElement) {
+                    this._cssAnimate(box, { opacity: 0, transform: 'scale(0.8)' }, { duration: 100, easing: 'easeInQuad' });
+                }
 
                 return new Promise<void>((resolve) => {
-                    anime({
-                        targets: overlay,
-                        opacity: 0,
+                    this._cssAnimate(overlay, { opacity: 0 }, {
                         duration: 100,
                         easing: 'easeInQuad',
                         complete: () => {
@@ -1377,4 +1416,5 @@ interface ToastInstance {
         w.notify = notifyInstance;
         w.Notification = notifyInstance;
     }
+    initFerNotify();
 })();

@@ -1,6 +1,6 @@
 # Notification System
 
-> Sistema moderno de notificaciones con animaciones fluidas y soporte completo de Dark Mode.
+> Sistema moderno de notificaciones con animaciones fluidas, soporte completo de Dark Mode y **cero dependencias externas**.
 
 [![Demo](https://img.shields.io/badge/Demo-Live-success)](https://fernotify.pages.dev)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -10,8 +10,9 @@
 
 - **5 tipos de notificaciones**: Success, Error, Warning, Info, Question
 - **Dark Mode automático**: Detecta el tema de tu web
-- **Animaciones fluidas**: Powered by anime.js
-- **Ligero y rápido**: ~10KB sin dependencias (excepto anime.js)
+- **Animaciones fluidas**: CSS transitions nativas — sin anime.js ni dependencias externas
+- **Cero dependencias**: No requiere anime.js, Boxicons ni ninguna otra librería
+- **Ligero y rápido**: ~34KB minificado, auto-contenido
 - **Accesible**: Soporte completo de teclado y ARIA
 - **Responsive**: Se adapta a todos los tamaños de pantalla
 - **Personalizable**: Colores, textos, temporizadores y callbacks
@@ -22,7 +23,7 @@
 ### Método 1: CDN Clásico (UMD) - Lo mas fácil 🚀
 
 ```html
-<!-- FerNotify (todo se carga automáticamente: anime.js, Boxicons) -->
+<!-- FerNotify v2 — sin dependencias externas -->
 <script src="https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.js"></script>
 
 <!-- Usar directamente -->
@@ -74,11 +75,11 @@ window.notify = new NotificationSystem();
 
 ```html
 <!-- UMD -->
-<script src="https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@1.2.1/dist/notification-system.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@2.0.0/dist/notification-system.js"></script>
 
 <!-- ES Module -->
 <script type="module">
-  import NotificationSystem from 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@1.2.1/dist/notification-system.esm.js';
+  import NotificationSystem from 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@2.0.0/dist/notification-system.esm.js';
 </script>
 ```
 
@@ -519,10 +520,17 @@ Las contribuciones son bienvenidas. Por favor:
 
 MIT License - ver [LICENSE](LICENSE) para más detalles.
 
+## Migración v1 → v2
+
+En v2.0.0 se eliminaron todas las dependencias externas:
+
+- **Eliminar**: `<script src="anime.min.js">` y `<link href="boxicons.min.css">` — ya no son necesarios.
+- **Easings personalizados**: Los nombres de easing de anime.js (`easeOutQuad`, `easeInBack`, etc.) siguen funcionando vía mapa interno de `cubic-bezier`. Easings específicos de anime.js sin equivalente CSS (`easeInElastic`, `spring`, etc.) se ignoran silenciosamente.
+- **Iconos**: Ahora son SVGs inline — no se necesita Boxicons.
+
 ## Créditos
 
-- Animaciones: [anime.js](https://animejs.com/)
-- Iconos: [Boxicons](https://boxicons.com/)
+- Iconos: Estilo [Feather Icons](https://feathericons.com/) (SVG inline)
 
 ## Soporte
 
