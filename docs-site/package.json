@@ -6,9 +6,13 @@
   "scripts": {
     "dev": "docmd dev",
     "build": "docmd build",
+    "postbuild": "node scripts/gen-favicon.cjs",
     "preview": "npx serve site"
   },
   "dependencies": {
     "@docmd/core": "^0.8.5"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.5"
   }
 }

@@ -69,7 +69,10 @@
   ],
   "plugins": {
     "seo": {
-      "defaultDescription": "FerNotify — Sistema de notificaciones moderno para web. Cero dependencias externas, animaciones CSS nativas, modales y toasts. Compatible con CDN, npm y React/TypeScript."
+      "defaultDescription": "FerNotify — Sistema de notificaciones moderno para web. Cero dependencias externas, animaciones CSS nativas, modales y toasts. Compatible con CDN, npm y React/TypeScript.",
+      "openGraph": {
+        "defaultImage": "assets/img/logoMeta.webp"
+      }
     }
   }
 }
