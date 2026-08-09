@@ -254,12 +254,12 @@ Prueba todos los tipos de modales y toasts directamente en tu navegador. Sin ins
   function bootstrap(fn) {
     if (window.notify) { fn(); return; }
     var s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/fernotify@2.1.2/dist/notification-system.min.js';
+    s.src = 'https://cdn.jsdelivr.net/npm/fernotify@2.1.3/dist/notification-system.min.js';
     s.onload = fn;
     s.onerror = function () {
       /* fallback: jsDelivr via GitHub */
       var cdn = document.createElement('script');
-      cdn.src = 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@2.1.2/dist/notification-system.min.js';
+      cdn.src = 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@2.1.3/dist/notification-system.min.js';
       cdn.onload = fn;
       document.head.appendChild(cdn);
     };

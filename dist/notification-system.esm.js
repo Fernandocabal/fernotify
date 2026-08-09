@@ -1192,6 +1192,31 @@ var __rest = (this && this.__rest) || function (s, e) {
                 contentEl.appendChild(msgEl);
                 toast.appendChild(iconEl);
                 toast.appendChild(contentEl);
+                let dismissed = false;
+                let timerId = null;
+                let remaining = duration;
+                let timerStartedAt = 0;
+                const removeToast = () => {
+                    if (dismissed)
+                        return Promise.resolve();
+                    dismissed = true;
+                    if (toastId !== null)
+                        this._toastInstances.delete(toastId);
+                    if (toast.contains(document.activeElement)) {
+                        try {
+                            document.activeElement.blur();
+                        }
+                        catch (e) { }
+                    }
+                    toast.classList.remove('notify-toast-visible');
+                    return new Promise(resolve => {
+                        setTimeout(() => {
+                            if (toast.parentNode)
+                                toast.parentNode.removeChild(toast);
+                            resolve();
+                        }, 300);
+                    });
+                };
                 if (closeable) {
                     const closeBtn = document.createElement('button');
                     closeBtn.className = 'notify-toast-close';
@@ -1213,31 +1238,6 @@ var __rest = (this && this.__rest) || function (s, e) {
                 }
                 else {
                     container.insertBefore(toast, container.firstChild);
-                }
-                let dismissed = false;
-                let timerId = null;
-                let remaining = duration;
-                let timerStartedAt = 0;
-                function removeToast() {
-                    if (dismissed)
-                        return Promise.resolve();
-                    dismissed = true;
-                    // Si el foco estaba dentro del toast, sacarlo antes de que el nodo desaparezca
-                    // para evitar que el foco se pierda silenciosamente en el documento
-                    if (toast.contains(document.activeElement)) {
-                        try {
-                            document.activeElement.blur();
-                        }
-                        catch (e) { }
-                    }
-                    toast.classList.remove('notify-toast-visible');
-                    return new Promise(resolve => {
-                        setTimeout(() => {
-                            if (toast.parentNode)
-                                toast.parentNode.removeChild(toast);
-                            resolve();
-                        }, 300);
-                    });
                 }
                 const startCountdown = (ms) => {
                     timerStartedAt = Date.now();

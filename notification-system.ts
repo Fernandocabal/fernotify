@@ -1317,6 +1317,27 @@ interface ToastInstance {
                 toast.appendChild(iconEl);
                 toast.appendChild(contentEl);
 
+                let dismissed = false;
+                let timerId: ReturnType<typeof setTimeout> | null = null;
+                let remaining = duration;
+                let timerStartedAt = 0;
+
+                const removeToast = (): Promise<void> => {
+                    if (dismissed) return Promise.resolve();
+                    dismissed = true;
+                    if (toastId !== null) this._toastInstances.delete(toastId);
+                    if (toast.contains(document.activeElement as Node)) {
+                        try { (document.activeElement as HTMLElement).blur(); } catch (e) { }
+                    }
+                    toast.classList.remove('notify-toast-visible');
+                    return new Promise(resolve => {
+                        setTimeout(() => {
+                            if (toast.parentNode) toast.parentNode.removeChild(toast);
+                            resolve();
+                        }, 300);
+                    });
+                };
+
                 if (closeable) {
                     const closeBtn = document.createElement('button');
                     closeBtn.className = 'notify-toast-close';
@@ -1339,28 +1360,6 @@ interface ToastInstance {
                     container.appendChild(toast);
                 } else {
                     container.insertBefore(toast, container.firstChild);
-                }
-
-                let dismissed = false;
-                let timerId: ReturnType<typeof setTimeout> | null = null;
-                let remaining = duration;
-                let timerStartedAt = 0;
-
-                function removeToast(): Promise<void> {
-                    if (dismissed) return Promise.resolve();
-                    dismissed = true;
-                    // Si el foco estaba dentro del toast, sacarlo antes de que el nodo desaparezca
-                    // para evitar que el foco se pierda silenciosamente en el documento
-                    if (toast.contains(document.activeElement as Node)) {
-                        try { (document.activeElement as HTMLElement).blur(); } catch (e) { }
-                    }
-                    toast.classList.remove('notify-toast-visible');
-                    return new Promise(resolve => {
-                        setTimeout(() => {
-                            if (toast.parentNode) toast.parentNode.removeChild(toast);
-                            resolve();
-                        }, 300);
-                    });
                 }
 
                 const startCountdown = (ms: number) => {
