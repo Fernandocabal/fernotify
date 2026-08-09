@@ -63,6 +63,13 @@ interface ToastOptions {
     id?: string;
     /** Si es false, el botón de cierre no se muestra (útil para toasts de carga). Default: true */
     closeable?: boolean;
+    /** Si es false, deshabilita el gesto de deslizar para cerrar. Default: true */
+    swipeToDismiss?: boolean;
+}
+
+interface GlobalDefaults {
+    toast?: Partial<ToastOptions>;
+    modal?: Partial<NotificationOptions>;
 }
 
 interface ToastInstance {
@@ -102,6 +109,7 @@ interface ToastInstance {
             _currentLoadingPromise: Promise<void> | null;
             _toastContainers: Map<string, HTMLDivElement>;
             _toastInstances: Map<string, ToastInstance>;
+            _globalDefaults: Required<GlobalDefaults>;
 
             constructor() {
                 this.currentNotification = null;
@@ -109,7 +117,14 @@ interface ToastInstance {
                 this._currentLoadingPromise = null;
                 this._toastContainers = new Map();
                 this._toastInstances = new Map();
+                this._globalDefaults = { toast: {}, modal: {} };
                 this.injectStyles();
+            }
+
+            configure(defaults: GlobalDefaults): this {
+                if (defaults.toast) Object.assign(this._globalDefaults.toast, defaults.toast);
+                if (defaults.modal) Object.assign(this._globalDefaults.modal, defaults.modal);
+                return this;
             }
 
             injectStyles() {
@@ -537,6 +552,10 @@ interface ToastInstance {
             .dark .notify-toast-close   { background: rgba(255,255,255,0.06); color: #94a3b8; }
             .dark .notify-toast-close:hover { background: rgba(255,255,255,0.1); color: #e2e8f0; }
 
+            /* Swipe-to-dismiss */
+            .notify-toast { touch-action: none; }
+            .notify-toast-swiping { transition: none !important; cursor: grabbing; user-select: none; }
+
             /* Respeta la preferencia de movimiento reducido del sistema */
             @media (prefers-reduced-motion: reduce) {
                 .notify-toast {
@@ -661,6 +680,7 @@ interface ToastInstance {
             }
 
             show(options: NotificationOptions = {}): Promise<void> {
+                options = { ...this._globalDefaults.modal, ...options };
                 // Cerrar notificación existente si hay (esperar a que termine)
                 if (this.currentNotification) {
                     const oldOverlay = this.currentNotification;
@@ -1145,14 +1165,82 @@ interface ToastInstance {
                 return `${mm}:${ss}`;
             }
 
+            private _attachSwipeGesture(
+                toast: HTMLDivElement,
+                removeToast: () => Promise<void>,
+                pauseCountdown: () => void,
+                resumeCountdown: () => void
+            ): void {
+                if (this._prefersReducedMotion()) return;
+
+                let startX = 0;
+                let startY = 0;
+                let startTime = 0;
+                let dragging = false;
+
+                const onPointerDown = (e: PointerEvent) => {
+                    if (e.pointerType === 'mouse' && e.button !== 0) return;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startTime = e.timeStamp;
+                    dragging = true;
+                    toast.setPointerCapture(e.pointerId);
+                    toast.classList.add('notify-toast-swiping');
+                    pauseCountdown();
+                };
+
+                const onPointerMove = (e: PointerEvent) => {
+                    if (!dragging) return;
+                    const dx = e.clientX - startX;
+                    const dy = e.clientY - startY;
+                    toast.style.transform = `translate(${dx}px, ${dy}px)`;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    toast.style.opacity = String(Math.max(0, 1 - dist / 150));
+                };
+
+                const onPointerUp = (e: PointerEvent) => {
+                    if (!dragging) return;
+                    dragging = false;
+                    toast.classList.remove('notify-toast-swiping');
+
+                    const dx = e.clientX - startX;
+                    const dy = e.clientY - startY;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const velocity = dist / Math.max(1, e.timeStamp - startTime);
+
+                    if (dist >= 60 || velocity > 0.4) {
+                        const angle = Math.atan2(dy, dx);
+                        const exitX = Math.cos(angle) * 400;
+                        const exitY = Math.sin(angle) * 400;
+                        toast.style.transition = 'transform 220ms ease-out, opacity 220ms ease-out';
+                        toast.style.transform = `translate(${exitX}px, ${exitY}px)`;
+                        toast.style.opacity = '0';
+                        removeToast();
+                    } else {
+                        toast.style.transition = 'transform 200ms ease-out, opacity 200ms ease-out';
+                        toast.style.transform = '';
+                        toast.style.opacity = '';
+                        setTimeout(() => { toast.style.transition = ''; }, 200);
+                        resumeCountdown();
+                    }
+                };
+
+                toast.addEventListener('pointerdown', onPointerDown);
+                toast.addEventListener('pointermove', onPointerMove);
+                toast.addEventListener('pointerup', onPointerUp);
+                toast.addEventListener('pointercancel', onPointerUp);
+            }
+
             showToast(message: string, options: ToastOptions = {}): void {
-                const type = options.type || 'info';
-                const title = options.title ?? null;
-                const duration = typeof options.duration === 'number' ? options.duration : 4000;
-                const position = options.position || 'top-right';
-                const showProgress = options.showProgress !== false;
-                const toastId = options.id ?? null;
-                const closeable = options.closeable !== false;
+                const opts: ToastOptions = { ...this._globalDefaults.toast, ...options };
+                const type = opts.type || 'info';
+                const title = opts.title ?? null;
+                const duration = typeof opts.duration === 'number' ? opts.duration : 4000;
+                const position = opts.position || 'top-right';
+                const showProgress = opts.showProgress !== false;
+                const toastId = opts.id ?? null;
+                const closeable = opts.closeable !== false;
+                const swipeToDismiss = opts.swipeToDismiss !== false;
 
                 // Deduplicación: si ya existe un toast con este ID, resetear su cuenta regresiva
                 if (toastId !== null) {
@@ -1335,6 +1423,10 @@ interface ToastInstance {
                     toast.addEventListener('mouseenter', pauseCountdown);
                     toast.addEventListener('mouseleave', resumeCountdown);
                 }
+
+                if (swipeToDismiss && closeable) {
+                    this._attachSwipeGesture(toast, removeToast, pauseCountdown, resumeCountdown);
+                }
             }
 
             toast(messageOrOptions: string | ToastOptions, options: ToastOptions = {}): void {
@@ -1381,6 +1473,7 @@ interface ToastInstance {
                     title: title ?? options.title,
                     id: '__loading__',
                     closeable: false,
+                    swipeToDismiss: false,
                     duration: 0,
                     showProgress: false,
                 });

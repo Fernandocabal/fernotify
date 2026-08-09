@@ -7,8 +7,8 @@ description: "FerNotify es una librería de notificaciones moderna para la web. 
 
 > Sistema moderno de notificaciones para la web — **cero dependencias externas**.
 
-::: callout tip "v2.0.0 — Sin anime.js ni Boxicons"
-Desde la versión 2.0.0, FerNotify no requiere ninguna librería externa. Las animaciones son CSS nativas y los iconos son SVGs inline.
+::: callout tip "v2.1.0 — Swipe to dismiss + configure()"
+Desliza los toasts para cerrarlos (mouse o dedo) y configura defaults globales con `notify.configure()`.
 :::
 
 ## ¿Qué es FerNotify?
@@ -23,6 +23,8 @@ FerNotify es una librería JavaScript/TypeScript que provee dos tipos de notific
 - Dark Mode automático (detecta el tema del sistema)
 - Animaciones CSS nativas (sin anime.js)
 - Iconos SVG inline (sin Boxicons)
+- Swipe to dismiss en toasts (mouse o dedo)
+- Configuración global con `configure()`
 - Accesible: teclado completo + ARIA
 - Compatible con CDN, npm, React y TypeScript
 :::

@@ -72,10 +72,33 @@ export interface ToastOptions {
      * @default true
      */
     closeable?: boolean;
+    /**
+     * When `false`, disables the swipe/drag-to-dismiss gesture.
+     * `toastLoading()` sets this to `false` automatically.
+     * @default true
+     */
+    swipeToDismiss?: boolean;
+}
+
+export interface GlobalDefaults {
+    /** Default options applied to every toast. Per-call options override these. */
+    toast?: Partial<ToastOptions>;
+    /** Default options applied to every modal. Per-call options override these. */
+    modal?: Partial<NotificationOptions>;
 }
 
 export declare class NotificationSystem {
     constructor();
+
+    /**
+     * Set global default options for toasts and/or modals.
+     * Per-call options always override these defaults.
+     * Returns `this` for chaining.
+     *
+     * @example
+     * notify.configure({ toast: { position: 'top-center', swipeToDismiss: true } });
+     */
+    configure(defaults: GlobalDefaults): this;
 
     // ── Modal notifications ──────────────────────────────────────────────────
 

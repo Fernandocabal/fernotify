@@ -138,3 +138,39 @@ notify.toastSuccess('Mensaje', { position: 'bottom-left' });
 notify.toastSuccess('Mensaje', { position: 'top-center' });
 notify.toastSuccess('Mensaje', { position: 'bottom-center' });
 ```
+
+---
+
+## Swipe to dismiss
+
+Los toasts soportan deslizarse para cerrar, tanto con el dedo en móvil como con el mouse en escritorio. El gesto está activo por defecto y convive con el botón × y el timer.
+
+```javascript
+// Desactivar para un toast puntual
+notify.toastInfo('No deslizable', { swipeToDismiss: false });
+```
+
+---
+
+## Configuración global con `configure()`
+
+Establece defaults que se aplican a todos los toasts o modales. Útil para evitar repetir las mismas opciones en cada llamada.
+
+```javascript
+const notify = new NotificationSystem();
+
+notify.configure({
+  toast: {
+    position: 'top-center',
+    swipeToDismiss: true,
+  },
+  modal: {
+    confirmColor: '#49a9b5',
+  }
+});
+
+// A partir de aquí, todos los toasts van al centro con swipe habilitado
+notify.toastSuccess('Guardado correctamente');
+```
+
+Las opciones pasadas en cada llamada siempre tienen prioridad sobre los defaults.

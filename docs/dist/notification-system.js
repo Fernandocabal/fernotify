@@ -40,7 +40,15 @@ var __rest = (this && this.__rest) || function (s, e) {
                 this._currentLoadingPromise = null;
                 this._toastContainers = new Map();
                 this._toastInstances = new Map();
+                this._globalDefaults = { toast: {}, modal: {} };
                 this.injectStyles();
+            }
+            configure(defaults) {
+                if (defaults.toast)
+                    Object.assign(this._globalDefaults.toast, defaults.toast);
+                if (defaults.modal)
+                    Object.assign(this._globalDefaults.modal, defaults.modal);
+                return this;
             }
             injectStyles() {
                 const style = document.createElement('style');
@@ -467,6 +475,10 @@ var __rest = (this && this.__rest) || function (s, e) {
             .dark .notify-toast-close   { background: rgba(255,255,255,0.06); color: #94a3b8; }
             .dark .notify-toast-close:hover { background: rgba(255,255,255,0.1); color: #e2e8f0; }
 
+            /* Swipe-to-dismiss */
+            .notify-toast { touch-action: none; }
+            .notify-toast-swiping { transition: none !important; cursor: grabbing; user-select: none; }
+
             /* Respeta la preferencia de movimiento reducido del sistema */
             @media (prefers-reduced-motion: reduce) {
                 .notify-toast {
@@ -591,6 +603,7 @@ var __rest = (this && this.__rest) || function (s, e) {
                 return shadows[type] || shadows.info;
             }
             show(options = {}) {
+                options = Object.assign(Object.assign({}, this._globalDefaults.modal), options);
                 // Cerrar notificación existente si hay (esperar a que termine)
                 if (this.currentNotification) {
                     const oldOverlay = this.currentNotification;
@@ -1034,15 +1047,75 @@ var __rest = (this && this.__rest) || function (s, e) {
                 const ss = (s % 60).toString().padStart(2, '0');
                 return `${mm}:${ss}`;
             }
+            _attachSwipeGesture(toast, removeToast, pauseCountdown, resumeCountdown) {
+                if (this._prefersReducedMotion())
+                    return;
+                let startX = 0;
+                let startY = 0;
+                let startTime = 0;
+                let dragging = false;
+                const onPointerDown = (e) => {
+                    if (e.pointerType === 'mouse' && e.button !== 0)
+                        return;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startTime = e.timeStamp;
+                    dragging = true;
+                    toast.setPointerCapture(e.pointerId);
+                    toast.classList.add('notify-toast-swiping');
+                    pauseCountdown();
+                };
+                const onPointerMove = (e) => {
+                    if (!dragging)
+                        return;
+                    const dx = e.clientX - startX;
+                    const dy = e.clientY - startY;
+                    toast.style.transform = `translate(${dx}px, ${dy}px)`;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    toast.style.opacity = String(Math.max(0, 1 - dist / 150));
+                };
+                const onPointerUp = (e) => {
+                    if (!dragging)
+                        return;
+                    dragging = false;
+                    toast.classList.remove('notify-toast-swiping');
+                    const dx = e.clientX - startX;
+                    const dy = e.clientY - startY;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const velocity = dist / Math.max(1, e.timeStamp - startTime);
+                    if (dist >= 60 || velocity > 0.4) {
+                        const angle = Math.atan2(dy, dx);
+                        const exitX = Math.cos(angle) * 400;
+                        const exitY = Math.sin(angle) * 400;
+                        toast.style.transition = 'transform 220ms ease-out, opacity 220ms ease-out';
+                        toast.style.transform = `translate(${exitX}px, ${exitY}px)`;
+                        toast.style.opacity = '0';
+                        removeToast();
+                    }
+                    else {
+                        toast.style.transition = 'transform 200ms ease-out, opacity 200ms ease-out';
+                        toast.style.transform = '';
+                        toast.style.opacity = '';
+                        setTimeout(() => { toast.style.transition = ''; }, 200);
+                        resumeCountdown();
+                    }
+                };
+                toast.addEventListener('pointerdown', onPointerDown);
+                toast.addEventListener('pointermove', onPointerMove);
+                toast.addEventListener('pointerup', onPointerUp);
+                toast.addEventListener('pointercancel', onPointerUp);
+            }
             showToast(message, options = {}) {
                 var _a, _b;
-                const type = options.type || 'info';
-                const title = (_a = options.title) !== null && _a !== void 0 ? _a : null;
-                const duration = typeof options.duration === 'number' ? options.duration : 4000;
-                const position = options.position || 'top-right';
-                const showProgress = options.showProgress !== false;
-                const toastId = (_b = options.id) !== null && _b !== void 0 ? _b : null;
-                const closeable = options.closeable !== false;
+                const opts = Object.assign(Object.assign({}, this._globalDefaults.toast), options);
+                const type = opts.type || 'info';
+                const title = (_a = opts.title) !== null && _a !== void 0 ? _a : null;
+                const duration = typeof opts.duration === 'number' ? opts.duration : 4000;
+                const position = opts.position || 'top-right';
+                const showProgress = opts.showProgress !== false;
+                const toastId = (_b = opts.id) !== null && _b !== void 0 ? _b : null;
+                const closeable = opts.closeable !== false;
+                const swipeToDismiss = opts.swipeToDismiss !== false;
                 // Deduplicación: si ya existe un toast con este ID, resetear su cuenta regresiva
                 if (toastId !== null) {
                     const existing = this._toastInstances.get(toastId);
@@ -1223,6 +1296,9 @@ var __rest = (this && this.__rest) || function (s, e) {
                     toast.addEventListener('mouseenter', pauseCountdown);
                     toast.addEventListener('mouseleave', resumeCountdown);
                 }
+                if (swipeToDismiss && closeable) {
+                    this._attachSwipeGesture(toast, removeToast, pauseCountdown, resumeCountdown);
+                }
             }
             toast(messageOrOptions, options = {}) {
                 if (typeof messageOrOptions === 'string') {
@@ -1256,7 +1332,7 @@ var __rest = (this && this.__rest) || function (s, e) {
              * Ciérralo con notify.closeToastLoading().
              */
             toastLoading(message = 'Cargando...', title, options = {}) {
-                this.showToast(message, Object.assign(Object.assign({ position: 'top-right' }, options), { type: 'loading', title: title !== null && title !== void 0 ? title : options.title, id: '__loading__', closeable: false, duration: 0, showProgress: false }));
+                this.showToast(message, Object.assign(Object.assign({ position: 'top-right' }, options), { type: 'loading', title: title !== null && title !== void 0 ? title : options.title, id: '__loading__', closeable: false, swipeToDismiss: false, duration: 0, showProgress: false }));
             }
             /** Cierra el toast de carga activo (si existe). Devuelve una Promise que resuelve cuando la animación de salida termina (≈300 ms). */
             closeToastLoading() {

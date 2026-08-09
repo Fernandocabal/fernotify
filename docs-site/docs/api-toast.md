@@ -36,6 +36,7 @@ notify.toast(options: ToastOptions): void
 | `title` | `string` | — | Título del toast |
 | `duration` | `number` | `4000` | Auto-cierre en ms (`0` = sin límite) |
 | `closeable` | `boolean` | `true` | Muestra botón × |
+| `swipeToDismiss` | `boolean` | `true` | Habilita deslizar para cerrar (mouse o dedo) |
 | `position` | `ToastPosition` | `'top-right'` | Posición en pantalla |
 | `id` | `string` | — | ID para deduplicación |
 
@@ -161,4 +162,88 @@ notify.toastInfo('Nueva versión disponible. Recarga para actualizar.', {
 notify.toastSuccess('Cambio 1 guardado', { position: 'bottom-right' });
 notify.toastSuccess('Cambio 2 guardado', { position: 'bottom-right' });
 // Los toasts se apilan verticalmente
+```
+
+---
+
+## Swipe to dismiss
+
+Los toasts se pueden cerrar deslizando con el dedo (o con el mouse) en cualquier dirección. El gesto está **habilitado por defecto** y convive con el botón × y el timer automático.
+
+```javascript
+// Deshabilitar el swipe para un toast puntual
+notify.toastInfo('No se puede deslizar', { swipeToDismiss: false });
+```
+
+::: callout info "Movimiento reducido"
+Si el usuario tiene activada la preferencia del sistema `prefers-reduced-motion`, el swipe-to-dismiss se desactiva automáticamente.
+:::
+
+::: callout warning "toastLoading"
+`notify.toastLoading()` siempre desactiva el swipe (`swipeToDismiss: false`) ya que el toast de carga no debe cerrarse manualmente.
+:::
+
+---
+
+## `notify.configure(defaults)`
+
+Establece opciones globales que se aplican a todos los toasts (y/o modales) sin necesidad de repetirlas en cada llamada. Las opciones por llamada siempre tienen prioridad.
+
+```typescript
+notify.configure(defaults: {
+  toast?: Partial<ToastOptions>;
+  modal?: Partial<NotificationOptions>;
+}): this
+```
+
+Retorna `this` para permitir encadenamiento.
+
+### Ejemplo — configuración global
+
+```javascript
+const notify = new NotificationSystem();
+
+notify.configure({
+  toast: {
+    position: 'top-center',
+    swipeToDismiss: true,
+    showProgress: false,
+  }
+});
+
+// Todos los toasts usarán top-center y tendrán swipe habilitado
+notify.toastSuccess('Guardado');
+notify.toastError('Error al conectar');
+
+// Puedes sobreescribir por llamada
+notify.toastInfo('Aviso', { position: 'bottom-right', swipeToDismiss: false });
+```
+
+### Ejemplo — React/TypeScript con patrón singleton
+
+```typescript
+// src/lib/notify.ts
+import NotificationSystem from 'fernotify';
+
+const notify = new NotificationSystem();
+
+notify.configure({
+  toast: { position: 'top-center', swipeToDismiss: true },
+  modal: { confirmColor: '#49a9b5', cancelColor: '#6a6a6a' },
+});
+
+export default notify;
+```
+
+```tsx
+// En cualquier componente
+import notify from '@/lib/notify';
+
+function MyComponent() {
+  return (
+    <button onClick={() => notify.toastSuccess('¡Listo!')}>
+      Guardar
+    </button>
+  );
+}
 ```
