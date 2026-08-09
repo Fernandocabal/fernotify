@@ -1065,14 +1065,20 @@ var __rest = (this && this.__rest) || function (s, e) {
                     toast.classList.add('notify-toast-swiping');
                     pauseCountdown();
                 };
+                const axisConstrain = (dx, dy) => Math.abs(dx) >= Math.abs(dy)
+                    ? [dx, dy * 0.15]
+                    : [dx * 0.15, dy];
                 const onPointerMove = (e) => {
                     if (!dragging)
                         return;
                     const dx = e.clientX - startX;
                     const dy = e.clientY - startY;
-                    toast.style.transform = `translate(${dx}px, ${dy}px)`;
+                    const [tx, ty] = axisConstrain(dx, dy);
                     const dist = Math.sqrt(dx * dx + dy * dy);
-                    toast.style.opacity = String(Math.max(0, 1 - dist / 150));
+                    toast.style.transform = `translate(${tx}px, ${ty}px)`;
+                    toast.style.opacity = dist > 60
+                        ? String(Math.max(0.35, 1 - (dist - 60) / 140))
+                        : '';
                 };
                 const onPointerUp = (e) => {
                     if (!dragging)
@@ -1083,11 +1089,16 @@ var __rest = (this && this.__rest) || function (s, e) {
                     const dy = e.clientY - startY;
                     const dist = Math.sqrt(dx * dx + dy * dy);
                     const velocity = dist / Math.max(1, e.timeStamp - startTime);
-                    if (dist >= 60 || velocity > 0.4) {
-                        const angle = Math.atan2(dy, dx);
-                        const exitX = Math.cos(angle) * 400;
-                        const exitY = Math.sin(angle) * 400;
-                        toast.style.transition = 'transform 220ms ease-out, opacity 220ms ease-out';
+                    const isUpward = Math.abs(dy) >= Math.abs(dx) && dy < 0;
+                    const distThreshold = isUpward ? 25 : 60;
+                    const velThreshold = isUpward ? 0.2 : 0.4;
+                    if (dist >= distThreshold || velocity > velThreshold) {
+                        const [tx, ty] = axisConstrain(dx, dy);
+                        const angle = Math.atan2(ty, tx);
+                        const exitDist = Math.max(window.innerWidth, window.innerHeight);
+                        const exitX = Math.cos(angle) * exitDist;
+                        const exitY = Math.sin(angle) * exitDist;
+                        toast.style.transition = 'transform 300ms ease-in, opacity 300ms ease-in';
                         toast.style.transform = `translate(${exitX}px, ${exitY}px)`;
                         toast.style.opacity = '0';
                         removeToast();

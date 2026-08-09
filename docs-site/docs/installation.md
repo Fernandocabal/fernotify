@@ -5,7 +5,7 @@ description: "Cómo instalar FerNotify via CDN, npm o ES Modules."
 
 # Instalación
 
-FerNotify v2.1.0 no requiere ninguna dependencia externa. Solo incluye el script y listo.
+FerNotify v2.1.1 no requiere ninguna dependencia externa. Solo incluye el script y listo.
 
 ## CDN (recomendado para webs estáticas)
 
@@ -18,7 +18,7 @@ El método más sencillo. Agrega el script a tu HTML y tendrás `window.notify` 
 <script src="https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.js"></script>
 
 <!-- Versión específica (recomendado en producción) -->
-<script src="https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@2.1.0/dist/notification-system.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@2.1.1/dist/notification-system.js"></script>
 ```
 
 Uso:

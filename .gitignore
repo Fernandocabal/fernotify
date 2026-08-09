@@ -29,6 +29,7 @@ desktop.ini
 .env.local
 .env.*.local
 AGENTS.md
+test.html
 
 # Caché
 .cache/

@@ -38,7 +38,7 @@
   "versions": {
     "current": "v2",
     "all": [
-      { "id": "v2", "label": "v2.1.0", "dir": "docs" },
+      { "id": "v2", "label": "v2.1.1", "dir": "docs" },
       { "id": "v1", "label": "v1.x (legacy)", "dir": "docs-v1" }
     ]
   },
