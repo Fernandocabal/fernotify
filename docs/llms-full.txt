@@ -642,6 +642,12 @@ Prueba todos los tipos de modales y toasts directamente en tu navegador. Sin ins
         <option value="false">false</option>
       </select>
     </label>
+    <label class="fn-label"><span>Swipe to dismiss</span>
+      <select id="fn-tpg-swipe" class="fn-select">
+        <option value="true">true</option>
+        <option value="false">false</option>
+      </select>
+    </label>
   </div>
 </div>
 <div class="fn-btn-group">
@@ -669,12 +675,12 @@ Prueba todos los tipos de modales y toasts directamente en tu navegador. Sin ins
   function bootstrap(fn) {
     if (window.notify) { fn(); return; }
     var s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/fernotify@2.0.0/dist/notification-system.min.js';
+    s.src = 'https://cdn.jsdelivr.net/npm/fernotify@2.1.0/dist/notification-system.min.js';
     s.onload = fn;
     s.onerror = function () {
       /* fallback: jsDelivr via GitHub */
       var cdn = document.createElement('script');
-      cdn.src = 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@2.0.0/dist/notification-system.min.js';
+      cdn.src = 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@2.1.0/dist/notification-system.min.js';
       cdn.onload = fn;
       document.head.appendChild(cdn);
     };
@@ -789,7 +795,8 @@ Prueba todos los tipos de modales y toasts directamente en tu navegador. Sin ins
       position: document.getElementById('fn-tpg-position').value,
       showProgress: document.getElementById('fn-tpg-showProgress').value!=='false',
       id: document.getElementById('fn-tpg-id').value.trim()||undefined,
-      closeable: document.getElementById('fn-tpg-closeable').value!=='false'
+      closeable: document.getElementById('fn-tpg-closeable').value!=='false',
+      swipeToDismiss: document.getElementById('fn-tpg-swipe').value!=='false'
     };
   }
 
@@ -809,6 +816,7 @@ Prueba todos los tipos de modales y toasts directamente en tu navegador. Sin ins
     if(!o.showProgress) lines.push(`  showProgress: false,`);
     if(o.id) lines.push(`  id: '${o.id.replace(/'/g,"\\'")}',`);
     if(!o.closeable) lines.push(`  closeable: false,`);
+    if(!o.swipeToDismiss) lines.push(`  swipeToDismiss: false,`);
     document.querySelector('#fn-tpg-code code').textContent = `notify.toast({\n${lines.join('\n')}\n});`;
   }
 
@@ -863,13 +871,13 @@ Prueba todos los tipos de modales y toasts directamente en tu navegador. Sin ins
     });
 
     // Playground toast
-    ['fn-tpg-type','fn-tpg-title','fn-tpg-message','fn-tpg-duration','fn-tpg-position','fn-tpg-showProgress','fn-tpg-id','fn-tpg-closeable']
+    ['fn-tpg-type','fn-tpg-title','fn-tpg-message','fn-tpg-duration','fn-tpg-position','fn-tpg-showProgress','fn-tpg-id','fn-tpg-closeable','fn-tpg-swipe']
       .forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input',tpgPreview); });
 
     document.getElementById('fn-tpg-run').addEventListener('click', ()=>{
       const o = tpgCollect();
       if(o.type==='loading'){ notify.toastLoading(o.message,o.title||undefined); return; }
-      notify.toast({type:o.type,title:o.title||undefined,message:o.message,duration:o.duration,position:o.position,showProgress:o.showProgress,id:o.id,closeable:o.closeable});
+      notify.toast({type:o.type,title:o.title||undefined,message:o.message,duration:o.duration,position:o.position,showProgress:o.showProgress,id:o.id,closeable:o.closeable,swipeToDismiss:o.swipeToDismiss});
     });
     document.getElementById('fn-tpg-copy').addEventListener('click', async()=>{
       try{ const c=document.querySelector('#fn-tpg-code code').textContent; await navigator.clipboard.writeText(c); const b=document.getElementById('fn-tpg-copy'); const o=b.innerHTML; b.innerHTML='Copiado ✓'; setTimeout(()=>b.innerHTML=o,1400); }catch(e){}

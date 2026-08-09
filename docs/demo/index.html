@@ -87,12 +87,12 @@
       Demo Interactiva : FerNotify
     </title>
     
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=msm9rvoi">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=msma92v8">
     
-    <link rel="stylesheet" href="../assets/css/docmd-git.css?v=msm9rvoi">
+    <link rel="stylesheet" href="../assets/css/docmd-git.css?v=msma92v8">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=msm9rvoi" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=msm9rvoi" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=msma92v8" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=msma92v8" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Prueba FerNotify en tiempo real — modales, toasts y playground sin instalar nada.">
@@ -109,8 +109,8 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=msm9rvoi" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=msm9rvoi" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=msma92v8" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=msma92v8" >
 
     
     <script>/**
@@ -1033,6 +1033,12 @@
         <option value="false">false</option>
       </select>
     </label>
+    <label class="fn-label"><span>Swipe to dismiss</span>
+      <select id="fn-tpg-swipe" class="fn-select">
+        <option value="true">true</option>
+        <option value="false">false</option>
+      </select>
+    </label>
   </div>
 </div>
 <div class="fn-btn-group">
@@ -1058,12 +1064,12 @@
   function bootstrap(fn) {
     if (window.notify) { fn(); return; }
     var s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/fernotify@2.0.0/dist/notification-system.min.js';
+    s.src = 'https://cdn.jsdelivr.net/npm/fernotify@2.1.0/dist/notification-system.min.js';
     s.onload = fn;
     s.onerror = function () {
       /* fallback: jsDelivr via GitHub */
       var cdn = document.createElement('script');
-      cdn.src = 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@2.0.0/dist/notification-system.min.js';
+      cdn.src = 'https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@2.1.0/dist/notification-system.min.js';
       cdn.onload = fn;
       document.head.appendChild(cdn);
     };
@@ -1178,7 +1184,8 @@
       position: document.getElementById('fn-tpg-position').value,
       showProgress: document.getElementById('fn-tpg-showProgress').value!=='false',
       id: document.getElementById('fn-tpg-id').value.trim()||undefined,
-      closeable: document.getElementById('fn-tpg-closeable').value!=='false'
+      closeable: document.getElementById('fn-tpg-closeable').value!=='false',
+      swipeToDismiss: document.getElementById('fn-tpg-swipe').value!=='false'
     };
   }
 
@@ -1198,6 +1205,7 @@
     if(!o.showProgress) lines.push(`  showProgress: false,`);
     if(o.id) lines.push(`  id: '${o.id.replace(/'/g,"\\'")}',`);
     if(!o.closeable) lines.push(`  closeable: false,`);
+    if(!o.swipeToDismiss) lines.push(`  swipeToDismiss: false,`);
     document.querySelector('#fn-tpg-code code').textContent = `notify.toast({\n${lines.join('\n')}\n});`;
   }
 
@@ -1252,13 +1260,13 @@
     });
 
     // Playground toast
-    ['fn-tpg-type','fn-tpg-title','fn-tpg-message','fn-tpg-duration','fn-tpg-position','fn-tpg-showProgress','fn-tpg-id','fn-tpg-closeable']
+    ['fn-tpg-type','fn-tpg-title','fn-tpg-message','fn-tpg-duration','fn-tpg-position','fn-tpg-showProgress','fn-tpg-id','fn-tpg-closeable','fn-tpg-swipe']
       .forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input',tpgPreview); });
 
     document.getElementById('fn-tpg-run').addEventListener('click', ()=>{
       const o = tpgCollect();
       if(o.type==='loading'){ notify.toastLoading(o.message,o.title||undefined); return; }
-      notify.toast({type:o.type,title:o.title||undefined,message:o.message,duration:o.duration,position:o.position,showProgress:o.showProgress,id:o.id,closeable:o.closeable});
+      notify.toast({type:o.type,title:o.title||undefined,message:o.message,duration:o.duration,position:o.position,showProgress:o.showProgress,id:o.id,closeable:o.closeable,swipeToDismiss:o.swipeToDismiss});
     });
     document.getElementById('fn-tpg-copy').addEventListener('click', async()=>{
       try{ const c=document.querySelector('#fn-tpg-code code').textContent; await navigator.clipboard.writeText(c); const b=document.getElementById('fn-tpg-copy'); const o=b.innerHTML; b.innerHTML='Copiado ✓'; setTimeout(()=>b.innerHTML=o,1400); }catch(e){}
@@ -1359,17 +1367,32 @@
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1780263983000">
+                <span class="git-last-updated" data-timestamp="1786308830000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1780263983000"></span>
+                  <span class="git-time" data-timestamp="1786308830000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="fernandocabal">
+                            
+                              <img src="https://www.gravatar.com/avatar/b1a8d3f53fa1f67a03a94988300e7ddd?d=mp&amp;s=64" alt="fernandocabal">
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="Upt the documentation">Upt the documentation</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">fernandocabal</span>
+                              <span class="git-commit-date" data-timestamp="1786308830000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="fernandocabal">
@@ -1400,7 +1423,7 @@
 
 <footer class="page-footer">
   <div class="footer-content">
-    <div class="user-footer">© 2026 FerNotify by Fernandocabal — MIT License.</div>
+    <div class="user-footer">© 2026 FerNotify by <a href="https://github.com/Fernandocabal">Fernando Caballero</a> — MIT License.</div>
     
       <div class="branding-footer">
         builtWith <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
@@ -1412,14 +1435,14 @@
         </div>
       </div>
       
-      <script src="../assets/js/docmd-main.js?v=msm9rvoi"></script>
+      <script src="../assets/js/docmd-main.js?v=msma92v8"></script>
       
-      <script src="../assets/js/docmd-git.js?v=msm9rvoi"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=msm9rvoi" ></script>
+      <script src="../assets/js/docmd-git.js?v=msma92v8"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=msma92v8" ></script>
 <script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
-<script src="../assets/js/docmd-search.js?v=msm9rvoi" ></script>
-<script src="../assets/js/init-mermaid.js?v=msm9rvoi" type="module"></script>
-<script src="../assets/js/docmd-git.js?v=msm9rvoi" type="module"></script>
+<script src="../assets/js/docmd-search.js?v=msma92v8" ></script>
+<script src="../assets/js/init-mermaid.js?v=msma92v8" type="module"></script>
+<script src="../assets/js/docmd-git.js?v=msma92v8" type="module"></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
