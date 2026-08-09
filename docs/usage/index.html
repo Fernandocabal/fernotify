@@ -87,12 +87,12 @@
       Uso Básico : FerNotify
     </title>
     
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mpuclrzl">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=msm9rvoi">
     
-    <link rel="stylesheet" href="../assets/css/docmd-git.css?v=mpuclrzl">
+    <link rel="stylesheet" href="../assets/css/docmd-git.css?v=msm9rvoi">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mpuclrzl" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mpuclrzl" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=msm9rvoi" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=msm9rvoi" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Cómo usar las notificaciones modales y los toasts de FerNotify.">
@@ -109,8 +109,8 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mpuclrzl" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mpuclrzl" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=msm9rvoi" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=msm9rvoi" >
 
     
     <script>/**
@@ -312,7 +312,7 @@
 </svg>
 
     <span class="version-label">
-      v2.0.0
+      v2.1.0
     </span>
     
 <svg class="lucide-icon icon-chevron-down version-chevron" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -338,7 +338,7 @@
          class="version-dropdown-item active" 
          data-spa-ignore
          data-version-root="/">
-        v2.0.0 <span class="version-latest-badge">latest</span>
+        v2.1.0 <span class="version-latest-badge">latest</span>
         
           
 <svg class="lucide-icon icon-check version-check" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -953,6 +953,31 @@ notify.<span class="hljs-title function_">toastSuccess</span>(<span class="hljs-
 notify.<span class="hljs-title function_">toastSuccess</span>(<span class="hljs-string">&#039;Mensaje&#039;</span>, { position<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;top-center&#039;</span> });
 notify.<span class="hljs-title function_">toastSuccess</span>(<span class="hljs-string">&#039;Mensaje&#039;</span>, { position<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;bottom-center&#039;</span> });
 </code></pre>
+<hr>
+<h2 id="uso-básico-swipe-to-dismiss" class="docmd-heading"><a href="#uso-básico-swipe-to-dismiss" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Swipe to dismiss</h2>
+<p>Los toasts soportan deslizarse para cerrar, tanto con el dedo en móvil como con el mouse en escritorio. El gesto está activo por defecto y convive con el botón × y el timer.</p>
+<pre class="hljs"><code><span class="hljs-comment">// Desactivar para un toast puntual</span>
+notify.<span class="hljs-title function_">toastInfo</span>(<span class="hljs-string">&#039;No deslizable&#039;</span>, { swipeToDismiss<span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span> });
+</code></pre>
+<hr>
+<h2 id="uso-básico-configuración-global-con-configure" class="docmd-heading"><a href="#uso-básico-configuración-global-con-configure" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Configuración global con <code>configure()</code></h2>
+<p>Establece defaults que se aplican a todos los toasts o modales. Útil para evitar repetir las mismas opciones en cada llamada.</p>
+<pre class="hljs"><code><span class="hljs-keyword">const</span> notify <span class="hljs-punctuation">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title function_">NotificationSystem</span>();
+
+notify.<span class="hljs-title function_">configure</span>({
+  toast<span class="hljs-punctuation">:</span> {
+    position<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;top-center&#039;</span>,
+    swipeToDismiss<span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+  },
+  modal<span class="hljs-punctuation">:</span> {
+    confirmColor<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;#49a9b5&#039;</span>,
+  }
+});
+
+<span class="hljs-comment">// A partir de aquí, todos los toasts van al centro con swipe habilitado</span>
+notify.<span class="hljs-title function_">toastSuccess</span>(<span class="hljs-string">&#039;Guardado correctamente&#039;</span>);
+</code></pre>
+<p>Las opciones pasadas en cada llamada siempre tienen prioridad sobre los defaults.</p>
 
                 
                   <div class="page-navigation">
@@ -1079,6 +1104,14 @@ notify.<span class="hljs-title function_">toastSuccess</span>(<span class="hljs-
           <a href="#uso-básico-posición-de-los-toasts" class="toc-link">Posición de los toasts</a>
         </li>
       
+        <li class="toc-item toc-level-2">
+          <a href="#uso-básico-swipe-to-dismiss" class="toc-link">Swipe to dismiss</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#uso-básico-configuración-global-con-configure" class="toc-link">Configuración global con configure()</a>
+        </li>
+      
     </ul>
   </div>
 
@@ -1087,17 +1120,32 @@ notify.<span class="hljs-title function_">toastSuccess</span>(<span class="hljs-
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1780263983000">
+                <span class="git-last-updated" data-timestamp="1786307505000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1780263983000"></span>
+                  <span class="git-time" data-timestamp="1786307505000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="fernandocabal">
+                            
+                              <img src="https://www.gravatar.com/avatar/b1a8d3f53fa1f67a03a94988300e7ddd?d=mp&amp;s=64" alt="fernandocabal">
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="Add new method swipe">Add new method swipe</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">fernandocabal</span>
+                              <span class="git-commit-date" data-timestamp="1786307505000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="fernandocabal">
@@ -1140,14 +1188,14 @@ notify.<span class="hljs-title function_">toastSuccess</span>(<span class="hljs-
         </div>
       </div>
       
-      <script src="../assets/js/docmd-main.js?v=mpuclrzl"></script>
+      <script src="../assets/js/docmd-main.js?v=msm9rvoi"></script>
       
-      <script src="../assets/js/docmd-git.js?v=mpuclrzl"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=mpuclrzl" ></script>
+      <script src="../assets/js/docmd-git.js?v=msm9rvoi"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=msm9rvoi" ></script>
 <script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
-<script src="../assets/js/docmd-search.js?v=mpuclrzl" ></script>
-<script src="../assets/js/init-mermaid.js?v=mpuclrzl" type="module"></script>
-<script src="../assets/js/docmd-git.js?v=mpuclrzl" type="module"></script>
+<script src="../assets/js/docmd-search.js?v=msm9rvoi" ></script>
+<script src="../assets/js/init-mermaid.js?v=msm9rvoi" type="module"></script>
+<script src="../assets/js/docmd-git.js?v=msm9rvoi" type="module"></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"

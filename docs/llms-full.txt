@@ -202,6 +202,7 @@ notify.toast(options: ToastOptions): void
 | `title` | `string` | — | Título del toast |
 | `duration` | `number` | `4000` | Auto-cierre en ms (`0` = sin límite) |
 | `closeable` | `boolean` | `true` | Muestra botón × |
+| `swipeToDismiss` | `boolean` | `true` | Habilita deslizar para cerrar (mouse o dedo) |
 | `position` | `ToastPosition` | `'top-right'` | Posición en pantalla |
 | `id` | `string` | — | ID para deduplicación |
 
@@ -327,6 +328,90 @@ notify.toastInfo('Nueva versión disponible. Recarga para actualizar.', {
 notify.toastSuccess('Cambio 1 guardado', { position: 'bottom-right' });
 notify.toastSuccess('Cambio 2 guardado', { position: 'bottom-right' });
 // Los toasts se apilan verticalmente
+```
+
+---
+
+## Swipe to dismiss
+
+Los toasts se pueden cerrar deslizando con el dedo (o con el mouse) en cualquier dirección. El gesto está **habilitado por defecto** y convive con el botón × y el timer automático.
+
+```javascript
+// Deshabilitar el swipe para un toast puntual
+notify.toastInfo('No se puede deslizar', { swipeToDismiss: false });
+```
+
+::: callout info "Movimiento reducido"
+Si el usuario tiene activada la preferencia del sistema `prefers-reduced-motion`, el swipe-to-dismiss se desactiva automáticamente.
+:::
+
+::: callout warning "toastLoading"
+`notify.toastLoading()` siempre desactiva el swipe (`swipeToDismiss: false`) ya que el toast de carga no debe cerrarse manualmente.
+:::
+
+---
+
+## `notify.configure(defaults)`
+
+Establece opciones globales que se aplican a todos los toasts (y/o modales) sin necesidad de repetirlas en cada llamada. Las opciones por llamada siempre tienen prioridad.
+
+```typescript
+notify.configure(defaults: {
+  toast?: Partial<ToastOptions>;
+  modal?: Partial<NotificationOptions>;
+}): this
+```
+
+Retorna `this` para permitir encadenamiento.
+
+### Ejemplo — configuración global
+
+```javascript
+const notify = new NotificationSystem();
+
+notify.configure({
+  toast: {
+    position: 'top-center',
+    swipeToDismiss: true,
+    showProgress: false,
+  }
+});
+
+// Todos los toasts usarán top-center y tendrán swipe habilitado
+notify.toastSuccess('Guardado');
+notify.toastError('Error al conectar');
+
+// Puedes sobreescribir por llamada
+notify.toastInfo('Aviso', { position: 'bottom-right', swipeToDismiss: false });
+```
+
+### Ejemplo — React/TypeScript con patrón singleton
+
+```typescript
+// src/lib/notify.ts
+import NotificationSystem from 'fernotify';
+
+const notify = new NotificationSystem();
+
+notify.configure({
+  toast: { position: 'top-center', swipeToDismiss: true },
+  modal: { confirmColor: '#49a9b5', cancelColor: '#6a6a6a' },
+});
+
+export default notify;
+```
+
+```tsx
+// En cualquier componente
+import notify from '@/lib/notify';
+
+function MyComponent() {
+  return (
+    <button onClick={() => notify.toastSuccess('¡Listo!')}>
+      Guardar
+    </button>
+  );
+}
 ```
 
 
@@ -1017,8 +1102,8 @@ description: "FerNotify es una librería de notificaciones moderna para la web. 
 
 > Sistema moderno de notificaciones para la web — **cero dependencias externas**.
 
-::: callout tip "v2.0.0 — Sin anime.js ni Boxicons"
-Desde la versión 2.0.0, FerNotify no requiere ninguna librería externa. Las animaciones son CSS nativas y los iconos son SVGs inline.
+::: callout tip "v2.1.0 — Swipe to dismiss + configure()"
+Desliza los toasts para cerrarlos (mouse o dedo) y configura defaults globales con `notify.configure()`.
 :::
 
 ## ¿Qué es FerNotify?
@@ -1033,6 +1118,8 @@ FerNotify es una librería JavaScript/TypeScript que provee dos tipos de notific
 - Dark Mode automático (detecta el tema del sistema)
 - Animaciones CSS nativas (sin anime.js)
 - Iconos SVG inline (sin Boxicons)
+- Swipe to dismiss en toasts (mouse o dedo)
+- Configuración global con `configure()`
 - Accesible: teclado completo + ARIA
 - Compatible con CDN, npm, React y TypeScript
 :::
@@ -1106,7 +1193,7 @@ description: "Cómo instalar FerNotify via CDN, npm o ES Modules."
 
 # Instalación
 
-FerNotify v2.0.0 no requiere ninguna dependencia externa. Solo incluye el script y listo.
+FerNotify v2.1.0 no requiere ninguna dependencia externa. Solo incluye el script y listo.
 
 ## CDN (recomendado para webs estáticas)
 
@@ -1119,7 +1206,7 @@ El método más sencillo. Agrega el script a tu HTML y tendrás `window.notify` 
 <script src="https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@latest/dist/notification-system.js"></script>
 
 <!-- Versión específica (recomendado en producción) -->
-<script src="https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@2.0.0/dist/notification-system.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Fernandocabal/fernotify@2.1.0/dist/notification-system.js"></script>
 ```
 
 Uso:
@@ -1453,6 +1540,42 @@ notify.toastSuccess('Mensaje', { position: 'bottom-left' });
 notify.toastSuccess('Mensaje', { position: 'top-center' });
 notify.toastSuccess('Mensaje', { position: 'bottom-center' });
 ```
+
+---
+
+## Swipe to dismiss
+
+Los toasts soportan deslizarse para cerrar, tanto con el dedo en móvil como con el mouse en escritorio. El gesto está activo por defecto y convive con el botón × y el timer.
+
+```javascript
+// Desactivar para un toast puntual
+notify.toastInfo('No deslizable', { swipeToDismiss: false });
+```
+
+---
+
+## Configuración global con `configure()`
+
+Establece defaults que se aplican a todos los toasts o modales. Útil para evitar repetir las mismas opciones en cada llamada.
+
+```javascript
+const notify = new NotificationSystem();
+
+notify.configure({
+  toast: {
+    position: 'top-center',
+    swipeToDismiss: true,
+  },
+  modal: {
+    confirmColor: '#49a9b5',
+  }
+});
+
+// A partir de aquí, todos los toasts van al centro con swipe habilitado
+notify.toastSuccess('Guardado correctamente');
+```
+
+Las opciones pasadas en cada llamada siempre tienen prioridad sobre los defaults.
 
 
 ---
