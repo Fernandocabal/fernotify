@@ -1177,6 +1177,7 @@ interface ToastInstance {
                 let startY = 0;
                 let startTime = 0;
                 let dragging = false;
+                let lockedAxis: 'x' | 'y' | null = null;
 
                 const onPointerDown = (e: PointerEvent) => {
                     if (e.pointerType === 'mouse' && e.button !== 0) return;
@@ -1184,22 +1185,25 @@ interface ToastInstance {
                     startY = e.clientY;
                     startTime = e.timeStamp;
                     dragging = true;
+                    lockedAxis = null;
                     toast.setPointerCapture(e.pointerId);
                     toast.classList.add('notify-toast-swiping');
                     pauseCountdown();
                 };
 
-                const axisConstrain = (dx: number, dy: number): [number, number] =>
-                    Math.abs(dx) >= Math.abs(dy)
-                        ? [dx, dy * 0.15]
-                        : [dx * 0.15, dy];
-
                 const onPointerMove = (e: PointerEvent) => {
                     if (!dragging) return;
                     const dx = e.clientX - startX;
                     const dy = e.clientY - startY;
-                    const [tx, ty] = axisConstrain(dx, dy);
-                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (!lockedAxis && Math.sqrt(dx * dx + dy * dy) > 10) {
+                        lockedAxis = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y';
+                    }
+
+                    const tx = lockedAxis === 'y' ? 0 : dx;
+                    const ty = lockedAxis === 'x' ? 0 : dy;
+                    const dist = Math.abs(lockedAxis === 'x' ? dx : dy);
+
                     toast.style.transform = `translate(${tx}px, ${ty}px)`;
                     toast.style.opacity = dist > 60
                         ? String(Math.max(0.35, 1 - (dist - 60) / 140))
@@ -1213,19 +1217,18 @@ interface ToastInstance {
 
                     const dx = e.clientX - startX;
                     const dy = e.clientY - startY;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const primary = lockedAxis === 'x' ? dx : dy;
+                    const dist = Math.abs(primary);
                     const velocity = dist / Math.max(1, e.timeStamp - startTime);
 
-                    const isUpward = Math.abs(dy) >= Math.abs(dx) && dy < 0;
+                    const isUpward = lockedAxis === 'y' && dy < 0;
                     const distThreshold = isUpward ? 25 : 60;
                     const velThreshold  = isUpward ? 0.2 : 0.4;
 
                     if (dist >= distThreshold || velocity > velThreshold) {
-                        const [tx, ty] = axisConstrain(dx, dy);
-                        const angle = Math.atan2(ty, tx);
                         const exitDist = Math.max(window.innerWidth, window.innerHeight);
-                        const exitX = Math.cos(angle) * exitDist;
-                        const exitY = Math.sin(angle) * exitDist;
+                        const exitX = lockedAxis === 'x' ? Math.sign(dx) * exitDist : 0;
+                        const exitY = lockedAxis === 'y' ? Math.sign(dy) * exitDist : 0;
                         toast.style.transition = 'transform 300ms ease-in, opacity 300ms ease-in';
                         toast.style.transform = `translate(${exitX}px, ${exitY}px)`;
                         toast.style.opacity = '0';
