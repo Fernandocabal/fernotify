@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "docmd dev",
     "build": "docmd build",
-    "postbuild": "node scripts/gen-favicon.cjs",
+    "postbuild": "node scripts/gen-favicon.cjs && node scripts/copy-dist.cjs",
     "preview": "npx serve site"
   },
   "dependencies": {

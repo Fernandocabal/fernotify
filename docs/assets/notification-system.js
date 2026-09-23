@@ -1,9 +1,50 @@
-/*!
- * docmd (v0.8.5)
- * Copyright (c) 2025-present docmd.io
- * License: MIT
- */
-"use strict";var __rest=this&&this.__rest||function(T,P){var $={};for(var v in T)Object.prototype.hasOwnProperty.call(T,v)&&P.indexOf(v)<0&&($[v]=T[v]);if(T!=null&&typeof Object.getOwnPropertySymbols=="function")for(var S=0,v=Object.getOwnPropertySymbols(T);S<v.length;S++)P.indexOf(v[S])<0&&Object.prototype.propertyIsEnumerable.call(T,v[S])&&($[v[S]]=T[v[S]]);return $};(function(){"use strict";const T={easeOutQuad:"cubic-bezier(0.25, 0.46, 0.45, 0.94)",easeOutCubic:"cubic-bezier(0.215, 0.61, 0.355, 1)",easeOutQuart:"cubic-bezier(0.165, 0.84, 0.44, 1)",easeOutQuint:"cubic-bezier(0.23, 1, 0.32, 1)",easeOutBack:"cubic-bezier(0.34, 1.56, 0.64, 1)",easeOutCirc:"cubic-bezier(0.075, 0.82, 0.165, 1)",easeInQuad:"cubic-bezier(0.55, 0.085, 0.68, 0.53)",easeInCubic:"cubic-bezier(0.55, 0.055, 0.675, 0.19)",easeInBack:"cubic-bezier(0.6, -0.28, 0.735, 0.045)",easeInOutQuad:"cubic-bezier(0.455, 0.03, 0.515, 0.955)",easeInOutCubic:"cubic-bezier(0.645, 0.045, 0.355, 1)",easeInOutBack:"cubic-bezier(0.68, -0.55, 0.265, 1.55)",linear:"linear",ease:"ease","ease-in":"ease-in","ease-out":"ease-out","ease-in-out":"ease-in-out"};function P(){class ${constructor(){this.currentNotification=null,this._lastActiveElement=null,this._currentLoadingPromise=null,this._toastContainers=new Map,this._toastInstances=new Map,this.injectStyles()}injectStyles(){const e=document.createElement("style");e.textContent=`
+"use strict";
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+(function () {
+    'use strict';
+    /** anime.js easing name → CSS cubic-bezier equivalents (unknown names pass through as raw CSS values) */
+    const EASING = {
+        easeOutQuad: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        easeOutCubic: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+        easeOutQuart: 'cubic-bezier(0.165, 0.84, 0.44, 1)',
+        easeOutQuint: 'cubic-bezier(0.23, 1, 0.32, 1)',
+        easeOutBack: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+        easeOutCirc: 'cubic-bezier(0.075, 0.82, 0.165, 1)',
+        easeInQuad: 'cubic-bezier(0.55, 0.085, 0.68, 0.53)',
+        easeInCubic: 'cubic-bezier(0.55, 0.055, 0.675, 0.19)',
+        easeInBack: 'cubic-bezier(0.6, -0.28, 0.735, 0.045)',
+        easeInOutQuad: 'cubic-bezier(0.455, 0.03, 0.515, 0.955)',
+        easeInOutCubic: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+        easeInOutBack: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        linear: 'linear',
+        ease: 'ease',
+        'ease-in': 'ease-in',
+        'ease-out': 'ease-out',
+        'ease-in-out': 'ease-in-out',
+    };
+    function initFerNotify() {
+        class NotificationSystem {
+            constructor() {
+                this.currentNotification = null;
+                this._lastActiveElement = null;
+                this._currentLoadingPromise = null;
+                this._toastContainers = new Map();
+                this._toastInstances = new Map();
+                this.injectStyles();
+            }
+            injectStyles() {
+                const style = document.createElement('style');
+                style.textContent = `
             .notification-overlay {
                 position: fixed;
                 top: 0;
@@ -88,7 +129,7 @@
             .notification-box label { display: block; margin-bottom: 6px; color: #374151; font-weight: 600; }
 
             /* Soporte para tema oscuro con clase .dark (Tailwind darkMode: 'class') */
-            /* Esto tiene prioridad sobre prefers-color-scheme para respetar la elecci\xF3n del usuario en la web */
+            /* Esto tiene prioridad sobre prefers-color-scheme para respetar la elección del usuario en la web */
             .dark .notification-box { background: #0f1724 !important; color: #e6eef8 !important; }
             .dark .notification-box input,
             .dark .notification-box textarea,
@@ -391,7 +432,7 @@
             }
             .notify-toast-close:hover { background: rgba(0,0,0,0.1); color: #374151; }
 
-            /* Sin bot\xF3n de cierre: reducir padding derecho */
+            /* Sin botón de cierre: reducir padding derecho */
             .notify-toast.notify-toast-no-close { padding-right: 14px; }
 
             .notify-toast-progress {
@@ -454,4 +495,797 @@
                 height: 20px;
                 display: block;
             }
-        `,document.head.appendChild(e)}_prefersReducedMotion(){try{return window.matchMedia("(prefers-reduced-motion: reduce)").matches}catch{return!1}}_cssAnimate(e,t,o){var l,d,b,x;if(this._prefersReducedMotion()){t.opacity!==void 0&&(e.style.opacity=String(t.opacity)),t.transform!==void 0&&(e.style.transform=t.transform),e.style.transition="",o.complete&&setTimeout(o.complete,0);return}const E=(b=(d=T[(l=o.easing)!==null&&l!==void 0?l:"ease"])!==null&&d!==void 0?d:o.easing)!==null&&b!==void 0?b:"ease",D=()=>{requestAnimationFrame(()=>{requestAnimationFrame(()=>{const k=[];t.opacity!==void 0&&k.push(`opacity ${o.duration}ms ${E}`),t.transform!==void 0&&k.push(`transform ${o.duration}ms ${E}`),e.style.transition=k.join(", "),t.opacity!==void 0&&(e.style.opacity=String(t.opacity)),t.transform!==void 0&&(e.style.transform=t.transform),o.complete&&setTimeout(o.complete,o.duration+50)})})};((x=o.delay)!==null&&x!==void 0?x:0)>0?setTimeout(D,o.delay):D()}getIcon(e){var t;const o=d=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`,l={success:o('<polyline points="20 6 9 17 4 12"/>'),error:o('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'),warning:o('<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'),info:o('<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'),question:o('<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>'),loading:'<div class="notify-toast-spinner" aria-hidden="true"></div>'};return(t=l[e])!==null&&t!==void 0?t:l.info}getDefaultTitle(e){return{success:"\xA1\xC9xito!",error:"Error",warning:"Advertencia",info:"Informaci\xF3n",question:"Pregunta"}[e]||"Notificaci\xF3n"}getButtonGradient(e){const t={success:"linear-gradient(135deg, #10b981 0%, #059669 100%)",error:"linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",warning:"linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",info:"linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",question:"linear-gradient(135deg, #8b5cf6 0%, #8b5cf6 100%)"};return t[e]||t.info}getButtonShadow(e){const t={success:"rgba(16, 185, 129, 0)",error:"rgba(239, 68, 68, 0)",warning:"rgba(245, 159, 11, 0)",info:"rgba(59, 131, 246, 0)",question:"rgba(139, 92, 246, 0)"};return t[e]||t.info}show(e={}){if(this.currentNotification){const n=this.currentNotification;this.currentNotification=null;try{n&&n.parentNode&&n.parentNode.removeChild(n)}catch{}}const{type:t="info",title:o=this.getDefaultTitle(t),message:l="",buttonText:d="OK",buttonColor:b=null,onClose:x=null,timer:E=null,allowOutsideClick:D=!0,allowEscapeKey:k=!0,hideButton:I=!1,buttons:w=null}=e,H=e.showCloseButton===!0;try{document.body.style.overflow="hidden"}catch{}try{document.documentElement.style.overflow="hidden"}catch{}const p=document.createElement("div");p.className="notification-overlay",p.tabIndex=-1,p.setAttribute("role","dialog"),p.setAttribute("aria-modal","true"),p.style.pointerEvents="auto";const i=document.createElement("div");i.className="notification-box";const h=document.createElement("div");h.className=`notification-icon ${t}`,I&&t==="info"?(h.className="notification-loading-container",h.innerHTML='<div class="notification-spinner"></div>',h.style.background="transparent",h.style.boxShadow="none",h.style.width="100px",h.style.height="100px"):h.innerHTML=this.getIcon(t);const L=document.createElement("h3");L.className="notification-title",L.textContent=o;const A=document.createElement("p");A.className="notification-message",A.textContent=l;let r=null;if(e.html||e.content)if(r=document.createElement("div"),r.className="notification-content",e.html)try{r.innerHTML=e.html}catch{r.textContent=e.html}else e.content&&e.content instanceof HTMLElement&&r.appendChild(e.content);const g=()=>this.close(x);let s=null,y=null;if(!I){if(Array.isArray(w)&&w.length)y=document.createElement("div"),y.className="notification-button-group",w.forEach(n=>{const c=document.createElement("button");c.className="notification-button",c.textContent=n.text||"OK";const m=n.color||this.getButtonGradient(t),O=n.shadowColor||this.getButtonShadow(t);c.style.background=m,c.style.boxShadow=`0 4px 12px ${O}`,c.addEventListener("click",N=>{N.stopPropagation(),N.preventDefault();try{g().then(()=>{if(typeof n.onClick=="function")try{const f=n.onClick();f&&typeof f.then=="function"&&f.catch(Q=>console.error(Q))}catch(f){console.error(f)}}).catch(()=>{})}catch(f){console.error(f)}}),c.addEventListener("mouseenter",()=>{c.style.boxShadow=`0 6px 16px ${O}`}),c.addEventListener("mouseleave",()=>{c.style.boxShadow=`0 4px 12px ${O}`}),y.appendChild(c)});else if(e.onConfirm||e.onCancel||e.confirmText||e.cancelText){y=document.createElement("div"),y.className="notification-button-group";const n=e.cancelText||"Cancelar",c=e.confirmText||"Aceptar",m=document.createElement("button");m.className="notification-button",m.textContent=n;const O=e.cancelColor||"linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)",N=e.cancelShadow||"rgba(107,114,128,0.25)";m.style.background=O,m.style.boxShadow=`0 4px 12px ${N}`,m.addEventListener("click",B=>{B.stopPropagation(),B.preventDefault(),g().then(()=>{try{if(typeof e.onCancel=="function"){const C=e.onCancel();C&&typeof C.then=="function"&&C.catch(J=>console.error(J))}}catch(C){console.error(C)}}).catch(()=>{})}),m.addEventListener("mouseenter",()=>{m.style.boxShadow=`0 6px 16px ${N}`}),m.addEventListener("mouseleave",()=>{m.style.boxShadow=`0 4px 12px ${N}`});const f=document.createElement("button");f.className="notification-button",f.textContent=c;const Q=e.confirmColor||this.getButtonGradient(t),F=e.confirmShadow||this.getButtonShadow(t);f.style.background=Q,f.style.boxShadow=`0 4px 12px ${F}`,f.addEventListener("click",async B=>{B.stopPropagation(),B.preventDefault();try{if(await g(),typeof e.onConfirm=="function"){const C=e.onConfirm();C&&typeof C.then=="function"&&await C}}catch(C){console.error(C)}}),f.addEventListener("mouseenter",()=>{f.style.boxShadow=`0 6px 16px ${F}`}),f.addEventListener("mouseleave",()=>{f.style.boxShadow=`0 4px 12px ${F}`}),y.appendChild(m),y.appendChild(f)}else if(d){s=document.createElement("button"),s.className="notification-button",s.textContent=d;const n=b||this.getButtonGradient(t),c=this.getButtonShadow(t);s.style.background=n,s.style.boxShadow=`0 4px 12px ${c}`}}let _=null;if(H&&(_=document.createElement("button"),_.setAttribute("aria-label","Cerrar"),_.className="notification-close",_.innerHTML="&times;",_.addEventListener("click",n=>{n.stopPropagation(),g()})),i.appendChild(h),r){const n="notify-desc-"+Date.now();r.id=n,p.setAttribute("aria-describedby",n),i.appendChild(r)}else i.appendChild(L),i.appendChild(A);_&&i.appendChild(_),y?i.appendChild(y):s&&i.appendChild(s),p.appendChild(i),document.body.appendChild(p);const j=p,z=new Promise(n=>{try{j._externalResolve=n}catch{}});try{const n=document.getElementById("notify-live");n&&(n.textContent=`${o}: ${l}`)}catch{}try{this._lastActiveElement=document.activeElement}catch{this._lastActiveElement=null}this.currentNotification=p;try{const n=i.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])');n&&n.length?n[0].focus():s?s.focus():p.focus()}catch{try{p.focus()}catch{}}const M=n=>{if(n.key!=="Tab")return;const m=Array.from(i.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])')).filter(f=>f instanceof HTMLElement&&f.offsetParent!==null);if(!m.length){n.preventDefault();return}const O=m[0],N=m[m.length-1];!n.shiftKey&&document.activeElement===N?(n.preventDefault(),O.focus()):n.shiftKey&&document.activeElement===O&&(n.preventDefault(),N.focus())};j._focusTrap=M,document.addEventListener("keydown",M);const u=e.anim||{},R=typeof u.overlayDuration=="number"?u.overlayDuration:150,a=u.overlayEasing||"easeOutQuad",q=typeof u.boxDuration=="number"?u.boxDuration:200,K=typeof u.boxDelay=="number"?u.boxDelay:50,G=u.boxEasing||"easeOutBack",X=typeof u.boxStartScale=="number"?u.boxStartScale:.8,Y=typeof u.iconDuration=="number"?u.iconDuration:250,W=typeof u.iconDelay=="number"?u.iconDelay:100,V=typeof u.iconRotate=="number"?u.iconRotate:t==="success"?-90:t==="error"?90:0;if(typeof u.overlayOpacity=="number"&&(p.style.backgroundColor=`rgba(0,0,0,${u.overlayOpacity})`),p.style.opacity="0",i.style.opacity="0",i.style.transform=`scale(${X})`,h.style.opacity="0",h.style.transform=`scale(0) rotate(${V}deg)`,this._cssAnimate(p,{opacity:1},{duration:R,easing:a}),this._cssAnimate(i,{opacity:1,transform:"scale(1)"},{duration:q,easing:G,delay:K}),this._cssAnimate(h,{opacity:1,transform:"scale(1) rotate(0deg)"},{duration:Y,easing:G,delay:W}),s){const n=this.getButtonShadow(t);s.addEventListener("mouseenter",()=>{s.style.boxShadow=`0 6px 16px ${n}`}),s.addEventListener("mouseleave",()=>{s.style.boxShadow=`0 4px 12px ${n}`}),s.addEventListener("click",c=>{c.stopPropagation(),c.preventDefault(),g().catch(()=>{})})}if(D&&p.addEventListener("click",n=>{i.contains(n.target)||g()}),E&&setTimeout(()=>{g()},E),k){const n=c=>{c.key==="Escape"&&(g(),document.removeEventListener("keydown",n))};j._escHandler=n,document.addEventListener("keydown",n)}return z}close(e=null){if(!this.currentNotification)return Promise.resolve();const t=this.currentNotification,o=t,l=t.querySelector(".notification-box");return this.currentNotification=null,l instanceof HTMLElement&&this._cssAnimate(l,{opacity:0,transform:"scale(0.8)"},{duration:100,easing:"easeInQuad"}),new Promise(d=>{this._cssAnimate(t,{opacity:0},{duration:100,easing:"easeInQuad",complete:()=>{try{o&&o._escHandler&&(document.removeEventListener("keydown",o._escHandler),o._escHandler=void 0)}catch{}try{o&&o._focusTrap&&(document.removeEventListener("keydown",o._focusTrap),o._focusTrap=void 0)}catch{}try{if(o&&typeof o._externalResolve=="function"){try{o._externalResolve()}catch{}o._externalResolve=void 0}}catch{}try{t&&t.parentNode&&t.parentNode.removeChild(t)}catch{try{t.remove()}catch{}}if(!this.currentNotification){try{document.body.style.overflow=""}catch{}try{document.documentElement.style.overflow=""}catch{}}try{this._lastActiveElement&&typeof this._lastActiveElement.focus=="function"&&this._lastActiveElement.focus()}catch{}this._lastActiveElement=null,e&&e(),d()}})})}success(e,t=null,o={}){this.show(Object.assign({type:"success",title:t||this.getDefaultTitle("success"),message:e},o))}error(e,t=null,o={}){this.show(Object.assign({type:"error",title:t||this.getDefaultTitle("error"),message:e},o))}warning(e,t=null,o={}){this.show(Object.assign({type:"warning",title:t||this.getDefaultTitle("warning"),message:e},o))}question(e,t=null,o={}){this.show(Object.assign({type:"question",title:t||this.getDefaultTitle("question"),message:e},o))}info(e,t=null,o={}){this.show(Object.assign({type:"info",title:t||this.getDefaultTitle("info"),message:e},o))}loading(e="Cargando...",t="Espera",o={}){const l=Object.assign({type:"info",title:t,message:e,hideButton:!0,allowOutsideClick:!1,allowEscapeKey:!1},o),d=this.show(l);return this._currentLoadingPromise=d,d}closeLoading(e=null){return this._currentLoadingPromise=null,this.close(e)}hide(e=null){return this.close(e)}hiden(e=null){return this.close(e)}_formatTime(e){const t=Math.max(0,Math.floor(e)),o=Math.floor(t/60).toString().padStart(2,"0"),l=(t%60).toString().padStart(2,"0");return`${o}:${l}`}showToast(e,t={}){var o,l;const d=t.type||"info",b=(o=t.title)!==null&&o!==void 0?o:null,x=typeof t.duration=="number"?t.duration:4e3,E=t.position||"top-right",D=t.showProgress!==!1,k=(l=t.id)!==null&&l!==void 0?l:null,I=t.closeable!==!1;if(k!==null){const a=this._toastInstances.get(k);if(a){a.reset(x);return}}let w=this._toastContainers.get(E);(!w||!document.body.contains(w))&&(w=document.createElement("div"),w.className=`notify-toast-container notify-toast-${E}`,w.setAttribute("aria-label","Notificaciones"),document.body.appendChild(w),this._toastContainers.set(E,w));const H=E.startsWith("bottom"),p=E==="top-center",i=document.createElement("div");i.className="notify-toast",I||i.classList.add("notify-toast-no-close"),d==="error"||d==="warning"?i.setAttribute("role","alert"):i.setAttribute("role","status"),i.setAttribute("aria-atomic","true"),i.setAttribute("aria-live",d==="error"||d==="warning"?"assertive":"polite");const h=document.createElement("div");h.className=`notify-toast-icon ${d}`,h.innerHTML=this.getIcon(d);const L=document.createElement("div");if(L.className="notify-toast-content",b){const a=document.createElement("div");a.className="notify-toast-title",a.textContent=b,L.appendChild(a)}const A=document.createElement("div");if(A.className="notify-toast-message",A.textContent=e,L.appendChild(A),i.appendChild(h),i.appendChild(L),I){const a=document.createElement("button");a.className="notify-toast-close",a.setAttribute("aria-label","Cerrar notificaci\xF3n"),a.innerHTML="&times;",a.addEventListener("click",j),i.appendChild(a)}let r=null;x>0&&D&&(r=document.createElement("div"),r.className=`notify-toast-progress ${d}`,r.setAttribute("role","progressbar"),r.setAttribute("aria-hidden","true"),i.appendChild(r)),H||p?w.appendChild(i):w.insertBefore(i,w.firstChild);let g=!1,s=null,y=x,_=0;function j(){if(g)return Promise.resolve();if(g=!0,i.contains(document.activeElement))try{document.activeElement.blur()}catch{}return i.classList.remove("notify-toast-visible"),new Promise(a=>{setTimeout(()=>{i.parentNode&&i.parentNode.removeChild(i),a()},300)})}const z=a=>{_=Date.now(),s=setTimeout(()=>{k!==null&&this._toastInstances.delete(k),j()},a),r&&(r.style.transition=`width ${a}ms linear`,r.style.width="0%")},M=()=>{if(g||s===null)return;clearTimeout(s),s=null;const a=Date.now()-_;if(y=Math.max(0,y-a),r){const q=y/x*100;r.style.transition="none",r.style.width=`${q}%`}},u=()=>{g||y<=0||z(y)},R=a=>{g||(s!==null&&(clearTimeout(s),s=null),y=a,a>0?(r&&(r.style.transition="none",r.style.width="100%",r.offsetWidth),z(a)):r&&(r.style.transition="none",r.style.width="100%"))};if(k!==null){const a=()=>{if(!g){if(g=!0,s!==null&&clearTimeout(s),i.contains(document.activeElement))try{document.activeElement.blur()}catch{}i.parentNode&&i.parentNode.removeChild(i)}};this._toastInstances.set(k,{reset:R,dismiss:j,_silentDismiss:a})}requestAnimationFrame(()=>{requestAnimationFrame(()=>{i.classList.add("notify-toast-visible"),x>0&&z(x)})}),x>0&&I&&(i.addEventListener("mouseenter",M),i.addEventListener("mouseleave",u))}toast(e,t={}){if(typeof e=="string")this.showToast(e,t);else{const{message:o=""}=e,l=__rest(e,["message"]);this.showToast(o,l)}}toastSuccess(e,t,o={}){this.showToast(e,Object.assign(Object.assign({},o),{type:"success",title:t??o.title}))}toastError(e,t,o={}){this.showToast(e,Object.assign(Object.assign({},o),{type:"error",title:t??o.title}))}toastWarning(e,t,o={}){this.showToast(e,Object.assign(Object.assign({},o),{type:"warning",title:t??o.title}))}toastInfo(e,t,o={}){this.showToast(e,Object.assign(Object.assign({},o),{type:"info",title:t??o.title}))}toastQuestion(e,t,o={}){this.showToast(e,Object.assign(Object.assign({},o),{type:"question",title:t??o.title}))}toastLoading(e="Cargando...",t,o={}){this.showToast(e,Object.assign(Object.assign({position:"top-right"},o),{type:"loading",title:t??o.title,id:"__loading__",closeable:!1,duration:0,showProgress:!1}))}closeToastLoading(){const e=this._toastInstances.get("__loading__");return e?(this._toastInstances.delete("__loading__"),e.dismiss()):Promise.resolve()}replaceToastLoading(e,t={}){const o=this._toastInstances.get("__loading__");o&&(this._toastInstances.delete("__loading__"),o._silentDismiss()),this.showToast(e,t)}}const v=new $,S=window;S.notify=v,S.Notification=v}P()})();
+        `;
+                document.head.appendChild(style);
+            }
+            _prefersReducedMotion() {
+                try {
+                    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                }
+                catch (_e) {
+                    return false;
+                }
+            }
+            /** Lightweight CSS transition helper — replaces anime.js with zero external dependency */
+            _cssAnimate(el, to, opts) {
+                var _a, _b, _c, _d;
+                if (this._prefersReducedMotion()) {
+                    if (to.opacity !== undefined)
+                        el.style.opacity = String(to.opacity);
+                    if (to.transform !== undefined)
+                        el.style.transform = to.transform;
+                    el.style.transition = '';
+                    if (opts.complete)
+                        setTimeout(opts.complete, 0);
+                    return;
+                }
+                // Map legacy anime.js easing names → CSS; unknown values pass through as raw CSS
+                const cssEasing = (_c = (_b = EASING[(_a = opts.easing) !== null && _a !== void 0 ? _a : 'ease']) !== null && _b !== void 0 ? _b : opts.easing) !== null && _c !== void 0 ? _c : 'ease';
+                const run = () => {
+                    // Double-rAF: ensures initial styles are committed before transition starts (critical in Safari)
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            const props = [];
+                            if (to.opacity !== undefined)
+                                props.push(`opacity ${opts.duration}ms ${cssEasing}`);
+                            if (to.transform !== undefined)
+                                props.push(`transform ${opts.duration}ms ${cssEasing}`);
+                            el.style.transition = props.join(', ');
+                            if (to.opacity !== undefined)
+                                el.style.opacity = String(to.opacity);
+                            if (to.transform !== undefined)
+                                el.style.transform = to.transform;
+                            if (opts.complete)
+                                setTimeout(opts.complete, opts.duration + 50);
+                        });
+                    });
+                };
+                if (((_d = opts.delay) !== null && _d !== void 0 ? _d : 0) > 0) {
+                    setTimeout(run, opts.delay);
+                }
+                else {
+                    run();
+                }
+            }
+            getIcon(type) {
+                var _a;
+                const svg = (path) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg>`;
+                const icons = {
+                    success: svg('<polyline points="20 6 9 17 4 12"/>'),
+                    error: svg('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'),
+                    warning: svg('<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'),
+                    info: svg('<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'),
+                    question: svg('<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>'),
+                    loading: '<div class="notify-toast-spinner" aria-hidden="true"></div>',
+                };
+                return (_a = icons[type]) !== null && _a !== void 0 ? _a : icons['info'];
+            }
+            getDefaultTitle(type) {
+                const titles = {
+                    'success': '¡Éxito!',
+                    'error': 'Error',
+                    'warning': 'Advertencia',
+                    'info': 'Información',
+                    'question': 'Pregunta'
+                };
+                return titles[type] || 'Notificación';
+            }
+            getButtonGradient(type) {
+                const gradients = {
+                    'success': 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    'error': 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                    'warning': 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                    'info': 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                    'question': 'linear-gradient(135deg, #8b5cf6 0%, #8b5cf6 100%)'
+                };
+                return gradients[type] || gradients.info;
+            }
+            getButtonShadow(type) {
+                const shadows = {
+                    'success': 'rgba(16, 185, 129, 0)',
+                    'error': 'rgba(239, 68, 68, 0)',
+                    'warning': 'rgba(245, 159, 11, 0)',
+                    'info': 'rgba(59, 131, 246, 0)',
+                    'question': 'rgba(139, 92, 246, 0)'
+                };
+                return shadows[type] || shadows.info;
+            }
+            show(options = {}) {
+                // Cerrar notificación existente si hay (esperar a que termine)
+                if (this.currentNotification) {
+                    const oldOverlay = this.currentNotification;
+                    this.currentNotification = null;
+                    try {
+                        if (oldOverlay && oldOverlay.parentNode) {
+                            oldOverlay.parentNode.removeChild(oldOverlay);
+                        }
+                    }
+                    catch (e) { }
+                }
+                const { type = 'info', title = this.getDefaultTitle(type), message = '', buttonText = 'OK', buttonColor = null, onClose = null, timer = null, allowOutsideClick = true, allowEscapeKey = true, hideButton = false, buttons = null } = options;
+                const showCloseButton = options.showCloseButton === true;
+                try {
+                    document.body.style.overflow = 'hidden';
+                }
+                catch (e) { }
+                try {
+                    document.documentElement.style.overflow = 'hidden';
+                }
+                catch (e) { }
+                const overlay = document.createElement('div');
+                overlay.className = 'notification-overlay';
+                overlay.tabIndex = -1;
+                overlay.setAttribute('role', 'dialog');
+                overlay.setAttribute('aria-modal', 'true');
+                overlay.style.pointerEvents = 'auto';
+                const box = document.createElement('div');
+                box.className = 'notification-box';
+                const icon = document.createElement('div');
+                icon.className = `notification-icon ${type}`;
+                if (hideButton && type === 'info') {
+                    icon.className = 'notification-loading-container';
+                    icon.innerHTML = '<div class="notification-spinner"></div>';
+                    icon.style.background = 'transparent';
+                    icon.style.boxShadow = 'none';
+                    icon.style.width = '100px';
+                    icon.style.height = '100px';
+                }
+                else {
+                    icon.innerHTML = this.getIcon(type);
+                }
+                const titleElement = document.createElement('h3');
+                titleElement.className = 'notification-title';
+                titleElement.textContent = title;
+                const messageElement = document.createElement('p');
+                messageElement.className = 'notification-message';
+                messageElement.textContent = message;
+                let customContent = null;
+                if (options.html || options.content) {
+                    customContent = document.createElement('div');
+                    customContent.className = 'notification-content';
+                    if (options.html) {
+                        try {
+                            customContent.innerHTML = options.html;
+                        }
+                        catch (e) {
+                            customContent.textContent = options.html;
+                        }
+                    }
+                    else if (options.content && options.content instanceof HTMLElement) {
+                        customContent.appendChild(options.content);
+                    }
+                }
+                const closeHandler = () => {
+                    return this.close(onClose);
+                };
+                let button = null;
+                let buttonContainer = null;
+                if (!hideButton) {
+                    if (Array.isArray(buttons) && buttons.length) {
+                        buttonContainer = document.createElement('div');
+                        buttonContainer.className = 'notification-button-group';
+                        buttons.forEach((btn) => {
+                            const btnEl = document.createElement('button');
+                            btnEl.className = 'notification-button';
+                            btnEl.textContent = btn.text || 'OK';
+                            const finalBtnColor = btn.color || this.getButtonGradient(type);
+                            const btnShadow = btn.shadowColor || this.getButtonShadow(type);
+                            btnEl.style.background = finalBtnColor;
+                            btnEl.style.boxShadow = `0 4px 12px ${btnShadow}`;
+                            btnEl.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                try {
+                                    closeHandler().then(() => {
+                                        if (typeof btn.onClick === 'function') {
+                                            try {
+                                                const res = btn.onClick();
+                                                if (res && typeof res.then === 'function') {
+                                                    res.catch((err) => console.error(err));
+                                                }
+                                            }
+                                            catch (err) {
+                                                console.error(err);
+                                            }
+                                        }
+                                    }).catch(() => { });
+                                }
+                                catch (err) {
+                                    console.error(err);
+                                }
+                            });
+                            btnEl.addEventListener('mouseenter', () => {
+                                btnEl.style.boxShadow = `0 6px 16px ${btnShadow}`;
+                            });
+                            btnEl.addEventListener('mouseleave', () => {
+                                btnEl.style.boxShadow = `0 4px 12px ${btnShadow}`;
+                            });
+                            buttonContainer.appendChild(btnEl);
+                        });
+                    }
+                    else if (options.onConfirm || options.onCancel || options.confirmText || options.cancelText) {
+                        buttonContainer = document.createElement('div');
+                        buttonContainer.className = 'notification-button-group';
+                        const cancelText = options.cancelText || 'Cancelar';
+                        const confirmText = options.confirmText || 'Aceptar';
+                        const cancelBtn = document.createElement('button');
+                        cancelBtn.className = 'notification-button';
+                        cancelBtn.textContent = cancelText;
+                        const cancelColor = options.cancelColor || 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)';
+                        const cancelShadow = options.cancelShadow || 'rgba(107,114,128,0.25)';
+                        cancelBtn.style.background = cancelColor;
+                        cancelBtn.style.boxShadow = `0 4px 12px ${cancelShadow}`;
+                        cancelBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            closeHandler().then(() => {
+                                try {
+                                    if (typeof options.onCancel === 'function') {
+                                        const res = options.onCancel();
+                                        if (res && typeof res.then === 'function') {
+                                            res.catch((err) => console.error(err));
+                                        }
+                                    }
+                                }
+                                catch (err) {
+                                    console.error(err);
+                                }
+                            }).catch(() => { });
+                        });
+                        cancelBtn.addEventListener('mouseenter', () => { cancelBtn.style.boxShadow = `0 6px 16px ${cancelShadow}`; });
+                        cancelBtn.addEventListener('mouseleave', () => { cancelBtn.style.boxShadow = `0 4px 12px ${cancelShadow}`; });
+                        const confirmBtn = document.createElement('button');
+                        confirmBtn.className = 'notification-button';
+                        confirmBtn.textContent = confirmText;
+                        const confirmColor = options.confirmColor || this.getButtonGradient(type);
+                        const confirmShadow = options.confirmShadow || this.getButtonShadow(type);
+                        confirmBtn.style.background = confirmColor;
+                        confirmBtn.style.boxShadow = `0 4px 12px ${confirmShadow}`;
+                        confirmBtn.addEventListener('click', async (e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            try {
+                                await closeHandler();
+                                if (typeof options.onConfirm === 'function') {
+                                    const res = options.onConfirm();
+                                    if (res && typeof res.then === 'function') {
+                                        await res;
+                                    }
+                                }
+                            }
+                            catch (err) {
+                                console.error(err);
+                            }
+                        });
+                        confirmBtn.addEventListener('mouseenter', () => { confirmBtn.style.boxShadow = `0 6px 16px ${confirmShadow}`; });
+                        confirmBtn.addEventListener('mouseleave', () => { confirmBtn.style.boxShadow = `0 4px 12px ${confirmShadow}`; });
+                        buttonContainer.appendChild(cancelBtn);
+                        buttonContainer.appendChild(confirmBtn);
+                    }
+                    else if (buttonText) {
+                        button = document.createElement('button');
+                        button.className = 'notification-button';
+                        button.textContent = buttonText;
+                        const finalButtonColor = buttonColor || this.getButtonGradient(type);
+                        const buttonShadowColor = this.getButtonShadow(type);
+                        button.style.background = finalButtonColor;
+                        button.style.boxShadow = `0 4px 12px ${buttonShadowColor}`;
+                    }
+                }
+                let closeBtn = null;
+                if (showCloseButton) {
+                    closeBtn = document.createElement('button');
+                    closeBtn.setAttribute('aria-label', 'Cerrar');
+                    closeBtn.className = 'notification-close';
+                    closeBtn.innerHTML = '&times;';
+                    closeBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        closeHandler();
+                    });
+                }
+                box.appendChild(icon);
+                if (customContent) {
+                    const descId = 'notify-desc-' + Date.now();
+                    customContent.id = descId;
+                    overlay.setAttribute('aria-describedby', descId);
+                    box.appendChild(customContent);
+                }
+                else {
+                    box.appendChild(titleElement);
+                    box.appendChild(messageElement);
+                }
+                if (closeBtn)
+                    box.appendChild(closeBtn);
+                if (buttonContainer) {
+                    box.appendChild(buttonContainer);
+                }
+                else if (button) {
+                    box.appendChild(button);
+                }
+                overlay.appendChild(box);
+                document.body.appendChild(overlay);
+                const overlayMeta = overlay;
+                const closePromise = new Promise((resolveClose) => {
+                    try {
+                        overlayMeta._externalResolve = resolveClose;
+                    }
+                    catch (e) { }
+                });
+                try {
+                    const live = document.getElementById('notify-live');
+                    if (live) {
+                        live.textContent = `${title}: ${message}`;
+                    }
+                }
+                catch (e) { }
+                try {
+                    this._lastActiveElement = document.activeElement;
+                }
+                catch (e) {
+                    this._lastActiveElement = null;
+                }
+                this.currentNotification = overlay;
+                try {
+                    const focusable = box.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])');
+                    if (focusable && focusable.length) {
+                        focusable[0].focus();
+                    }
+                    else if (button) {
+                        button.focus();
+                    }
+                    else {
+                        overlay.focus();
+                    }
+                }
+                catch (e) {
+                    try {
+                        overlay.focus();
+                    }
+                    catch (err) { }
+                }
+                const focusTrap = (e) => {
+                    if (e.key !== 'Tab')
+                        return;
+                    const focusableNodes = Array.from(box.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'));
+                    const focusable = focusableNodes.filter((el) => el instanceof HTMLElement && el.offsetParent !== null);
+                    if (!focusable.length) {
+                        e.preventDefault();
+                        return;
+                    }
+                    const first = focusable[0];
+                    const last = focusable[focusable.length - 1];
+                    if (!e.shiftKey && document.activeElement === last) {
+                        e.preventDefault();
+                        first.focus();
+                    }
+                    else if (e.shiftKey && document.activeElement === first) {
+                        e.preventDefault();
+                        last.focus();
+                    }
+                };
+                overlayMeta._focusTrap = focusTrap;
+                document.addEventListener('keydown', focusTrap);
+                const anim = options.anim || {};
+                const overlayDuration = typeof anim.overlayDuration === 'number' ? anim.overlayDuration : 150;
+                const overlayEasing = anim.overlayEasing || 'easeOutQuad';
+                const boxDuration = typeof anim.boxDuration === 'number' ? anim.boxDuration : 200;
+                const boxDelay = typeof anim.boxDelay === 'number' ? anim.boxDelay : 50;
+                const boxEasing = anim.boxEasing || 'easeOutBack';
+                const boxStartScale = typeof anim.boxStartScale === 'number' ? anim.boxStartScale : 0.8;
+                const iconDuration = typeof anim.iconDuration === 'number' ? anim.iconDuration : 250;
+                const iconDelay = typeof anim.iconDelay === 'number' ? anim.iconDelay : 100;
+                const iconRotate = (typeof anim.iconRotate === 'number') ? anim.iconRotate : (type === 'success' ? -90 : type === 'error' ? 90 : 0);
+                if (typeof anim.overlayOpacity === 'number') {
+                    overlay.style.backgroundColor = `rgba(0,0,0,${anim.overlayOpacity})`;
+                }
+                // Set initial animation states before transitions begin
+                overlay.style.opacity = '0';
+                box.style.opacity = '0';
+                box.style.transform = `scale(${boxStartScale})`;
+                icon.style.opacity = '0';
+                icon.style.transform = `scale(0) rotate(${iconRotate}deg)`;
+                this._cssAnimate(overlay, { opacity: 1 }, { duration: overlayDuration, easing: overlayEasing });
+                this._cssAnimate(box, { opacity: 1, transform: 'scale(1)' }, { duration: boxDuration, easing: boxEasing, delay: boxDelay });
+                this._cssAnimate(icon, { opacity: 1, transform: 'scale(1) rotate(0deg)' }, { duration: iconDuration, easing: boxEasing, delay: iconDelay });
+                if (button) {
+                    const buttonShadowColor = this.getButtonShadow(type);
+                    button.addEventListener('mouseenter', () => {
+                        button.style.boxShadow = `0 6px 16px ${buttonShadowColor}`;
+                    });
+                    button.addEventListener('mouseleave', () => {
+                        button.style.boxShadow = `0 4px 12px ${buttonShadowColor}`;
+                    });
+                    button.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        closeHandler().catch(() => { });
+                    });
+                }
+                if (allowOutsideClick) {
+                    overlay.addEventListener('click', (e) => {
+                        if (!box.contains(e.target)) {
+                            closeHandler();
+                        }
+                    });
+                }
+                if (timer) {
+                    setTimeout(() => {
+                        closeHandler();
+                    }, timer);
+                }
+                if (allowEscapeKey) {
+                    const escHandler = (e) => {
+                        if (e.key === 'Escape') {
+                            closeHandler();
+                            document.removeEventListener('keydown', escHandler);
+                        }
+                    };
+                    overlayMeta._escHandler = escHandler;
+                    document.addEventListener('keydown', escHandler);
+                }
+                return closePromise;
+            }
+            close(callback = null) {
+                if (!this.currentNotification) {
+                    return Promise.resolve();
+                }
+                const overlay = this.currentNotification;
+                const overlayMeta = overlay;
+                const box = overlay.querySelector('.notification-box');
+                this.currentNotification = null;
+                if (box instanceof HTMLElement) {
+                    this._cssAnimate(box, { opacity: 0, transform: 'scale(0.8)' }, { duration: 100, easing: 'easeInQuad' });
+                }
+                return new Promise((resolve) => {
+                    this._cssAnimate(overlay, { opacity: 0 }, {
+                        duration: 100,
+                        easing: 'easeInQuad',
+                        complete: () => {
+                            try {
+                                if (overlayMeta && overlayMeta._escHandler) {
+                                    document.removeEventListener('keydown', overlayMeta._escHandler);
+                                    overlayMeta._escHandler = undefined;
+                                }
+                            }
+                            catch (e) { }
+                            try {
+                                if (overlayMeta && overlayMeta._focusTrap) {
+                                    document.removeEventListener('keydown', overlayMeta._focusTrap);
+                                    overlayMeta._focusTrap = undefined;
+                                }
+                            }
+                            catch (e) { }
+                            try {
+                                if (overlayMeta && typeof overlayMeta._externalResolve === 'function') {
+                                    try {
+                                        overlayMeta._externalResolve();
+                                    }
+                                    catch (er) { }
+                                    overlayMeta._externalResolve = undefined;
+                                }
+                            }
+                            catch (e) { }
+                            try {
+                                if (overlay && overlay.parentNode) {
+                                    overlay.parentNode.removeChild(overlay);
+                                }
+                            }
+                            catch (e) {
+                                try {
+                                    overlay.remove();
+                                }
+                                catch (er) { }
+                            }
+                            if (!this.currentNotification) {
+                                try {
+                                    document.body.style.overflow = '';
+                                }
+                                catch (e) { }
+                                try {
+                                    document.documentElement.style.overflow = '';
+                                }
+                                catch (e) { }
+                            }
+                            try {
+                                if (this._lastActiveElement && typeof this._lastActiveElement.focus === 'function') {
+                                    this._lastActiveElement.focus();
+                                }
+                            }
+                            catch (e) { }
+                            this._lastActiveElement = null;
+                            if (callback)
+                                callback();
+                            resolve();
+                        }
+                    });
+                });
+            }
+            success(message, title = null, options = {}) {
+                this.show(Object.assign({ type: 'success', title: title || this.getDefaultTitle('success'), message }, options));
+            }
+            error(message, title = null, options = {}) {
+                this.show(Object.assign({ type: 'error', title: title || this.getDefaultTitle('error'), message }, options));
+            }
+            warning(message, title = null, options = {}) {
+                this.show(Object.assign({ type: 'warning', title: title || this.getDefaultTitle('warning'), message }, options));
+            }
+            question(message, title = null, options = {}) {
+                this.show(Object.assign({ type: 'question', title: title || this.getDefaultTitle('question'), message }, options));
+            }
+            info(message, title = null, options = {}) {
+                this.show(Object.assign({ type: 'info', title: title || this.getDefaultTitle('info'), message }, options));
+            }
+            loading(message = 'Cargando...', title = 'Espera', options = {}) {
+                const loadingOptions = Object.assign({ type: 'info', title,
+                    message, hideButton: true, allowOutsideClick: false, allowEscapeKey: false }, options);
+                const loadingPromise = this.show(loadingOptions);
+                this._currentLoadingPromise = loadingPromise;
+                return loadingPromise;
+            }
+            closeLoading(callback = null) {
+                this._currentLoadingPromise = null;
+                return this.close(callback);
+            }
+            hide(callback = null) { return this.close(callback); }
+            hiden(callback = null) { return this.close(callback); }
+            _formatTime(seconds) {
+                const s = Math.max(0, Math.floor(seconds));
+                const mm = Math.floor(s / 60).toString().padStart(2, '0');
+                const ss = (s % 60).toString().padStart(2, '0');
+                return `${mm}:${ss}`;
+            }
+            showToast(message, options = {}) {
+                var _a, _b;
+                const type = options.type || 'info';
+                const title = (_a = options.title) !== null && _a !== void 0 ? _a : null;
+                const duration = typeof options.duration === 'number' ? options.duration : 4000;
+                const position = options.position || 'top-right';
+                const showProgress = options.showProgress !== false;
+                const toastId = (_b = options.id) !== null && _b !== void 0 ? _b : null;
+                const closeable = options.closeable !== false;
+                // Deduplicación: si ya existe un toast con este ID, resetear su cuenta regresiva
+                if (toastId !== null) {
+                    const existing = this._toastInstances.get(toastId);
+                    if (existing) {
+                        existing.reset(duration);
+                        return;
+                    }
+                }
+                let container = this._toastContainers.get(position);
+                if (!container || !document.body.contains(container)) {
+                    container = document.createElement('div');
+                    container.className = `notify-toast-container notify-toast-${position}`;
+                    container.setAttribute('aria-label', 'Notificaciones');
+                    document.body.appendChild(container);
+                    this._toastContainers.set(position, container);
+                }
+                const isBottom = position.startsWith('bottom');
+                const isCenter = position === 'top-center';
+                const toast = document.createElement('div');
+                toast.className = 'notify-toast';
+                if (!closeable) {
+                    toast.classList.add('notify-toast-no-close');
+                }
+                // Accesibilidad: role + aria-live según la urgencia del tipo
+                // role="alert" implica aria-live="assertive" + aria-atomic="true" → lector lo interrumpe
+                // role="status" implica aria-live="polite" + aria-atomic="true" → lector espera pausa
+                if (type === 'error' || type === 'warning') {
+                    toast.setAttribute('role', 'alert');
+                }
+                else {
+                    toast.setAttribute('role', 'status');
+                }
+                toast.setAttribute('aria-atomic', 'true');
+                toast.setAttribute('aria-live', type === 'error' || type === 'warning' ? 'assertive' : 'polite');
+                const iconEl = document.createElement('div');
+                iconEl.className = `notify-toast-icon ${type}`;
+                iconEl.innerHTML = this.getIcon(type);
+                const contentEl = document.createElement('div');
+                contentEl.className = 'notify-toast-content';
+                if (title) {
+                    const titleEl = document.createElement('div');
+                    titleEl.className = 'notify-toast-title';
+                    titleEl.textContent = title;
+                    contentEl.appendChild(titleEl);
+                }
+                const msgEl = document.createElement('div');
+                msgEl.className = 'notify-toast-message';
+                msgEl.textContent = message;
+                contentEl.appendChild(msgEl);
+                toast.appendChild(iconEl);
+                toast.appendChild(contentEl);
+                if (closeable) {
+                    const closeBtn = document.createElement('button');
+                    closeBtn.className = 'notify-toast-close';
+                    closeBtn.setAttribute('aria-label', 'Cerrar notificación');
+                    closeBtn.innerHTML = '&times;';
+                    closeBtn.addEventListener('click', removeToast);
+                    toast.appendChild(closeBtn);
+                }
+                let progressEl = null;
+                if (duration > 0 && showProgress) {
+                    progressEl = document.createElement('div');
+                    progressEl.className = `notify-toast-progress ${type}`;
+                    progressEl.setAttribute('role', 'progressbar');
+                    progressEl.setAttribute('aria-hidden', 'true'); // decorativo: el timer no añade info que el usuario necesite leer
+                    toast.appendChild(progressEl);
+                }
+                if (isBottom || isCenter) {
+                    container.appendChild(toast);
+                }
+                else {
+                    container.insertBefore(toast, container.firstChild);
+                }
+                let dismissed = false;
+                let timerId = null;
+                let remaining = duration;
+                let timerStartedAt = 0;
+                function removeToast() {
+                    if (dismissed)
+                        return Promise.resolve();
+                    dismissed = true;
+                    // Si el foco estaba dentro del toast, sacarlo antes de que el nodo desaparezca
+                    // para evitar que el foco se pierda silenciosamente en el documento
+                    if (toast.contains(document.activeElement)) {
+                        try {
+                            document.activeElement.blur();
+                        }
+                        catch (e) { }
+                    }
+                    toast.classList.remove('notify-toast-visible');
+                    return new Promise(resolve => {
+                        setTimeout(() => {
+                            if (toast.parentNode)
+                                toast.parentNode.removeChild(toast);
+                            resolve();
+                        }, 300);
+                    });
+                }
+                const startCountdown = (ms) => {
+                    timerStartedAt = Date.now();
+                    timerId = setTimeout(() => {
+                        if (toastId !== null)
+                            this._toastInstances.delete(toastId);
+                        removeToast();
+                    }, ms);
+                    if (progressEl) {
+                        progressEl.style.transition = `width ${ms}ms linear`;
+                        progressEl.style.width = '0%';
+                    }
+                };
+                const pauseCountdown = () => {
+                    if (dismissed || timerId === null)
+                        return;
+                    clearTimeout(timerId);
+                    timerId = null;
+                    const elapsed = Date.now() - timerStartedAt;
+                    remaining = Math.max(0, remaining - elapsed);
+                    if (progressEl) {
+                        const pct = (remaining / duration) * 100;
+                        progressEl.style.transition = 'none';
+                        progressEl.style.width = `${pct}%`;
+                    }
+                };
+                const resumeCountdown = () => {
+                    if (dismissed || remaining <= 0)
+                        return;
+                    startCountdown(remaining);
+                };
+                const resetCountdown = (newDuration) => {
+                    if (dismissed)
+                        return;
+                    if (timerId !== null) {
+                        clearTimeout(timerId);
+                        timerId = null;
+                    }
+                    remaining = newDuration;
+                    if (newDuration > 0) {
+                        if (progressEl) {
+                            progressEl.style.transition = 'none';
+                            progressEl.style.width = '100%';
+                            // Forzar reflow para que la transición se aplique desde el inicio
+                            void progressEl.offsetWidth;
+                        }
+                        startCountdown(newDuration);
+                    }
+                    else if (progressEl) {
+                        progressEl.style.transition = 'none';
+                        progressEl.style.width = '100%';
+                    }
+                };
+                if (toastId !== null) {
+                    const silentDismiss = () => {
+                        if (dismissed)
+                            return;
+                        dismissed = true;
+                        if (timerId !== null)
+                            clearTimeout(timerId);
+                        if (toast.contains(document.activeElement)) {
+                            try {
+                                document.activeElement.blur();
+                            }
+                            catch (e) { }
+                        }
+                        if (toast.parentNode)
+                            toast.parentNode.removeChild(toast);
+                    };
+                    this._toastInstances.set(toastId, { reset: resetCountdown, dismiss: removeToast, _silentDismiss: silentDismiss });
+                }
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        toast.classList.add('notify-toast-visible');
+                        if (duration > 0) {
+                            startCountdown(duration);
+                        }
+                    });
+                });
+                if (duration > 0 && closeable) {
+                    toast.addEventListener('mouseenter', pauseCountdown);
+                    toast.addEventListener('mouseleave', resumeCountdown);
+                }
+            }
+            toast(messageOrOptions, options = {}) {
+                if (typeof messageOrOptions === 'string') {
+                    this.showToast(messageOrOptions, options);
+                }
+                else {
+                    const { message = '' } = messageOrOptions, rest = __rest(messageOrOptions, ["message"]);
+                    this.showToast(message, rest);
+                }
+            }
+            toastSuccess(message, title, options = {}) {
+                this.showToast(message, Object.assign(Object.assign({}, options), { type: 'success', title: title !== null && title !== void 0 ? title : options.title }));
+            }
+            toastError(message, title, options = {}) {
+                this.showToast(message, Object.assign(Object.assign({}, options), { type: 'error', title: title !== null && title !== void 0 ? title : options.title }));
+            }
+            toastWarning(message, title, options = {}) {
+                this.showToast(message, Object.assign(Object.assign({}, options), { type: 'warning', title: title !== null && title !== void 0 ? title : options.title }));
+            }
+            toastInfo(message, title, options = {}) {
+                this.showToast(message, Object.assign(Object.assign({}, options), { type: 'info', title: title !== null && title !== void 0 ? title : options.title }));
+            }
+            toastQuestion(message, title, options = {}) {
+                this.showToast(message, Object.assign(Object.assign({}, options), { type: 'question', title: title !== null && title !== void 0 ? title : options.title }));
+            }
+            /**
+             * Muestra un toast de carga con spinner.
+             * - No se puede cerrar manualmente (closeable: false por defecto).
+             * - No tiene cuenta regresiva (duration: 0 por defecto).
+             * - Solo puede existir uno a la vez (id '__loading__').
+             * Ciérralo con notify.closeToastLoading().
+             */
+            toastLoading(message = 'Cargando...', title, options = {}) {
+                this.showToast(message, Object.assign(Object.assign({ position: 'top-right' }, options), { type: 'loading', title: title !== null && title !== void 0 ? title : options.title, id: '__loading__', closeable: false, duration: 0, showProgress: false }));
+            }
+            /** Cierra el toast de carga activo (si existe). Devuelve una Promise que resuelve cuando la animación de salida termina (≈300 ms). */
+            closeToastLoading() {
+                const entry = this._toastInstances.get('__loading__');
+                if (entry) {
+                    this._toastInstances.delete('__loading__');
+                    return entry.dismiss();
+                }
+                return Promise.resolve();
+            }
+            /**
+             * Reemplaza el toast de carga activo por un toast de resultado en el mismo lugar,
+             * sin animación de salida/entrada — no hay solapamiento ni hueco visual.
+             * Si no existe un toast de carga activo, simplemente muestra un toast normal.
+             */
+            replaceToastLoading(message, options = {}) {
+                const entry = this._toastInstances.get('__loading__');
+                if (entry) {
+                    this._toastInstances.delete('__loading__');
+                    entry._silentDismiss();
+                }
+                this.showToast(message, options);
+            }
+        }
+        const notifyInstance = new NotificationSystem();
+        const w = window;
+        w.notify = notifyInstance;
+        w.Notification = notifyInstance;
+    }
+    initFerNotify();
+})();
+//# sourceMappingURL=notification-system.js.map

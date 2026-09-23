@@ -87,12 +87,12 @@
       API — Modales : FerNotify
     </title>
     
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=msmddjle">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=muesd7bq">
     
-    <link rel="stylesheet" href="../assets/css/docmd-git.css?v=msmddjle">
+    <link rel="stylesheet" href="../assets/css/docmd-git.css?v=muesd7bq">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=msmddjle" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=msmddjle" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=muesd7bq" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=muesd7bq" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Referencia completa de la API de modales de FerNotify.">
@@ -109,8 +109,8 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=msmddjle" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=msmddjle" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=muesd7bq" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=muesd7bq" >
 
     
     <script>/**
@@ -161,8 +161,6 @@
     console.error('Theme init failed', e);
   }
 })();</script>
-      <link rel="icon" type="image/x-icon" href="../favicon.ico">
-    <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico">
   </head>
   <body
     class="sidebar-collapsible"
@@ -312,7 +310,7 @@
 </svg>
 
     <span class="version-label">
-      v2.1.3
+      v2.2.0
     </span>
     
 <svg class="lucide-icon icon-chevron-down version-chevron" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -338,7 +336,7 @@
          class="version-dropdown-item active" 
          data-spa-ignore
          data-version-root="/">
-        v2.1.3 <span class="version-latest-badge">latest</span>
+        v2.2.0 <span class="version-latest-badge">latest</span>
         
           
 <svg class="lucide-icon icon-check version-check" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -682,10 +680,9 @@
         
       </li>
     
-      <li class="" >
+      <li class="expanded nav-group" >
       
-        <a href="../demo/" class=" "
-          >
+        <span class="nav-label nav-group">
            
 <svg class="lucide-icon icon-play " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
   class="lucide lucide-play"
@@ -705,12 +702,82 @@
           
           <span class="nav-item-title">
             Demo Interactiva
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../demo-modal/" class=" "
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Modales
             </span>
           
           
         </a>
         
 
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../demo-toast/" class=" "
+          >
+           
+<svg class="lucide-icon icon-bell " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-bell"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M10.268 21a2 2 0 0 0 3.464 0" />
+  <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Toast
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
         
       </li>
     
@@ -1285,14 +1352,14 @@ notify.<span class="hljs-title function_">toastSuccess</span>(<span class="hljs-
         </div>
       </div>
       
-      <script src="../assets/js/docmd-main.js?v=msmddjle"></script>
+      <script src="../assets/js/docmd-main.js?v=muesd7bq"></script>
       
-      <script src="../assets/js/docmd-git.js?v=msmddjle"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=msmddjle" ></script>
+      <script src="../assets/js/docmd-git.js?v=muesd7bq"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=muesd7bq" ></script>
 <script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
-<script src="../assets/js/docmd-search.js?v=msmddjle" ></script>
-<script src="../assets/js/init-mermaid.js?v=msmddjle" type="module"></script>
-<script src="../assets/js/docmd-git.js?v=msmddjle" type="module"></script>
+<script src="../assets/js/docmd-search.js?v=muesd7bq" ></script>
+<script src="../assets/js/init-mermaid.js?v=muesd7bq" type="module"></script>
+<script src="../assets/js/docmd-git.js?v=muesd7bq" type="module"></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"

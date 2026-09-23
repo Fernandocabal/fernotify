@@ -1,115 +1,480 @@
-/*!
- * docmd (v0.8.5)
- * Copyright (c) 2025-present docmd.io
- * License: MIT
- */
-document.addEventListener("DOMContentLoaded",function(){function v(l,d=100,s=0){typeof notify<"u"&&typeof notify.success=="function"?l():s<d?setTimeout(()=>v(l,d,s+1),50):console.error("FerNotify no se pudo cargar.")}v(B);function B(){const l=[{title:"\xC9xito b\xE1sico",desc:"Usa el helper r\xE1pido para mostrar una notificaci\xF3n de \xE9xito.",code:"notify.success('Operaci\xF3n completada exitosamente.');",run:e=>{notify.success("Operaci\xF3n completada exitosamente.",null,{onClose:e})}},{title:"Error con t\xEDtulo",desc:"Notificaci\xF3n de error con t\xEDtulo personalizado.",code:"notify.error('Ha ocurrido un error.', 'Error de Conexi\xF3n');",run:e=>{notify.error("Ha ocurrido un error.","Error de Conexi\xF3n",{onClose:e})}},{title:"Advertencia con timer",desc:"Notificaci\xF3n con bot\xF3n de acci\xF3n y cierre autom\xE1tico a los 5 s.",code:`notify.show({
-  type: 'warning',
-  title: 'Advertencia',
-  message: '\xBFEst\xE1s seguro de continuar?',
-  buttonText: 'S\xED, continuar',
-  timer: 5000
-});`,run:e=>{notify.show({type:"warning",title:"Advertencia",message:"\xBFEst\xE1s seguro de continuar?",buttonText:"S\xED, continuar",timer:5e3,onClose:e})}},{title:"Pregunta (question)",desc:"Tipo question con botones confirmar / cancelar.",code:`notify.question('\xBFDeseas continuar?', 'Confirmar', {
-  confirmText: 'S\xED',
-  cancelText: 'No',
-  onConfirm: () => notify.success('Confirmado'),
-  onCancel: () => notify.info('Cancelado')
-});`,run:e=>{notify.question("\xBFDeseas continuar con la operaci\xF3n?","Confirmar",{confirmText:"S\xED",cancelText:"No",onConfirm:()=>{notify.success("Contin\xFAa ejecutando...",null,{onClose:e})},onCancel:()=>{notify.info("Operaci\xF3n cancelada",null,{onClose:e})}})}},{title:"Confirmaci\xF3n (dos botones)",desc:"Di\xE1logo con array de botones personalizados.",code:`notify.show({
-  type: 'warning',
-  title: '\xBFEliminar registro?',
-  message: 'Esta acci\xF3n no se puede deshacer.',
-  buttons: [
-    { text: 'Cancelar', color: 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)' },
-    { text: 'Eliminar', color: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', onClick: () => console.log('eliminado') }
-  ],
-  allowOutsideClick: false
-});`,run:e=>{notify.show({type:"warning",title:"\xBFEliminar registro?",message:"Esta acci\xF3n no se puede deshacer.",buttons:[{text:"Cancelar",color:"linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)",onClick:e},{text:"Eliminar",color:"linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",onClick:()=>{notify.success("Eliminado",null,{onClose:e})}}],allowOutsideClick:!1})}},{title:"onConfirm / onCancel",desc:"Atajo pr\xE1ctico con spinner durante la operaci\xF3n as\xEDncrona.",code:`notify.show({
-  type: 'info',
-  title: '\xBFEliminar elemento?',
-  message: 'Esta acci\xF3n no se puede deshacer.',
-  confirmText: 'S\xED, eliminar',
-  cancelText: 'Cancelar',
-  onConfirm: async () => {
-    notify.loading('Eliminando...', 'Espera');
-    await new Promise(r => setTimeout(r, 1200));
-    notify.closeLoading();
-    notify.success('Eliminado');
-  },
-  onCancel: () => notify.info('Cancelado'),
-  allowOutsideClick: false,
-  allowEscapeKey: false
-});`,run:e=>{notify.show({type:"info",title:"\xBFEliminar elemento?",message:"Esta acci\xF3n no se puede deshacer.",confirmText:"S\xED, eliminar",cancelText:"Cancelar",allowOutsideClick:!1,allowEscapeKey:!1,onConfirm:async()=>{notify.loading("Eliminando...","Espera"),await new Promise(t=>setTimeout(t,1200)),notify.closeLoading(),notify.success("Eliminado",null,{onClose:e})},onCancel:()=>{notify.info("Cancelado",null,{onClose:e})}})}},{title:"Auto-cierre (sin bot\xF3n)",desc:"Notificaci\xF3n que se cierra sola en 3 s, sin bot\xF3n de acci\xF3n.",code:`notify.info('Esta notificaci\xF3n se cierra sola.', 'Info', {
-  hideButton: true,
-  timer: 3000
-});`,run:e=>{notify.info("Esta notificaci\xF3n se cierra sola.","Info",{hideButton:!0,timer:3e3,onClose:e})}},{title:"Bot\xF3n cerrar (X)",desc:"Modal con bot\xF3n X en la esquina para cerrar manualmente.",code:`notify.show({
-  type: 'info',
-  title: 'Con bot\xF3n X',
-  message: 'Puedes cerrar con el bot\xF3n de la esquina.',
-  showCloseButton: true,
-  hideButton: true
-});`,run:e=>{notify.show({type:"info",title:"Con bot\xF3n X",message:"Puedes cerrar con el bot\xF3n de la esquina.",showCloseButton:!0,hideButton:!0,onClose:e})}},{title:"Formulario (content)",desc:"Modal con formulario din\xE1mico pasado como content.",code:`const form = document.createElement('form');
-form.innerHTML = \`<label>Nombre:<br><input id='name' type='text'></label>\`;
-form.addEventListener('submit', e => { e.preventDefault(); notify.close(); });
-notify.show({ title: 'Formulario', content: form, allowOutsideClick: false, showCloseButton: true });`,run:e=>{const t=document.createElement("form");t.innerHTML='<label>Nombre:<br><input id="form-name" type="text" style="margin-top:6px"></label><div style="margin-top:12px"><button type="submit" style="padding:6px 14px;background:#6366f1;color:white;border:none;border-radius:6px;cursor:pointer">Enviar</button></div>',t.addEventListener("submit",o=>{o.preventDefault();const a=t.querySelector("#form-name").value;notify.close(),notify.success("Nombre: "+(a||"(vac\xEDo)"),null,{onClose:e})}),notify.show({title:"Formulario",content:t,allowOutsideClick:!1,showCloseButton:!0,onClose:e})}},{title:"Modal fijo (no ESC / no click fuera)",desc:"Solo se puede cerrar con el bot\xF3n.",code:`notify.show({
-  type: 'error',
-  message: 'Solo cierra con el bot\xF3n.',
-  allowEscapeKey: false,
-  allowOutsideClick: false,
-  buttonText: 'Cerrar'
-});`,run:e=>{notify.show({type:"error",message:"Este di\xE1logo solo cierra con el bot\xF3n.",allowEscapeKey:!1,allowOutsideClick:!1,buttonText:"Cerrar",onClose:e})}},{title:"Quick Zoom",desc:"Entrada r\xE1pida con zoom (anim overrides).",code:`notify.show({
-  type: 'success',
-  message: 'Zoom r\xE1pido',
-  anim: { boxDuration: 120, overlayDuration: 80, boxStartScale: 0.6 }
-});`,run:e=>{notify.show({type:"success",message:"Zoom r\xE1pido",anim:{boxDuration:120,overlayDuration:80,boxStartScale:.6},onClose:e})}},{title:"Slow Fade",desc:"Aparici\xF3n lenta y suave.",code:`notify.show({
-  type: 'info',
-  message: 'Aparece lento',
-  anim: { overlayDuration: 500, boxDuration: 600, boxEasing: 'easeOutQuart' }
-});`,run:e=>{notify.show({type:"info",message:"Aparece lento",anim:{overlayDuration:500,boxDuration:600,boxEasing:"easeOutQuart"},onClose:e})}},{title:"Carga b\xE1sica",desc:"Spinner de carga con cierre manual tras 3 s.",code:`notify.loading('Procesando solicitud...', 'Espera');
-setTimeout(() => notify.closeLoading(), 3000);`,run:e=>{notify.loading("Procesando solicitud...","Espera"),setTimeout(()=>{notify.closeLoading(),e&&e()},3e3)}},{title:"Carga con cierre autom\xE1tico",desc:"Spinner que se cierra solo con timer.",code:`notify.loading('Conectando...', 'Por favor espera', { timer: 2500 })
-  .then(() => console.log('Carga completada'));`,run:e=>{notify.loading("Conectando al servidor...","Por favor espera",{timer:2500}).then(()=>{e&&e()})}},{title:"Simular respuesta backend",desc:"Mostrar carga, luego cerrar y mostrar resultado.",code:`notify.loading('Obteniendo datos...', 'Cargando');
-setTimeout(() => {
-  notify.closeLoading();
-  notify.success('Datos cargados correctamente');
-}, 2000);`,run:e=>{notify.loading("Obteniendo datos...","Cargando"),setTimeout(()=>{notify.closeLoading(),notify.success("Datos cargados correctamente",null,{onClose:e})},2e3)}},{title:"Carga con error",desc:"Simular un error despu\xE9s de la carga.",code:`notify.loading('Subiendo archivo...', 'Espera');
-setTimeout(() => {
-  notify.closeLoading();
-  notify.error('Archivo demasiado grande');
-}, 2500);`,run:e=>{notify.loading("Subiendo archivo...","Espera"),setTimeout(()=>{notify.closeLoading(),notify.error("Archivo demasiado grande",null,{onClose:e})},2500)}}],d=[{title:"Toast \u2014 \xC9xito",desc:"Toast no bloqueante de tipo success con auto-cierre en 4 s.",code:"notify.toastSuccess('Cambios guardados correctamente.', '\xA1Guardado!');",run:e=>{notify.toastSuccess("Cambios guardados correctamente.","\xA1Guardado!"),e&&e()}},{title:"Toast \u2014 Error",desc:"Toast de error con duraci\xF3n personalizada de 6 s.",code:"notify.toastError('No se pudo conectar al servidor.', 'Error de red', { duration: 6000 });",run:e=>{notify.toastError("No se pudo conectar al servidor.","Error de red",{duration:6e3}),e&&e()}},{title:"Toast \u2014 Advertencia",desc:"Toast de advertencia posicionado abajo a la derecha.",code:"notify.toastWarning('Tu sesi\xF3n expirar\xE1 en 5 minutos.', 'Advertencia', { position: 'bottom-right' });",run:e=>{notify.toastWarning("Tu sesi\xF3n expirar\xE1 en 5 minutos.","Advertencia",{position:"bottom-right"}),e&&e()}},{title:"Toast \u2014 Acumular varios",desc:"Muestra 3 toasts seguidos para ver el apilamiento.",code:`notify.toastSuccess('Archivo subido.');
-setTimeout(() => notify.toastInfo('Procesando...'), 500);
-setTimeout(() => notify.toastWarning('Espacio casi agotado.'), 1000);`,run:e=>{notify.toastSuccess("Archivo subido."),setTimeout(()=>notify.toastInfo("Procesando..."),500),setTimeout(()=>{notify.toastWarning("Espacio casi agotado."),e&&e()},1e3)}},{title:"Toast \u2014 Sin auto-cierre",desc:"Permanece hasta que el usuario lo cierra manualmente. (duration: 0)",code:"notify.toast({ type: 'info', title: 'Persistente', message: 'Esta notificaci\xF3n no se cierra sola.', duration: 0 });",run:e=>{notify.toast({type:"info",title:"Persistente",message:"Esta notificaci\xF3n no se cierra sola.",duration:0}),e&&e()}},{title:"Toast \u2014 Sin barra de progreso",desc:"Toast con progress bar oculta (showProgress: false).",code:"notify.toastSuccess('Guardado sin barra.', '\xA1Listo!', { showProgress: false });",run:e=>{notify.toastSuccess("Guardado sin barra.","\xA1Listo!",{showProgress:!1}),e&&e()}},{title:"Toast \u2014 Pausa en hover",desc:"Pasa el mouse sobre el toast para detener el contador.",code:"notify.toastInfo('Pasa el mouse para pausar el timer.', 'Hover', { duration: 8000 });",run:e=>{notify.toastInfo("Pasa el mouse encima para pausar el timer.","Hover",{duration:8e3}),e&&e()}},{title:"Toast \u2014 Posici\xF3n top-left",desc:"Toast en la esquina superior izquierda.",code:"notify.toastQuestion('Nueva solicitud pendiente.', 'Revisi\xF3n', { position: 'top-left' });",run:e=>{notify.toastQuestion("Nueva solicitud pendiente de revisi\xF3n.","Revisi\xF3n",{position:"top-left"}),e&&e()}},{title:"Toast \u2014 Posici\xF3n top-center",desc:"Toast centrado en la parte superior de la pantalla.",code:"notify.toastInfo('Actualizaci\xF3n disponible.', 'Info', { position: 'top-center' });",run:e=>{notify.toastInfo("Actualizaci\xF3n disponible.","Info",{position:"top-center"}),e&&e()}},{title:"Toast \u2014 Loading \u2192 \xC9xito (await) \u2705",desc:"\u26A0\uFE0F IMPORTANTE \u2014 Usa await para esperar la animaci\xF3n de salida (~300 ms) antes de mostrar el toast siguiente. Sin await, ambos toasts se solapan brevemente.",code:`// \u2705 Correcto: sin solapamiento
-notify.toastLoading('Subiendo archivo...', 'Espera');
-setTimeout(async () => {
-  await notify.closeToastLoading(); // espera ~300ms de salida
-  notify.toastSuccess('Archivo subido correctamente.');
-}, 2500);`,run:e=>{notify.toastLoading("Subiendo archivo...","Espera"),setTimeout(async()=>{await notify.closeToastLoading(),notify.toastSuccess("Archivo subido correctamente."),e&&e()},2500)}},{title:"Toast \u2014 Loading \u2192 \xC9xito (replace) \u26A1",desc:"Alternativa: replaceToastLoading() elimina el spinner al instante y muestra el resultado sin animaci\xF3n de salida ni hueco visual. Ideal si prefieres una transici\xF3n directa.",code:`// \u26A1 Alternativa: reemplazo instant\xE1neo, sin solapamiento ni hueco
-notify.toastLoading('Subiendo archivo...', 'Espera');
-setTimeout(() => {
-  notify.replaceToastLoading('Archivo subido correctamente.', { type: 'success', showProgress: false, duration: 1500 });
-}, 1500);`,run:e=>{notify.toastLoading("Subiendo archivo...","Espera",{position:"top-center"}),setTimeout(()=>{notify.replaceToastLoading("Archivo subido correctamente.",{title:"\xC9xito",type:"success",showProgress:!1,duration:0,position:"top-center"}),e&&e()},1500)}},{title:"Toast \u2014 Loading \u2192 Error (sin await) \u26A0\uFE0F",desc:"\u26A0\uFE0F SIN AWAIT \u2014 Ejemplo del problema: closeToastLoading() y toastError() se llaman juntos. El spinner y el error se solapan ~300ms mientras dura la animaci\xF3n de salida.",code:`// \u26A0\uFE0F Sin await: se solapan brevemente ~300ms
-notify.toastLoading('Conectando...', 'Cargando');
-setTimeout(() => {
-  notify.closeToastLoading(); // no se espera la salida
-  notify.toastError('Sin conexi\xF3n.', 'Error'); // aparece mientras el spinner sale
-}, 2000);`,run:e=>{notify.toastLoading("Conectando...","Cargando"),setTimeout(()=>{notify.closeToastLoading(),notify.toastError("Sin conexi\xF3n. Int\xE9ntalo de nuevo.","Error de red"),e&&e()},2e3)}},{title:"Toast \u2014 Deduplicaci\xF3n por ID",desc:"Haz clic varias veces seguidas: solo existe un toast; su contador se resetea en vez de crear duplicados.",code:`// Aunque se llame muchas veces, solo existe un toast
-notify.toastError('Email o contrase\xF1a incorrectos.', 'Error', {
-  id: 'login-error',
-  duration: 4000
-});`,run:e=>{notify.toastError("Email o contrase\xF1a incorrectos.","Error",{id:"login-error",duration:4e3}),e&&e()}}];function s(e,t){const o=document.getElementById(e),a=document.getElementById("example-template");o.innerHTML="",t.forEach(g=>{function S(i){return i&&i.replace(/\\n/g,`
-`).replace(/\\t/g,"	").replace(/\\\\'/g,"'").replace(/\"/g,'"')}const r=a.content.cloneNode(!0);r.querySelector(".example-title").textContent=g.title,r.querySelector(".example-desc").textContent=g.desc;const L=S(g.code);r.querySelector(".example-code code").textContent=L;const c=r.querySelector(".run-btn"),y=r.querySelector(".copy-btn");c.addEventListener("click",()=>{const i=c.innerHTML;c.disabled=!0,c.innerHTML="<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' style='animation:spin .8s linear infinite;vertical-align:middle;margin-right:4px'><path d='M21 12a9 9 0 1 1-6.219-8.56'/></svg><span>Running</span>";let b=!1;const u=()=>{b||(b=!0,c.disabled=!1,c.innerHTML=i)};try{const m=g.run(u);m&&typeof m.then=="function"&&m.then(u).catch(k=>{console.error(k),u()})}catch(m){console.error(m),u()}setTimeout(()=>{b||u()},8e3)}),y.addEventListener("click",async()=>{try{await navigator.clipboard.writeText(L);const i=y.innerHTML;y.innerHTML="<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' style='vertical-align:middle;margin-right:4px'><polyline points='20 6 9 17 4 12'/></svg><span>Copied</span>",setTimeout(()=>y.innerHTML=i,1500)}catch(i){console.warn("Clipboard failed",i)}}),o.appendChild(r)})}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",()=>{s("examples-notify",l),s("examples-toast",d)}):(s("examples-notify",l),s("examples-toast",d));function w(){let e=null;try{const t=document.getElementById("pg-buttons").value;t&&t.trim()&&(e=JSON.parse(t))}catch(t){console.warn("pgCollect: invalid buttons JSON",t),e=null}return{type:document.getElementById("pg-type").value,title:document.getElementById("pg-title").value,message:document.getElementById("pg-message").value,buttonText:document.getElementById("pg-buttonText").value,buttons:e,timer:Number(document.getElementById("pg-timer").value)||null,showCloseButton:document.getElementById("pg-showCloseButton").value==="true",allowOutsideClick:document.getElementById("pg-allowOutsideClick").value!=="false",allowEscapeKey:document.getElementById("pg-allowEscapeKey").value!=="false",anim:{overlayOpacity:Number(document.getElementById("pg-overlayOpacity").value),overlayDuration:Number(document.getElementById("pg-overlayDuration").value),boxDuration:Number(document.getElementById("pg-boxDuration").value),boxStartScale:Number(document.getElementById("pg-boxStartScale").value),iconRotate:Number(document.getElementById("pg-iconRotate").value)}}}const n=document.getElementById("pg-run"),p=document.getElementById("pg-copy"),C=document.getElementById("pg-code").querySelector("code");function h(){const e=w(),t=JSON.stringify(e.anim,null,2),o=Array.isArray(e.buttons)?`  buttons: ${JSON.stringify(e.buttons,null,2)},
-`:`  buttonText: '${e.buttonText.replace(/'/g,"\\'")}',
-`,a=[e.timer?`  timer: ${e.timer},
-`:"",e.showCloseButton?`  showCloseButton: true,
-`:"",e.allowOutsideClick?"":`  allowOutsideClick: false,
-`,e.allowEscapeKey?"":`  allowEscapeKey: false,
-`].join("");C.textContent=`notify.show({
-  type: '${e.type}',
-  title: '${e.title.replace(/'/g,"\\'")}',
-  message: '${e.message.replace(/'/g,"\\'")}',
-${o}${a}  anim: ${t}
-});`}["pg-type","pg-title","pg-message","pg-buttonText","pg-buttons","pg-timer","pg-showCloseButton","pg-allowOutsideClick","pg-allowEscapeKey","pg-overlayOpacity","pg-overlayDuration","pg-boxDuration","pg-boxStartScale","pg-iconRotate"].forEach(e=>{const t=document.getElementById(e);t&&t.addEventListener("input",h)}),n.addEventListener("click",()=>{const e=w();n.disabled=!0;const t=n.innerHTML;n.innerHTML="<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' style='animation:spin .8s linear infinite;vertical-align:middle;margin-right:4px'><path d='M21 12a9 9 0 1 1-6.219-8.56'/></svg> Running";const o={type:e.type,title:e.title,message:e.message,timer:e.timer||null,anim:e.anim,showCloseButton:e.showCloseButton,allowOutsideClick:e.allowOutsideClick,allowEscapeKey:e.allowEscapeKey,onClose:()=>{n.disabled=!1,n.innerHTML=t}};Array.isArray(e.buttons)?o.buttons=e.buttons:o.buttonText=e.buttonText,notify.show(o).then(()=>{n.disabled&&(n.disabled=!1,n.innerHTML=t)}),setTimeout(()=>{n.disabled&&(n.disabled=!1,n.innerHTML=t)},6e3)}),p.addEventListener("click",async()=>{try{await navigator.clipboard.writeText(C.textContent);const e=p.innerHTML;p.innerHTML="Copied",setTimeout(()=>p.innerHTML=e,1200)}catch(e){console.warn("Clipboard failed",e)}}),h();const I=document.getElementById("tpg-run"),f=document.getElementById("tpg-copy"),E=document.getElementById("tpg-code").querySelector("code");function T(){const e=document.getElementById("tpg-id")?document.getElementById("tpg-id").value.trim():"",t=document.getElementById("tpg-closeable");return{type:document.getElementById("tpg-type").value,title:document.getElementById("tpg-title").value,message:document.getElementById("tpg-message").value,duration:Number(document.getElementById("tpg-duration").value),position:document.getElementById("tpg-position").value,showProgress:document.getElementById("tpg-showProgress").value!=="false",id:e||void 0,closeable:t?t.value!=="false":!0}}function x(){const e=T();if(e.type==="loading"){const a=e.title?`, '${e.title.replace(/'/g,"\\'")}'`:"";E.textContent=`notify.toastLoading('${e.message.replace(/'/g,"\\'")}')${a?`
-// title: ${a}`:""};
-// ... operaci\xF3n as\xEDncrona ...
-notify.closeToastLoading();`;return}const o=[`  type: '${e.type}',`];e.title&&o.push(`  title: '${e.title.replace(/'/g,"\\'")}',`),o.push(`  message: '${e.message.replace(/'/g,"\\'")}',`),o.push(`  duration: ${e.duration},`),o.push(`  position: '${e.position}',`),e.showProgress||o.push("  showProgress: false,"),e.id&&o.push(`  id: '${e.id.replace(/'/g,"\\'")}',`),e.closeable||o.push("  closeable: false,"),E.textContent=`notify.toast({
-${o.join(`
-`)}
-});`}["tpg-type","tpg-title","tpg-message","tpg-duration","tpg-position","tpg-showProgress","tpg-id","tpg-closeable"].forEach(e=>{const t=document.getElementById(e);t&&t.addEventListener("input",x)}),I.addEventListener("click",()=>{const e=T();e.type==="loading"?notify.toastLoading(e.message,e.title||void 0):notify.toast({type:e.type,title:e.title||void 0,message:e.message,duration:e.duration,position:e.position,showProgress:e.showProgress,id:e.id,closeable:e.closeable})}),f.addEventListener("click",async()=>{try{await navigator.clipboard.writeText(E.textContent);const e=f.innerHTML;f.innerHTML="Copied",setTimeout(()=>f.innerHTML=e,1200)}catch(e){console.warn("Clipboard failed",e)}}),x(),document.getElementById("btn-success").addEventListener("click",()=>{notify.success("Operaci\xF3n completada exitosamente.","\xA1\xC9xito!")}),document.getElementById("btn-error").addEventListener("click",()=>{notify.error("Ha ocurrido un error inesperado.","Error")}),document.getElementById("btn-warning").addEventListener("click",()=>{notify.warning("Revisa los datos antes de continuar.","Advertencia")}),document.getElementById("btn-info").addEventListener("click",()=>{notify.info("Esta es una notificaci\xF3n informativa.","Informaci\xF3n")}),document.getElementById("btn-question").addEventListener("click",()=>{notify.question("\xBFEst\xE1s seguro que quieres ejecutar esta acci\xF3n?","Confirmar",{confirmText:"S\xED",cancelText:"No",onConfirm:()=>notify.success("Acci\xF3n confirmada"),onCancel:()=>notify.info("Acci\xF3n cancelada"),allowOutsideClick:!1,allowEscapeKey:!1})}),document.getElementById("btn-loading").addEventListener("click",()=>{notify.loading("Procesando solicitud...","Por favor espera"),setTimeout(()=>{notify.closeLoading()},3e3)}),document.getElementById("btn-custom").addEventListener("click",()=>{notify.show({type:"info",title:"Notificaci\xF3n Personalizada",message:"Esta notificaci\xF3n se cierra autom\xE1ticamente en 3 segundos.",buttonText:"Entendido",timer:3e3})}),document.getElementById("btn-confirm").addEventListener("click",()=>{notify.show({type:"warning",title:"\xBFEliminar elemento?",message:"Esta acci\xF3n no se puede deshacer.",confirmText:"S\xED, eliminar",cancelText:"Cancelar",onConfirm:async()=>{await new Promise(e=>setTimeout(e,600)),notify.success("Elemento eliminado correctamente")},onCancel:()=>{notify.info("Operaci\xF3n cancelada")},allowOutsideClick:!1,allowEscapeKey:!1})}),document.getElementById("btn-toast-success").addEventListener("click",()=>{notify.toastSuccess("Cambios guardados correctamente.","\xA1Guardado!")}),document.getElementById("btn-toast-error").addEventListener("click",()=>{notify.toastError("No se pudo conectar al servidor.","Error")}),document.getElementById("btn-toast-warning").addEventListener("click",()=>{notify.toastWarning("Tu sesi\xF3n expirar\xE1 pronto.","Advertencia")}),document.getElementById("btn-toast-info").addEventListener("click",()=>{notify.toastInfo("Hay una nueva actualizaci\xF3n disponible.","Info")}),document.getElementById("btn-toast-question").addEventListener("click",()=>{notify.toastQuestion("Nueva solicitud pendiente de revisi\xF3n.","Revisi\xF3n")}),document.getElementById("btn-toast-loading").addEventListener("click",()=>{notify.toastLoading("Procesando solicitud...","Espera"),setTimeout(async()=>{await notify.closeToastLoading(),notify.toastSuccess("Operaci\xF3n completada.")},3e3)})}});
+﻿document.addEventListener('DOMContentLoaded', function () {
+    function waitForNotify(callback, maxAttempts = 100, attempt = 0) {
+        if (typeof notify !== 'undefined' && typeof notify.success === 'function') {
+            callback();
+        } else if (attempt < maxAttempts) {
+            setTimeout(() => waitForNotify(callback, maxAttempts, attempt + 1), 50);
+        } else {
+            console.error('FerNotify no se pudo cargar.');
+        }
+    }
+
+    waitForNotify(initDemo);
+
+    function initDemo() {
+
+        // — Ejemplos de NOTIFICACIONES —
+        const examplesNotify = [
+            {
+                title: 'Éxito básico',
+                desc: 'Usa el helper rápido para mostrar una notificación de éxito.',
+                code: "notify.success('Operación completada exitosamente.');",
+                run: (done) => { notify.success('Operación completada exitosamente.', null, { onClose: done }); }
+            },
+            {
+                title: 'Error con título',
+                desc: 'Notificación de error con título personalizado.',
+                code: "notify.error('Ha ocurrido un error.', 'Error de Conexión');",
+                run: (done) => { notify.error('Ha ocurrido un error.', 'Error de Conexión', { onClose: done }); }
+            },
+            {
+                title: 'Advertencia con timer',
+                desc: 'Notificación con botón de acción y cierre automático a los 5 s.',
+                code: "notify.show({\n  type: 'warning',\n  title: 'Advertencia',\n  message: '¿Estás seguro de continuar?',\n  buttonText: 'Sí, continuar',\n  timer: 5000\n});",
+                run: (done) => { notify.show({ type: 'warning', title: 'Advertencia', message: '¿Estás seguro de continuar?', buttonText: 'Sí, continuar', timer: 5000, onClose: done }); }
+            },
+            {
+                title: 'Pregunta (question)',
+                desc: 'Tipo question con botones confirmar / cancelar.',
+                code: "notify.question('¿Deseas continuar?', 'Confirmar', {\n  confirmText: 'Sí',\n  cancelText: 'No',\n  onConfirm: () => notify.success('Confirmado'),\n  onCancel: () => notify.info('Cancelado')\n});",
+                run: (done) => {
+                    notify.question('¿Deseas continuar con la operación?', 'Confirmar', {
+                        confirmText: 'Sí', cancelText: 'No',
+                        onConfirm: () => { notify.success('Continúa ejecutando...', null, { onClose: done }); },
+                        onCancel: () => { notify.info('Operación cancelada', null, { onClose: done }); }
+                    });
+                }
+            },
+            {
+                title: 'Confirmación (dos botones)',
+                desc: 'Diálogo con array de botones personalizados.',
+                code: "notify.show({\n  type: 'warning',\n  title: '¿Eliminar registro?',\n  message: 'Esta acción no se puede deshacer.',\n  buttons: [\n    { text: 'Cancelar', color: 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)' },\n    { text: 'Eliminar', color: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', onClick: () => console.log('eliminado') }\n  ],\n  allowOutsideClick: false\n});",
+                run: (done) => {
+                    notify.show({
+                        type: 'warning', title: '¿Eliminar registro?', message: 'Esta acción no se puede deshacer.',
+                        buttons: [
+                            { text: 'Cancelar', color: 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)', onClick: done },
+                            { text: 'Eliminar', color: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', onClick: () => { notify.success('Eliminado', null, { onClose: done }); } }
+                        ],
+                        allowOutsideClick: false
+                    });
+                }
+            },
+            {
+                title: 'onConfirm / onCancel',
+                desc: 'Atajo práctico con spinner durante la operación asíncrona.',
+                code: "notify.show({\n  type: 'info',\n  title: '¿Eliminar elemento?',\n  message: 'Esta acción no se puede deshacer.',\n  confirmText: 'Sí, eliminar',\n  cancelText: 'Cancelar',\n  onConfirm: async () => {\n    notify.loading('Eliminando...', 'Espera');\n    await new Promise(r => setTimeout(r, 1200));\n    notify.closeLoading();\n    notify.success('Eliminado');\n  },\n  onCancel: () => notify.info('Cancelado'),\n  allowOutsideClick: false,\n  allowEscapeKey: false\n});",
+                run: (done) => {
+                    notify.show({
+                        type: 'info', title: '¿Eliminar elemento?', message: 'Esta acción no se puede deshacer.',
+                        confirmText: 'Sí, eliminar', cancelText: 'Cancelar', allowOutsideClick: false, allowEscapeKey: false,
+                        onConfirm: async () => {
+                            notify.loading('Eliminando...', 'Espera');
+                            await new Promise(r => setTimeout(r, 1200));
+                            notify.closeLoading();
+                            notify.success('Eliminado', null, { onClose: done });
+                        },
+                        onCancel: () => { notify.info('Cancelado', null, { onClose: done }); }
+                    });
+                }
+            },
+            {
+                title: 'Auto-cierre (sin botón)',
+                desc: 'Notificación que se cierra sola en 3 s, sin botón de acción.',
+                code: "notify.info('Esta notificación se cierra sola.', 'Info', {\n  hideButton: true,\n  timer: 3000\n});",
+                run: (done) => { notify.info('Esta notificación se cierra sola.', 'Info', { hideButton: true, timer: 3000, onClose: done }); }
+            },
+            {
+                title: 'Botón cerrar (X)',
+                desc: 'Modal con botón X en la esquina para cerrar manualmente.',
+                code: "notify.show({\n  type: 'info',\n  title: 'Con botón X',\n  message: 'Puedes cerrar con el botón de la esquina.',\n  showCloseButton: true,\n  hideButton: true\n});",
+                run: (done) => { notify.show({ type: 'info', title: 'Con botón X', message: 'Puedes cerrar con el botón de la esquina.', showCloseButton: true, hideButton: true, onClose: done }); }
+            },
+            {
+                title: 'Formulario (content)',
+                desc: 'Modal con formulario dinámico pasado como content.',
+                code: "const form = document.createElement('form');\nform.innerHTML = `<label>Nombre:<br><input id='name' type='text'></label>`;\nform.addEventListener('submit', e => { e.preventDefault(); notify.close(); });\nnotify.show({ title: 'Formulario', content: form, allowOutsideClick: false, showCloseButton: true });",
+                run: (done) => {
+                    const form = document.createElement('form');
+                    form.innerHTML = '<label>Nombre:<br><input id="form-name" type="text" style="margin-top:6px"></label><div style="margin-top:12px"><button type="submit" style="padding:6px 14px;background:#6366f1;color:white;border:none;border-radius:6px;cursor:pointer">Enviar</button></div>';
+                    form.addEventListener('submit', (e) => { e.preventDefault(); const v = form.querySelector('#form-name').value; notify.close(); notify.success('Nombre: ' + (v || '(vacío)'), null, { onClose: done }); });
+                    notify.show({ title: 'Formulario', content: form, allowOutsideClick: false, showCloseButton: true, onClose: done });
+                }
+            },
+            {
+                title: 'Modal fijo (no ESC / no click fuera)',
+                desc: 'Solo se puede cerrar con el botón.',
+                code: "notify.show({\n  type: 'error',\n  message: 'Solo cierra con el botón.',\n  allowEscapeKey: false,\n  allowOutsideClick: false,\n  buttonText: 'Cerrar'\n});",
+                run: (done) => { notify.show({ type: 'error', message: 'Este diálogo solo cierra con el botón.', allowEscapeKey: false, allowOutsideClick: false, buttonText: 'Cerrar', onClose: done }); }
+            },
+            {
+                title: 'Quick Zoom',
+                desc: 'Entrada rápida con zoom (anim overrides).',
+                code: "notify.show({\n  type: 'success',\n  message: 'Zoom rápido',\n  anim: { boxDuration: 120, overlayDuration: 80, boxStartScale: 0.6 }\n});",
+                run: (done) => { notify.show({ type: 'success', message: 'Zoom rápido', anim: { boxDuration: 120, overlayDuration: 80, boxStartScale: 0.6 }, onClose: done }); }
+            },
+            {
+                title: 'Slow Fade',
+                desc: 'Aparición lenta y suave.',
+                code: "notify.show({\n  type: 'info',\n  message: 'Aparece lento',\n  anim: { overlayDuration: 500, boxDuration: 600, boxEasing: 'easeOutQuart' }\n});",
+                run: (done) => { notify.show({ type: 'info', message: 'Aparece lento', anim: { overlayDuration: 500, boxDuration: 600, boxEasing: 'easeOutQuart' }, onClose: done }); }
+            },
+            {
+                title: 'Carga básica',
+                desc: 'Spinner de carga con cierre manual tras 3 s.',
+                code: "notify.loading('Procesando solicitud...', 'Espera');\nsetTimeout(() => notify.closeLoading(), 3000);",
+                run: (done) => {
+                    notify.loading('Procesando solicitud...', 'Espera');
+                    setTimeout(() => { notify.closeLoading(); if (done) done(); }, 3000);
+                }
+            },
+            {
+                title: 'Carga con cierre automático',
+                desc: 'Spinner que se cierra solo con timer.',
+                code: "notify.loading('Conectando...', 'Por favor espera', { timer: 2500 })\n  .then(() => console.log('Carga completada'));",
+                run: (done) => { notify.loading('Conectando al servidor...', 'Por favor espera', { timer: 2500 }).then(() => { if (done) done(); }); }
+            },
+            {
+                title: 'Simular respuesta backend',
+                desc: 'Mostrar carga, luego cerrar y mostrar resultado.',
+                code: "notify.loading('Obteniendo datos...', 'Cargando');\nsetTimeout(() => {\n  notify.closeLoading();\n  notify.success('Datos cargados correctamente');\n}, 2000);",
+                run: (done) => {
+                    notify.loading('Obteniendo datos...', 'Cargando');
+                    setTimeout(() => { notify.closeLoading(); notify.success('Datos cargados correctamente', null, { onClose: done }); }, 2000);
+                }
+            },
+            {
+                title: 'Carga con error',
+                desc: 'Simular un error después de la carga.',
+                code: "notify.loading('Subiendo archivo...', 'Espera');\nsetTimeout(() => {\n  notify.closeLoading();\n  notify.error('Archivo demasiado grande');\n}, 2500);",
+                run: (done) => {
+                    notify.loading('Subiendo archivo...', 'Espera');
+                    setTimeout(() => { notify.closeLoading(); notify.error('Archivo demasiado grande', null, { onClose: done }); }, 2500);
+                }
+            }
+        ];
+
+        const exampleToast = [
+            {
+                title: 'Toast — Éxito',
+                desc: 'Toast no bloqueante de tipo success con auto-cierre en 4 s.',
+                code: "notify.toastSuccess('Cambios guardados correctamente.', '¡Guardado!');",
+                run: (done) => { notify.toastSuccess('Cambios guardados correctamente.', '¡Guardado!'); if (done) done(); }
+            },
+            {
+                title: 'Toast — Error',
+                desc: 'Toast de error con duración personalizada de 6 s.',
+                code: "notify.toastError('No se pudo conectar al servidor.', 'Error de red', { duration: 6000 });",
+                run: (done) => { notify.toastError('No se pudo conectar al servidor.', 'Error de red', { duration: 6000 }); if (done) done(); }
+            },
+            {
+                title: 'Toast — Advertencia',
+                desc: 'Toast de advertencia posicionado abajo a la derecha.',
+                code: "notify.toastWarning('Tu sesión expirará en 5 minutos.', 'Advertencia', { position: 'bottom-right' });",
+                run: (done) => { notify.toastWarning('Tu sesión expirará en 5 minutos.', 'Advertencia', { position: 'bottom-right' }); if (done) done(); }
+            },
+            {
+                title: 'Toast — Acumular varios',
+                desc: 'Muestra 3 toasts seguidos para ver el apilamiento.',
+                code: "notify.toastSuccess('Archivo subido.');\nsetTimeout(() => notify.toastInfo('Procesando...'), 500);\nsetTimeout(() => notify.toastWarning('Espacio casi agotado.'), 1000);",
+                run: (done) => {
+                    notify.toastSuccess('Archivo subido.');
+                    setTimeout(() => notify.toastInfo('Procesando...'), 500);
+                    setTimeout(() => { notify.toastWarning('Espacio casi agotado.'); if (done) done(); }, 1000);
+                }
+            },
+            {
+                title: 'Toast — Sin auto-cierre',
+                desc: 'Permanece hasta que el usuario lo cierra manualmente. (duration: 0)',
+                code: "notify.toast({ type: 'info', title: 'Persistente', message: 'Esta notificación no se cierra sola.', duration: 0 });",
+                run: (done) => { notify.toast({ type: 'info', title: 'Persistente', message: 'Esta notificación no se cierra sola.', duration: 0 }); if (done) done(); }
+            },
+            {
+                title: 'Toast — Sin barra de progreso',
+                desc: 'Toast con progress bar oculta (showProgress: false).',
+                code: "notify.toastSuccess('Guardado sin barra.', '¡Listo!', { showProgress: false });",
+                run: (done) => { notify.toastSuccess('Guardado sin barra.', '¡Listo!', { showProgress: false }); if (done) done(); }
+            },
+            {
+                title: 'Toast — Pausa en hover',
+                desc: 'Pasa el mouse sobre el toast para detener el contador.',
+                code: "notify.toastInfo('Pasa el mouse para pausar el timer.', 'Hover', { duration: 8000 });",
+                run: (done) => { notify.toastInfo('Pasa el mouse encima para pausar el timer.', 'Hover', { duration: 8000 }); if (done) done(); }
+            },
+            {
+                title: 'Toast — Posición top-left',
+                desc: 'Toast en la esquina superior izquierda.',
+                code: "notify.toastQuestion('Nueva solicitud pendiente.', 'Revisión', { position: 'top-left' });",
+                run: (done) => { notify.toastQuestion('Nueva solicitud pendiente de revisión.', 'Revisión', { position: 'top-left' }); if (done) done(); }
+            },
+            {
+                title: 'Toast — Posición top-center',
+                desc: 'Toast centrado en la parte superior de la pantalla.',
+                code: "notify.toastInfo('Actualización disponible.', 'Info', { position: 'top-center' });",
+                run: (done) => { notify.toastInfo('Actualización disponible.', 'Info', { position: 'top-center' }); if (done) done(); }
+            },
+            {
+                title: 'Toast — Loading → Éxito (await) ✅',
+                desc: '⚠️ IMPORTANTE — Usa await para esperar la animación de salida (~300 ms) antes de mostrar el toast siguiente. Sin await, ambos toasts se solapan brevemente.',
+                code: "// ✅ Correcto: sin solapamiento\nnotify.toastLoading('Subiendo archivo...', 'Espera');\nsetTimeout(async () => {\n  await notify.closeToastLoading(); // espera ~300ms de salida\n  notify.toastSuccess('Archivo subido correctamente.');\n}, 2500);",
+                run: (done) => {
+                    notify.toastLoading('Subiendo archivo...', 'Espera');
+                    setTimeout(async () => {
+                        await notify.closeToastLoading();
+                        notify.toastSuccess('Archivo subido correctamente.');
+                        if (done) done();
+                    }, 2500);
+                }
+            },
+            {
+                title: 'Toast — Loading → Éxito (replace) ⚡',
+                desc: 'Alternativa: replaceToastLoading() elimina el spinner al instante y muestra el resultado sin animación de salida ni hueco visual. Ideal si prefieres una transición directa.',
+                code: "// ⚡ Alternativa: reemplazo instantáneo, sin solapamiento ni hueco\nnotify.toastLoading('Subiendo archivo...', 'Espera');\nsetTimeout(() => {\n  notify.replaceToastLoading('Archivo subido correctamente.', { type: 'success', showProgress: false, duration: 1500 });\n}, 1500);",
+                run: (done) => {
+                    notify.toastLoading('Subiendo archivo...', 'Espera',{ position: 'top-center' });
+                    setTimeout(() => {
+                        notify.replaceToastLoading('Archivo subido correctamente.', {title: 'Éxito', type: 'success', showProgress: false, duration: 0, position: 'top-center' });
+                        if (done) done();
+                    }, 1500);
+                }
+            },
+            {
+                title: 'Toast — Loading → Error (sin await) ⚠️',
+                desc: '⚠️ SIN AWAIT — Ejemplo del problema: closeToastLoading() y toastError() se llaman juntos. El spinner y el error se solapan ~300ms mientras dura la animación de salida.',
+                code: "// ⚠️ Sin await: se solapan brevemente ~300ms\nnotify.toastLoading('Conectando...', 'Cargando');\nsetTimeout(() => {\n  notify.closeToastLoading(); // no se espera la salida\n  notify.toastError('Sin conexión.', 'Error'); // aparece mientras el spinner sale\n}, 2000);",
+                run: (done) => {
+                    notify.toastLoading('Conectando...', 'Cargando');
+                    setTimeout(() => {
+                        notify.closeToastLoading();
+                        notify.toastError('Sin conexión. Inténtalo de nuevo.', 'Error de red');
+                        if (done) done();
+                    }, 2000);
+                }
+            },
+            {
+                title: 'Toast — Deduplicación por ID',
+                desc: 'Haz clic varias veces seguidas: solo existe un toast; su contador se resetea en vez de crear duplicados.',
+                code: "// Aunque se llame muchas veces, solo existe un toast\nnotify.toastError('Email o contraseña incorrectos.', 'Error', {\n  id: 'login-error',\n  duration: 4000\n});",
+                run: (done) => {
+                    notify.toastError('Email o contraseña incorrectos.', 'Error', { id: 'login-error', duration: 4000 });
+                    if (done) done();
+                }
+            }
+        ];
+
+        function renderExamples(containerId, list) {
+            const container = document.getElementById(containerId);
+            const template = document.getElementById('example-template');
+            container.innerHTML = '';
+            list.forEach((ex) => {
+                function unescapeForDisplay(s) {
+                    if (!s) return s;
+                    return s.replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\\\'/g, "'").replace(/\"/g, '"');
+                }
+                const node = template.content.cloneNode(true);
+                node.querySelector('.example-title').textContent = ex.title;
+                node.querySelector('.example-desc').textContent = ex.desc;
+                const codeText = unescapeForDisplay(ex.code);
+                node.querySelector('.example-code code').textContent = codeText;
+                const runBtn = node.querySelector('.run-btn');
+                const copyBtn = node.querySelector('.copy-btn');
+                runBtn.addEventListener('click', () => {
+                    const original = runBtn.innerHTML;
+                    runBtn.disabled = true;
+                    runBtn.innerHTML = "<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' style='animation:spin .8s linear infinite;vertical-align:middle;margin-right:4px'><path d='M21 12a9 9 0 1 1-6.219-8.56'/></svg><span>Running</span>";
+                    let finished = false;
+                    const done = () => { if (finished) return; finished = true; runBtn.disabled = false; runBtn.innerHTML = original; };
+                    try {
+                        const res = ex.run(done);
+                        if (res && typeof res.then === 'function') res.then(done).catch((e) => { console.error(e); done(); });
+                    } catch (e) { console.error(e); done(); }
+                    setTimeout(() => { if (!finished) done(); }, 8000);
+                });
+                copyBtn.addEventListener('click', async () => {
+                    try { await navigator.clipboard.writeText(codeText); const prev = copyBtn.innerHTML; copyBtn.innerHTML = "<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' style='vertical-align:middle;margin-right:4px'><polyline points='20 6 9 17 4 12'/></svg><span>Copied</span>"; setTimeout(() => copyBtn.innerHTML = prev, 1500); } catch (e) { console.warn('Clipboard failed', e); }
+                });
+                container.appendChild(node);
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => { renderExamples('examples-notify', examplesNotify); renderExamples('examples-toast', exampleToast); });
+        } else {
+            renderExamples('examples-notify', examplesNotify);
+            renderExamples('examples-toast', exampleToast);
+        }
+
+        function pgCollect() {
+            let buttons = null;
+            try {
+                const raw = document.getElementById('pg-buttons').value;
+                if (raw && raw.trim()) buttons = JSON.parse(raw);
+            } catch (e) { console.warn('pgCollect: invalid buttons JSON', e); buttons = null; }
+            return {
+                type: document.getElementById('pg-type').value,
+                title: document.getElementById('pg-title').value,
+                message: document.getElementById('pg-message').value,
+                buttonText: document.getElementById('pg-buttonText').value,
+                buttons,
+                timer: Number(document.getElementById('pg-timer').value) || null,
+                showCloseButton: document.getElementById('pg-showCloseButton').value === 'true',
+                allowOutsideClick: document.getElementById('pg-allowOutsideClick').value !== 'false',
+                allowEscapeKey: document.getElementById('pg-allowEscapeKey').value !== 'false',
+                anim: {
+                    overlayOpacity: Number(document.getElementById('pg-overlayOpacity').value),
+                    overlayDuration: Number(document.getElementById('pg-overlayDuration').value),
+                    boxDuration: Number(document.getElementById('pg-boxDuration').value),
+                    boxStartScale: Number(document.getElementById('pg-boxStartScale').value),
+                    iconRotate: Number(document.getElementById('pg-iconRotate').value)
+                }
+            };
+        }
+
+        const pgRunBtn = document.getElementById('pg-run');
+        const pgCopyBtn = document.getElementById('pg-copy');
+        const pgCodeEl = document.getElementById('pg-code').querySelector('code');
+
+        function updatePlaygroundPreview() {
+            const opts = pgCollect();
+            const animStr = JSON.stringify(opts.anim, null, 2);
+            const btnPart = Array.isArray(opts.buttons)
+                ? `  buttons: ${JSON.stringify(opts.buttons, null, 2)},\n`
+                : `  buttonText: '${opts.buttonText.replace(/'/g, "\\'")}',\n`;
+            const extra = [
+                opts.timer ? `  timer: ${opts.timer},\n` : '',
+                opts.showCloseButton ? `  showCloseButton: true,\n` : '',
+                !opts.allowOutsideClick ? `  allowOutsideClick: false,\n` : '',
+                !opts.allowEscapeKey ? `  allowEscapeKey: false,\n` : ''
+            ].join('');
+            pgCodeEl.textContent =
+                `notify.show({\n  type: '${opts.type}',\n  title: '${opts.title.replace(/'/g, "\\'")}',\n  message: '${opts.message.replace(/'/g, "\\'")}',\n${btnPart}${extra}  anim: ${animStr}\n});`;
+        }
+
+        ['pg-type', 'pg-title', 'pg-message', 'pg-buttonText', 'pg-buttons', 'pg-timer',
+            'pg-showCloseButton', 'pg-allowOutsideClick', 'pg-allowEscapeKey',
+            'pg-overlayOpacity', 'pg-overlayDuration', 'pg-boxDuration', 'pg-boxStartScale', 'pg-iconRotate'
+        ].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('input', updatePlaygroundPreview); });
+
+        pgRunBtn.addEventListener('click', () => {
+            const opts = pgCollect();
+            pgRunBtn.disabled = true;
+            const prev = pgRunBtn.innerHTML;
+            pgRunBtn.innerHTML = "<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' style='animation:spin .8s linear infinite;vertical-align:middle;margin-right:4px'><path d='M21 12a9 9 0 1 1-6.219-8.56'/></svg> Running";
+            const params = {
+                type: opts.type, title: opts.title, message: opts.message, timer: opts.timer || null,
+                anim: opts.anim, showCloseButton: opts.showCloseButton,
+                allowOutsideClick: opts.allowOutsideClick, allowEscapeKey: opts.allowEscapeKey,
+                onClose: () => { pgRunBtn.disabled = false; pgRunBtn.innerHTML = prev; }
+            };
+            if (Array.isArray(opts.buttons)) { params.buttons = opts.buttons; } else { params.buttonText = opts.buttonText; }
+            notify.show(params).then(() => { if (pgRunBtn.disabled) { pgRunBtn.disabled = false; pgRunBtn.innerHTML = prev; } });
+            setTimeout(() => { if (pgRunBtn.disabled) { pgRunBtn.disabled = false; pgRunBtn.innerHTML = prev; } }, 6000);
+        });
+
+        pgCopyBtn.addEventListener('click', async () => {
+            try { await navigator.clipboard.writeText(pgCodeEl.textContent); const prev = pgCopyBtn.innerHTML; pgCopyBtn.innerHTML = 'Copied'; setTimeout(() => pgCopyBtn.innerHTML = prev, 1200); } catch (e) { console.warn('Clipboard failed', e); }
+        });
+
+        updatePlaygroundPreview();
+
+        // — Playground TOAST —
+        const tpgRunBtn = document.getElementById('tpg-run');
+        const tpgCopyBtn = document.getElementById('tpg-copy');
+        const tpgCodeEl = document.getElementById('tpg-code').querySelector('code');
+
+        function tpgCollect() {
+            const idVal = document.getElementById('tpg-id') ? document.getElementById('tpg-id').value.trim() : '';
+            const closeableEl = document.getElementById('tpg-closeable');
+            return {
+                type: document.getElementById('tpg-type').value,
+                title: document.getElementById('tpg-title').value,
+                message: document.getElementById('tpg-message').value,
+                duration: Number(document.getElementById('tpg-duration').value),
+                position: document.getElementById('tpg-position').value,
+                showProgress: document.getElementById('tpg-showProgress').value !== 'false',
+                id: idVal || undefined,
+                closeable: closeableEl ? closeableEl.value !== 'false' : true
+            };
+        }
+
+        function updateToastPlaygroundPreview() {
+            const o = tpgCollect();
+            const isLoading = o.type === 'loading';
+            if (isLoading) {
+                const titlePart = o.title ? `, '${o.title.replace(/'/g, "\\'")}'` : '';
+                tpgCodeEl.textContent = `notify.toastLoading('${o.message.replace(/'/g, "\\'")}')${titlePart ? `\n// title: ${titlePart}` : ''};\n// ... operación asíncrona ...\nnotify.closeToastLoading();`;
+                return;
+            }
+            const lines = [
+                `  type: '${o.type}',`
+            ];
+            if (o.title) lines.push(`  title: '${o.title.replace(/'/g, "\\'")}',`);
+            lines.push(`  message: '${o.message.replace(/'/g, "\\'")}',`);
+            lines.push(`  duration: ${o.duration},`);
+            lines.push(`  position: '${o.position}',`);
+            if (!o.showProgress) lines.push(`  showProgress: false,`);
+            if (o.id) lines.push(`  id: '${o.id.replace(/'/g, "\\'")}',`);
+            if (!o.closeable) lines.push(`  closeable: false,`);
+            tpgCodeEl.textContent = `notify.toast({\n${lines.join('\n')}\n});`;
+        }
+
+        ['tpg-type', 'tpg-title', 'tpg-message', 'tpg-duration', 'tpg-position', 'tpg-showProgress', 'tpg-id', 'tpg-closeable']
+            .forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('input', updateToastPlaygroundPreview); });
+
+        tpgRunBtn.addEventListener('click', () => {
+            const o = tpgCollect();
+            if (o.type === 'loading') {
+                notify.toastLoading(o.message, o.title || undefined);
+            } else {
+                notify.toast({ type: o.type, title: o.title || undefined, message: o.message, duration: o.duration, position: o.position, showProgress: o.showProgress, id: o.id, closeable: o.closeable });
+            }
+        });
+
+        tpgCopyBtn.addEventListener('click', async () => {
+            try { await navigator.clipboard.writeText(tpgCodeEl.textContent); const prev = tpgCopyBtn.innerHTML; tpgCopyBtn.innerHTML = 'Copied'; setTimeout(() => tpgCopyBtn.innerHTML = prev, 1200); } catch (e) { console.warn('Clipboard failed', e); }
+        });
+
+        updateToastPlaygroundPreview();
+
+        document.getElementById('btn-success').addEventListener('click', () => { notify.success('Operación completada exitosamente.', '¡Éxito!'); });
+        document.getElementById('btn-error').addEventListener('click', () => { notify.error('Ha ocurrido un error inesperado.', 'Error'); });
+        document.getElementById('btn-warning').addEventListener('click', () => { notify.warning('Revisa los datos antes de continuar.', 'Advertencia'); });
+        document.getElementById('btn-info').addEventListener('click', () => { notify.info('Esta es una notificación informativa.', 'Información'); });
+        document.getElementById('btn-question').addEventListener('click', () => {
+            notify.question('¿Estás seguro que quieres ejecutar esta acción?', 'Confirmar', {
+                confirmText: 'Sí', cancelText: 'No',
+                onConfirm: () => notify.success('Acción confirmada'),
+                onCancel: () => notify.info('Acción cancelada'),
+                allowOutsideClick: false, allowEscapeKey: false
+            });
+        });
+        document.getElementById('btn-loading').addEventListener('click', () => {
+            notify.loading('Procesando solicitud...', 'Por favor espera');
+            setTimeout(() => { notify.closeLoading(); }, 3000);
+        });
+        document.getElementById('btn-custom').addEventListener('click', () => { notify.show({ type: 'info', title: 'Notificación Personalizada', message: 'Esta notificación se cierra automáticamente en 3 segundos.', buttonText: 'Entendido', timer: 3000 }); });
+        document.getElementById('btn-confirm').addEventListener('click', () => {
+            notify.show({
+                type: 'warning', title: '¿Eliminar elemento?', message: 'Esta acción no se puede deshacer.',
+                confirmText: 'Sí, eliminar', cancelText: 'Cancelar',
+                onConfirm: async () => { await new Promise((r) => setTimeout(r, 600)); notify.success('Elemento eliminado correctamente'); },
+                onCancel: () => { notify.info('Operación cancelada'); },
+                allowOutsideClick: false, allowEscapeKey: false
+            });
+        });
+
+        document.getElementById('btn-toast-success').addEventListener('click', () => { notify.toastSuccess('Cambios guardados correctamente.', '¡Guardado!'); });
+        document.getElementById('btn-toast-error').addEventListener('click', () => { notify.toastError('No se pudo conectar al servidor.', 'Error'); });
+        document.getElementById('btn-toast-warning').addEventListener('click', () => { notify.toastWarning('Tu sesión expirará pronto.', 'Advertencia'); });
+        document.getElementById('btn-toast-info').addEventListener('click', () => { notify.toastInfo('Hay una nueva actualización disponible.', 'Info'); });
+        document.getElementById('btn-toast-question').addEventListener('click', () => { notify.toastQuestion('Nueva solicitud pendiente de revisión.', 'Revisión'); });
+        document.getElementById('btn-toast-loading').addEventListener('click', () => {
+            notify.toastLoading('Procesando solicitud...', 'Espera');
+            setTimeout(async () => {
+                await notify.closeToastLoading();
+                notify.toastSuccess('Operación completada.');
+            }, 3000);
+        });
+
+    } // FIN initDemo
+});

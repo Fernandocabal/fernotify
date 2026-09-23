@@ -38,7 +38,7 @@
   "versions": {
     "current": "v2",
     "all": [
-      { "id": "v2", "label": "v2.1.3", "dir": "docs" },
+      { "id": "v2", "label": "v2.2.0", "dir": "docs" },
       { "id": "v1", "label": "v1.x (legacy)", "dir": "docs-v1" }
     ]
   },
@@ -64,7 +64,15 @@
       ]
     },
     { "title": "Ejemplos", "path": "/examples", "icon": "star" },
-    { "title": "Demo Interactiva", "path": "/demo", "icon": "play" },
+    {
+      "title": "Demo Interactiva",
+      "icon": "play",
+      "collapsible": false,
+      "children": [
+        { "title": "Modales", "path": "/demo-modal", "icon": "layers" },
+        { "title": "Toast", "path": "/demo-toast", "icon": "bell" }
+      ]
+    },
     { "title": "GitHub", "path": "https://github.com/Fernandocabal/fernotify", "icon": "github", "external": true }
   ],
   "plugins": {

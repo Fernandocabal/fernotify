@@ -8,8 +8,10 @@
   Referencia completa de la API de modales de FerNotify.
 - [API — Toasts](https://fernotify.pages.dev/api-toast/)
   Referencia completa de la API de toasts de FerNotify.
-- [Demo Interactiva](https://fernotify.pages.dev/demo/)
-  Prueba FerNotify en tiempo real — modales, toasts y playground sin instalar nada.
+- [Demo — Modales](https://fernotify.pages.dev/demo-modal/)
+  Prueba los modales de FerNotify en tiempo real.
+- [Demo — Toast](https://fernotify.pages.dev/demo-toast/)
+  Prueba los toasts de FerNotify en tiempo real.
 - [Ejemplos](https://fernotify.pages.dev/examples/)
   Ejemplos prácticos de FerNotify para casos de uso comunes.
 - [FerNotify — Sistema de Notificaciones](https://fernotify.pages.dev/)

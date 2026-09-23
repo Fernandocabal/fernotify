@@ -87,12 +87,12 @@
       Demo Interactiva : FerNotify
     </title>
     
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=msmddjle">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mueo2vis">
     
-    <link rel="stylesheet" href="../assets/css/docmd-git.css?v=msmddjle">
+    <link rel="stylesheet" href="../assets/css/docmd-git.css?v=mueo2vis">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=msmddjle" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=msmddjle" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mueo2vis" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mueo2vis" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Prueba FerNotify en tiempo real — modales, toasts y playground sin instalar nada.">
@@ -109,8 +109,8 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=msmddjle" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=msmddjle" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mueo2vis" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mueo2vis" >
 
     
     <script>/**
@@ -682,10 +682,9 @@
         
       </li>
     
-      <li class="active" >
+      <li class="expanded nav-group" >
       
-        <a href="../demo/" class="active "
-          >
+        <span class="nav-label nav-group">
            
 <svg class="lucide-icon icon-play " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
   class="lucide lucide-play"
@@ -705,12 +704,82 @@
           
           <span class="nav-item-title">
             Demo Interactiva
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../demo-modal/" class=" "
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Modales
             </span>
           
           
         </a>
         
 
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../demo-toast/" class=" "
+          >
+           
+<svg class="lucide-icon icon-bell " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-bell"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M10.268 21a2 2 0 0 0 3.464 0" />
+  <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Toast
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
         
       </li>
     
@@ -816,20 +885,6 @@
           <main class="content-area" id="main-content">
             <div class="content-layout">
               <div class="main-content">
-                
-                  <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
-                    <ol>
-                      
-                      
-                        <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
-                          
-                            <span>Demo Interactiva</span>
-                          
-                          
-                        </li>
-                      
-                    </ol>
-                  </nav>
                 
                 
                 <h1 id="demo-interactiva">Demo Interactiva</h1>
@@ -1104,6 +1159,10 @@
     { title:'Toast — Loading → Éxito (await) ✅', desc:'Usa await para evitar solapamiento visual entre spinner y el siguiente toast.', code:"notify.toastLoading('Subiendo archivo...','Espera');\nsetTimeout(async()=>{\n  await notify.closeToastLoading();\n  notify.toastSuccess('Archivo subido.');\n},2500);", run:(done)=>{ notify.toastLoading('Subiendo archivo...','Espera'); setTimeout(async()=>{ await notify.closeToastLoading(); notify.toastSuccess('Archivo subido correctamente.'); if(done)done(); },2500); } },
     { title:'Toast — Replace ⚡', desc:'replaceToastLoading() sustituye el spinner al instante, sin animación de salida.', code:"notify.toastLoading('Subiendo...','Espera');\nsetTimeout(()=>{\n  notify.replaceToastLoading('Subido.',{type:'success'});\n},1500);", run:(done)=>{ notify.toastLoading('Subiendo archivo...','Espera',{position:'top-center'}); setTimeout(()=>{ notify.replaceToastLoading('Archivo subido correctamente.',{title:'Éxito',type:'success',showProgress:false,duration:0,position:'top-center'}); if(done)done(); },1500); } },
     { title:'Toast — Deduplicación por ID', desc:'Haz clic varias veces: solo existe un toast; su contador se resetea.', code:"notify.toastError('Email incorrecto.','Error',{\n  id:'login-error',\n  duration:4000\n});", run:(done)=>{ notify.toastError('Email o contraseña incorrectos.','Error',{id:'fn-login-error',duration:4000}); if(done)done(); } },
+    { title:'Toast — onClick (navegar al hacer clic)', desc:'Haz clic en el cuerpo del toast para ejecutar una acción. Se descarta automáticamente.', code:"notify.toast({\n  type: 'info',\n  title: 'Nuevo pedido',\n  message: 'Haz clic para ver el detalle →',\n  duration: 8000,\n  onClick: () => alert('Navigando a /pedidos/123')\n});", run:(done)=>{ notify.toast({type:'info',title:'Nuevo pedido',message:'Haz clic en el toast para ver el detalle →',duration:8000,onClick:()=>alert('Navegando a /pedidos/123'),onClosed:done}); } },
+    { title:'Toast — onClick + closeOnClick:false', desc:'El clic ejecuta la acción pero el toast permanece visible.', code:"notify.toast({\n  type: 'info',\n  title: 'Copiar código',\n  message: 'Haz clic para copiar',\n  duration: 8000,\n  closeOnClick: false,\n  onClick: () => navigator.clipboard.writeText('4821')\n});", run:(done)=>{ notify.toast({type:'info',title:'Copiar código',message:'Haz clic para copiar "4821" al portapapeles',duration:8000,closeOnClick:false,onClick:()=>{ navigator.clipboard.writeText('4821').catch(()=>{}); notify.toastSuccess('Copiado al portapapeles'); },onClosed:done}); } },
+    { title:'Toast — onClose (al iniciar cierre)', desc:'Se ejecuta en cuanto el toast empieza a cerrarse (por cualquier causa).', code:"notify.toast({\n  type: 'success',\n  title: 'Notificación',\n  message: 'Ciérrala de cualquier forma.',\n  onClose: () => console.log('onClose disparado')\n});", run:(done)=>{ notify.toast({type:'success',title:'Notificación',message:'Ciérrala con la X, swipe o espera el timer.',onClose:()=>{ notify.toastInfo('onClose ejecutado','Callback'); },onClosed:done}); } },
+    { title:'Toast — onClosed (al salir del DOM)', desc:'Se ejecuta cuando el toast ya fue removido del DOM (tras la animación).', code:"notify.toast({\n  type: 'warning',\n  message: 'Espera que desaparezca...',\n  onClosed: () => console.log('Toast fuera del DOM')\n});", run:(done)=>{ notify.toast({type:'warning',message:'Espera que desaparezca completamente...',onClosed:()=>{ notify.toastInfo('onClosed ejecutado — ya salió del DOM','Callback'); done && done(); }}); } },
   ];
 
   function renderExamples(containerId, list) {
@@ -1286,10 +1345,18 @@
                 
                   <div class="page-navigation">
                     
-                      <a href="../examples/" class="prev-page">
+                      <div class="prev-page-placeholder">
+                      </div>
+                    
+                    
+                      <a href="../" class="next-page">
+                        <span><small>next</small>
+                          <strong>
+                            Introducción
+                          </strong></span>
                         
-<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-  class="lucide lucide-arrow-left"
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
   xmlns="http://www.w3.org/2000/svg"
   width="24"
   height="24"
@@ -1300,18 +1367,11 @@
   stroke-linecap="round"
   stroke-linejoin="round"
 >
-  <path d="m12 19-7-7 7-7" />
-  <path d="M19 12H5" />
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
 </svg>
 
-                        <span><small>previous</small><strong>
-                            Ejemplos
-                          </strong></span>
                       </a>
-                    
-                    
-                      <div class="next-page-placeholder">
-                      </div>
                     
                   </div>
                 
@@ -1367,17 +1427,32 @@
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1786310706000">
+                <span class="git-last-updated" data-timestamp="1786314340000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1786310706000"></span>
+                  <span class="git-time" data-timestamp="1786314340000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="fernandocabal">
+                            
+                              <img src="https://www.gravatar.com/avatar/b1a8d3f53fa1f67a03a94988300e7ddd?d=mp&amp;s=64" alt="fernandocabal">
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="Fix timer and close toat">Fix timer and close toat</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">fernandocabal</span>
+                              <span class="git-commit-date" data-timestamp="1786314340000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="fernandocabal">
@@ -1465,14 +1540,14 @@
         </div>
       </div>
       
-      <script src="../assets/js/docmd-main.js?v=msmddjle"></script>
+      <script src="../assets/js/docmd-main.js?v=mueo2vis"></script>
       
-      <script src="../assets/js/docmd-git.js?v=msmddjle"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=msmddjle" ></script>
+      <script src="../assets/js/docmd-git.js?v=mueo2vis"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mueo2vis" ></script>
 <script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
-<script src="../assets/js/docmd-search.js?v=msmddjle" ></script>
-<script src="../assets/js/init-mermaid.js?v=msmddjle" type="module"></script>
-<script src="../assets/js/docmd-git.js?v=msmddjle" type="module"></script>
+<script src="../assets/js/docmd-search.js?v=mueo2vis" ></script>
+<script src="../assets/js/init-mermaid.js?v=mueo2vis" type="module"></script>
+<script src="../assets/js/docmd-git.js?v=mueo2vis" type="module"></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"

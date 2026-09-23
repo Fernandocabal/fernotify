@@ -39,6 +39,10 @@ notify.toast(options: ToastOptions): void
 | `swipeToDismiss` | `boolean` | `true` | Habilita deslizar para cerrar (mouse o dedo) |
 | `position` | `ToastPosition` | `'top-right'` | Posición en pantalla |
 | `id` | `string` | — | ID para deduplicación |
+| `onClick` | `() => void` | — | Callback al hacer clic en el cuerpo del toast (no en la ×) |
+| `closeOnClick` | `boolean` | `true` | Si es `false`, el clic no descarta el toast. Solo aplica cuando `onClick` está definido |
+| `onClose` | `() => void` | — | Se ejecuta en cuanto inicia el cierre (×, swipe, timer o programático) |
+| `onClosed` | `() => void` | — | Se ejecuta cuando el toast fue removido del DOM (tras la animación) |
 
 ### Posiciones disponibles
 
@@ -163,6 +167,75 @@ notify.toastSuccess('Cambio 1 guardado', { position: 'bottom-right' });
 notify.toastSuccess('Cambio 2 guardado', { position: 'bottom-right' });
 // Los toasts se apilan verticalmente
 ```
+
+---
+
+## Callbacks de eventos
+
+Los toasts aceptan tres callbacks opcionales para reaccionar a la interacción del usuario.
+
+### `onClick`
+
+Se dispara cuando el usuario hace clic en el **cuerpo** del toast (no en el botón ×). Por defecto, el clic también descarta el toast (`closeOnClick: true`).
+
+```javascript
+notify.toast('Tienes un nuevo pedido', {
+  type: 'info',
+  onClick: () => window.location.href = '/pedidos/123'
+})
+```
+
+Para que el toast **no se descarte** al hacer clic (por ejemplo, para copiar algo y mantenerlo visible):
+
+```javascript
+notify.toast('Código de verificación: 4821', {
+  type: 'info',
+  duration: 0,
+  onClick: () => navigator.clipboard.writeText('4821'),
+  closeOnClick: false
+})
+```
+
+### `onClose`
+
+Se ejecuta en cuanto **inicia** el cierre, sin importar la causa (×, swipe, timer expirado o llamada programática).
+
+```javascript
+notify.toast('Mensaje visto', {
+  type: 'success',
+  onClose: () => fetch('/api/notificaciones/42/leida', { method: 'POST' })
+})
+```
+
+### `onClosed`
+
+Se ejecuta cuando el toast **ya fue removido del DOM**, es decir, después de que termina la animación de salida (~300 ms).
+
+```javascript
+notify.toast('Operación completada', {
+  type: 'success',
+  onClosed: () => console.log('Toast completamente fuera de la pantalla')
+})
+```
+
+### Combinando callbacks
+
+```javascript
+notify.toast('Nuevo mensaje de Juan', {
+  type: 'info',
+  title: 'Mensajes',
+  onClick: () => router.push('/mensajes/juan'),  // navega al hacer clic
+  onClose: () => marcarComoLeida(notifId),       // marca como leída al cerrar
+})
+```
+
+::: callout info "Orden de ejecución"
+Cuando el usuario hace clic y `closeOnClick` es `true`, el orden es: `onClick` → cierre inicia → `onClose` → animación → `onClosed`.
+:::
+
+::: callout warning "Sin auto-dismiss en replaceToastLoading"
+`onClose` y `onClosed` **no** se disparan cuando el toast de carga es reemplazado mediante `replaceToastLoading()`, ya que esa operación es silenciosa por diseño.
+:::
 
 ---
 

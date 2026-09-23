@@ -87,12 +87,12 @@
       API — Toasts : FerNotify
     </title>
     
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=msmddjle">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=muesd7bq">
     
-    <link rel="stylesheet" href="../assets/css/docmd-git.css?v=msmddjle">
+    <link rel="stylesheet" href="../assets/css/docmd-git.css?v=muesd7bq">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=msmddjle" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=msmddjle" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=muesd7bq" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=muesd7bq" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Referencia completa de la API de toasts de FerNotify.">
@@ -109,8 +109,8 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=msmddjle" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=msmddjle" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=muesd7bq" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=muesd7bq" >
 
     
     <script>/**
@@ -161,8 +161,6 @@
     console.error('Theme init failed', e);
   }
 })();</script>
-      <link rel="icon" type="image/x-icon" href="../favicon.ico">
-    <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico">
   </head>
   <body
     class="sidebar-collapsible"
@@ -312,7 +310,7 @@
 </svg>
 
     <span class="version-label">
-      v2.1.3
+      v2.2.0
     </span>
     
 <svg class="lucide-icon icon-chevron-down version-chevron" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -338,7 +336,7 @@
          class="version-dropdown-item active" 
          data-spa-ignore
          data-version-root="/">
-        v2.1.3 <span class="version-latest-badge">latest</span>
+        v2.2.0 <span class="version-latest-badge">latest</span>
         
           
 <svg class="lucide-icon icon-check version-check" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -682,10 +680,9 @@
         
       </li>
     
-      <li class="" >
+      <li class="expanded nav-group" >
       
-        <a href="../demo/" class=" "
-          >
+        <span class="nav-label nav-group">
            
 <svg class="lucide-icon icon-play " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
   class="lucide lucide-play"
@@ -705,12 +702,82 @@
           
           <span class="nav-item-title">
             Demo Interactiva
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../demo-modal/" class=" "
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Modales
             </span>
           
           
         </a>
         
 
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../demo-toast/" class=" "
+          >
+           
+<svg class="lucide-icon icon-bell " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-bell"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M10.268 21a2 2 0 0 0 3.464 0" />
+  <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Toast
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
         
       </li>
     
@@ -954,6 +1021,30 @@ notify.<span class="hljs-title function_">toast</span>(options<span class="hljs-
 <td>—</td>
 <td>ID para deduplicación</td>
 </tr>
+<tr>
+<td><code>onClick</code></td>
+<td><code>() =&gt; void</code></td>
+<td>—</td>
+<td>Callback al hacer clic en el cuerpo del toast (no en la ×)</td>
+</tr>
+<tr>
+<td><code>closeOnClick</code></td>
+<td><code>boolean</code></td>
+<td><code>true</code></td>
+<td>Si es <code>false</code>, el clic no descarta el toast. Solo aplica cuando <code>onClick</code> está definido</td>
+</tr>
+<tr>
+<td><code>onClose</code></td>
+<td><code>() =&gt; void</code></td>
+<td>—</td>
+<td>Se ejecuta en cuanto inicia el cierre (×, swipe, timer o programático)</td>
+</tr>
+<tr>
+<td><code>onClosed</code></td>
+<td><code>() =&gt; void</code></td>
+<td>—</td>
+<td>Se ejecuta cuando el toast fue removido del DOM (tras la animación)</td>
+</tr>
 </tbody>
 </table>
 </div><h3 id="api-toasts-notifytoastmsgoropts-opts-posiciones-disponibles" class="docmd-heading"><a href="#api-toasts-notifytoastmsgoropts-opts-posiciones-disponibles" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Posiciones disponibles</h3>
@@ -1043,6 +1134,52 @@ notify.<span class="hljs-title function_">toastInfo</span>(<span class="hljs-str
 notify.<span class="hljs-title function_">toastSuccess</span>(<span class="hljs-string">&#039;Cambio 2 guardado&#039;</span>, { position<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;bottom-right&#039;</span> });
 <span class="hljs-comment">// Los toasts se apilan verticalmente</span>
 </code></pre>
+<hr>
+<h2 id="api-toasts-callbacks-de-eventos" class="docmd-heading"><a href="#api-toasts-callbacks-de-eventos" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Callbacks de eventos</h2>
+<p>Los toasts aceptan tres callbacks opcionales para reaccionar a la interacción del usuario.</p>
+<h3 id="api-toasts-callbacks-de-eventos-onclick" class="docmd-heading"><a href="#api-toasts-callbacks-de-eventos-onclick" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a><code>onClick</code></h3>
+<p>Se dispara cuando el usuario hace clic en el <strong>cuerpo</strong> del toast (no en el botón ×). Por defecto, el clic también descarta el toast (<code>closeOnClick: true</code>).</p>
+<pre class="hljs"><code>notify.<span class="hljs-title function_">toast</span>(<span class="hljs-string">&#039;Tienes un nuevo pedido&#039;</span>, {
+  <span class="hljs-keyword">type</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;info&#039;</span>,
+  onClick<span class="hljs-punctuation">:</span> () <span class="hljs-punctuation">=&gt;</span> window.<span class="hljs-attr">location</span>.<span class="hljs-attr">href</span> <span class="hljs-punctuation">=</span> <span class="hljs-string">&#039;/pedidos/123&#039;</span>
+})
+</code></pre>
+<p>Para que el toast <strong>no se descarte</strong> al hacer clic (por ejemplo, para copiar algo y mantenerlo visible):</p>
+<pre class="hljs"><code>notify.<span class="hljs-title function_">toast</span>(<span class="hljs-string">&#039;Código de verificación: 4821&#039;</span>, {
+  <span class="hljs-keyword">type</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;info&#039;</span>,
+  duration<span class="hljs-punctuation">:</span> <span class="hljs-number">0</span>,
+  onClick<span class="hljs-punctuation">:</span> () <span class="hljs-punctuation">=&gt;</span> navigator.<span class="hljs-attr">clipboard</span>.<span class="hljs-title function_">writeText</span>(<span class="hljs-string">&#039;4821&#039;</span>),
+  closeOnClick<span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>
+})
+</code></pre>
+<h3 id="api-toasts-callbacks-de-eventos-onclose" class="docmd-heading"><a href="#api-toasts-callbacks-de-eventos-onclose" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a><code>onClose</code></h3>
+<p>Se ejecuta en cuanto <strong>inicia</strong> el cierre, sin importar la causa (×, swipe, timer expirado o llamada programática).</p>
+<pre class="hljs"><code>notify.<span class="hljs-title function_">toast</span>(<span class="hljs-string">&#039;Mensaje visto&#039;</span>, {
+  <span class="hljs-keyword">type</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;success&#039;</span>,
+  onClose<span class="hljs-punctuation">:</span> () <span class="hljs-punctuation">=&gt;</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">&#039;/api/notificaciones/42/leida&#039;</span>, { method<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;POST&#039;</span> })
+})
+</code></pre>
+<h3 id="api-toasts-callbacks-de-eventos-onclosed" class="docmd-heading"><a href="#api-toasts-callbacks-de-eventos-onclosed" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a><code>onClosed</code></h3>
+<p>Se ejecuta cuando el toast <strong>ya fue removido del DOM</strong>, es decir, después de que termina la animación de salida (~300 ms).</p>
+<pre class="hljs"><code>notify.<span class="hljs-title function_">toast</span>(<span class="hljs-string">&#039;Operación completada&#039;</span>, {
+  <span class="hljs-keyword">type</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;success&#039;</span>,
+  onClosed<span class="hljs-punctuation">:</span> () <span class="hljs-punctuation">=&gt;</span> console.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#039;Toast completamente fuera de la pantalla&#039;</span>)
+})
+</code></pre>
+<h3 id="api-toasts-callbacks-de-eventos-combinando-callbacks" class="docmd-heading"><a href="#api-toasts-callbacks-de-eventos-combinando-callbacks" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Combinando callbacks</h3>
+<pre class="hljs"><code>notify.<span class="hljs-title function_">toast</span>(<span class="hljs-string">&#039;Nuevo mensaje de Juan&#039;</span>, {
+  <span class="hljs-keyword">type</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;info&#039;</span>,
+  title<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;Mensajes&#039;</span>,
+  onClick<span class="hljs-punctuation">:</span> () <span class="hljs-punctuation">=&gt;</span> router.<span class="hljs-title function_">push</span>(<span class="hljs-string">&#039;/mensajes/juan&#039;</span>),  <span class="hljs-comment">// navega al hacer clic</span>
+  onClose<span class="hljs-punctuation">:</span> () <span class="hljs-punctuation">=&gt;</span> <span class="hljs-title function_">marcarComoLeida</span>(notifId),       <span class="hljs-comment">// marca como leída al cerrar</span>
+})
+</code></pre>
+<div class="docmd-container callout callout-info"><div class="callout-title">Orden de ejecución</div><div class="callout-content">
+<p>Cuando el usuario hace clic y <code>closeOnClick</code> es <code>true</code>, el orden es: <code>onClick</code> → cierre inicia → <code>onClose</code> → animación → <code>onClosed</code>.</p>
+</div></div>
+<div class="docmd-container callout callout-warning"><div class="callout-title">Sin auto-dismiss en replaceToastLoading</div><div class="callout-content">
+<p><code>onClose</code> y <code>onClosed</code> <strong>no</strong> se disparan cuando el toast de carga es reemplazado mediante <code>replaceToastLoading()</code>, ya que esa operación es silenciosa por diseño.</p>
+</div></div>
 <hr>
 <h2 id="api-toasts-swipe-to-dismiss" class="docmd-heading"><a href="#api-toasts-swipe-to-dismiss" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Swipe to dismiss</h2>
 <p>Los toasts se pueden cerrar deslizando con el dedo (o con el mouse) en cualquier dirección. El gesto está <strong>habilitado por defecto</strong> y convive con el botón × y el timer automático.</p>
@@ -1233,6 +1370,26 @@ notify.<span class="hljs-title function_">configure</span>({
         </li>
       
         <li class="toc-item toc-level-2">
+          <a href="#api-toasts-callbacks-de-eventos" class="toc-link">Callbacks de eventos</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#api-toasts-callbacks-de-eventos-onclick" class="toc-link">onClick</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#api-toasts-callbacks-de-eventos-onclose" class="toc-link">onClose</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#api-toasts-callbacks-de-eventos-onclosed" class="toc-link">onClosed</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#api-toasts-callbacks-de-eventos-combinando-callbacks" class="toc-link">Combinando callbacks</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
           <a href="#api-toasts-swipe-to-dismiss" class="toc-link">Swipe to dismiss</a>
         </li>
       
@@ -1324,14 +1481,14 @@ notify.<span class="hljs-title function_">configure</span>({
         </div>
       </div>
       
-      <script src="../assets/js/docmd-main.js?v=msmddjle"></script>
+      <script src="../assets/js/docmd-main.js?v=muesd7bq"></script>
       
-      <script src="../assets/js/docmd-git.js?v=msmddjle"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=msmddjle" ></script>
+      <script src="../assets/js/docmd-git.js?v=muesd7bq"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=muesd7bq" ></script>
 <script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
-<script src="../assets/js/docmd-search.js?v=msmddjle" ></script>
-<script src="../assets/js/init-mermaid.js?v=msmddjle" type="module"></script>
-<script src="../assets/js/docmd-git.js?v=msmddjle" type="module"></script>
+<script src="../assets/js/docmd-search.js?v=muesd7bq" ></script>
+<script src="../assets/js/init-mermaid.js?v=muesd7bq" type="module"></script>
+<script src="../assets/js/docmd-git.js?v=muesd7bq" type="module"></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"

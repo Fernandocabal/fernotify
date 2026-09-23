@@ -65,6 +65,14 @@ interface ToastOptions {
     closeable?: boolean;
     /** Si es false, deshabilita el gesto de deslizar para cerrar. Default: true */
     swipeToDismiss?: boolean;
+    /** Callback al hacer clic en el cuerpo del toast (no en la X). Por defecto también descarta el toast (ver closeOnClick). */
+    onClick?: (() => void) | null;
+    /** Si es false, el clic en el cuerpo no descarta el toast. Solo aplica cuando onClick está definido. Default: true */
+    closeOnClick?: boolean;
+    /** Callback que se ejecuta en cuanto inicia el cierre (X, swipe, timer o programático). */
+    onClose?: (() => void) | null;
+    /** Callback que se ejecuta cuando el toast ya fue removido del DOM (tras la animación de salida). */
+    onClosed?: (() => void) | null;
 }
 
 interface GlobalDefaults {
@@ -1181,6 +1189,8 @@ interface ToastInstance {
 
                 const onPointerDown = (e: PointerEvent) => {
                     if (e.pointerType === 'mouse' && e.button !== 0) return;
+                    const closeBtn = toast.querySelector('.notify-toast-close');
+                    if (closeBtn && closeBtn.contains(e.target as Node)) return;
                     startX = e.clientX;
                     startY = e.clientY;
                     startTime = e.timeStamp;
@@ -1329,10 +1339,16 @@ interface ToastInstance {
                     if (toast.contains(document.activeElement as Node)) {
                         try { (document.activeElement as HTMLElement).blur(); } catch (e) { }
                     }
+                    if (typeof opts.onClose === 'function') {
+                        try { opts.onClose(); } catch (e) { console.error(e); }
+                    }
                     toast.classList.remove('notify-toast-visible');
                     return new Promise(resolve => {
                         setTimeout(() => {
                             if (toast.parentNode) toast.parentNode.removeChild(toast);
+                            if (typeof opts.onClosed === 'function') {
+                                try { opts.onClosed(); } catch (e) { console.error(e); }
+                            }
                             resolve();
                         }, 300);
                     });
@@ -1412,6 +1428,17 @@ interface ToastInstance {
                         progressEl.style.width = '100%';
                     }
                 };
+
+                if (typeof opts.onClick === 'function') {
+                    toast.style.cursor = 'pointer';
+                    toast.addEventListener('click', (e: MouseEvent) => {
+                        if (dismissed) return;
+                        const closeBtn = toast.querySelector('.notify-toast-close');
+                        if (closeBtn && closeBtn.contains(e.target as Node)) return;
+                        try { opts.onClick!(); } catch (err) { console.error(err); }
+                        if (opts.closeOnClick !== false) removeToast();
+                    });
+                }
 
                 if (toastId !== null) {
                     const silentDismiss = () => {

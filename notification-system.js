@@ -1058,6 +1058,9 @@ var __rest = (this && this.__rest) || function (s, e) {
                 const onPointerDown = (e) => {
                     if (e.pointerType === 'mouse' && e.button !== 0)
                         return;
+                    const closeBtn = toast.querySelector('.notify-toast-close');
+                    if (closeBtn && closeBtn.contains(e.target))
+                        return;
                     startX = e.clientX;
                     startY = e.clientY;
                     startTime = e.timeStamp;
@@ -1196,11 +1199,27 @@ var __rest = (this && this.__rest) || function (s, e) {
                         }
                         catch (e) { }
                     }
+                    if (typeof opts.onClose === 'function') {
+                        try {
+                            opts.onClose();
+                        }
+                        catch (e) {
+                            console.error(e);
+                        }
+                    }
                     toast.classList.remove('notify-toast-visible');
                     return new Promise(resolve => {
                         setTimeout(() => {
                             if (toast.parentNode)
                                 toast.parentNode.removeChild(toast);
+                            if (typeof opts.onClosed === 'function') {
+                                try {
+                                    opts.onClosed();
+                                }
+                                catch (e) {
+                                    console.error(e);
+                                }
+                            }
                             resolve();
                         }, 300);
                     });
@@ -1279,6 +1298,24 @@ var __rest = (this && this.__rest) || function (s, e) {
                         progressEl.style.width = '100%';
                     }
                 };
+                if (typeof opts.onClick === 'function') {
+                    toast.style.cursor = 'pointer';
+                    toast.addEventListener('click', (e) => {
+                        if (dismissed)
+                            return;
+                        const closeBtn = toast.querySelector('.notify-toast-close');
+                        if (closeBtn && closeBtn.contains(e.target))
+                            return;
+                        try {
+                            opts.onClick();
+                        }
+                        catch (err) {
+                            console.error(err);
+                        }
+                        if (opts.closeOnClick !== false)
+                            removeToast();
+                    });
+                }
                 if (toastId !== null) {
                     const silentDismiss = () => {
                         if (dismissed)
